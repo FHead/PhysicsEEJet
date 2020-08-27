@@ -7,6 +7,7 @@ using namespace std;
 #include "TTree.h"
 
 #include "CommandLine.h"
+#include "Code/TauHelperFunctions3.h"
 
 #include "JetCorrector.h"
 
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
 
    double MatchedGenPT, MatchedGenEta, MatchedGenTheta, MatchedGenPhi;       int MatchedGenN;
    double MatchedRecoPT, MatchedRecoEta, MatchedRecoTheta, MatchedRecoPhi;   int MatchedRecoN;
-   double MatchedDR, MatchedCorrectedPT;
+   double MatchedAngle, MatchedCorrectedPT;
 
    OutputTree.Branch("GenPT",       &MatchedGenPT,       "GenPT/D");
    OutputTree.Branch("GenEta",      &MatchedGenEta,      "GenEta/D");
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("RecoTheta",   &MatchedRecoTheta,   "RecoTheta/D");
    OutputTree.Branch("RecoPhi",     &MatchedRecoPhi,     "RecoPhi/D");
    OutputTree.Branch("RecoN",       &MatchedRecoN,       "RecoN/I");
-   OutputTree.Branch("DR",          &MatchedDR,          "DR/D");
+   OutputTree.Branch("Angle",       &MatchedAngle,       "Angle/D");
 
    JetCorrector JEC(JECFile);
 
@@ -83,31 +84,32 @@ int main(int argc, char *argv[])
       for(int iJ = 0; iJ < GenNJet; iJ++)
       {
          int Best = -1;
-         double BestDR2 = -1;
+         double BestAngle = -1;
+
+         FourVector Gen;
+         Gen.SetPtEtaPhi(GenJetPT[iJ], GenJetEta[iJ], GenJetPhi[iJ]);
 
          for(int i = 0; i < RecoNJet; i++)
          {
             if(RecoUsed[i] == true)
                continue;
 
-            double DEta = GenJetEta[iJ] - RecoJetEta[i];
-            double DPhi = GenJetPhi[iJ] - RecoJetPhi[i];
-            if(DPhi < -M_PI)   DPhi = DPhi + 2 * M_PI;
-            if(DPhi > +M_PI)   DPhi = DPhi - 2 * M_PI;
+            FourVector Reco;
+            Reco.SetPtEtaPhi(RecoJetPT[i], RecoJetEta[i], RecoJetPhi[i]);
 
-            double DR2 = DEta * DEta + DPhi * DPhi;
+            double Angle = GetAngle(Gen, Reco);
 
-            if(Best < 0 || BestDR2 > DR2)
+            if(Best < 0 || BestAngle > Angle)
             {
                Best = i;
-               BestDR2 = DR2;
+               BestAngle = Angle;
             }
          }
 
          if(Best < 0)   // no match
             continue;
 
-         JEC.SetJetPT(RecoJetPT[Best]);
+         JEC.SetJetP(RecoJetPT[Best] * cosh(RecoJetEta[Best]));
          JEC.SetJetTheta(EtaToTheta(RecoJetEta[Best]));
          JEC.SetJetPhi(RecoJetPhi[Best]);
 
@@ -117,12 +119,12 @@ int main(int argc, char *argv[])
          MatchedGenPhi      = GenJetPhi[iJ];
          MatchedGenN        = GenJetN[iJ];
          MatchedRecoPT      = RecoJetPT[Best];
-         MatchedCorrectedPT = JEC.GetCorrectedPT();
+         MatchedCorrectedPT = RecoJetPT[Best] * JEC.GetCorrection();
          MatchedRecoEta     = RecoJetEta[Best];
          MatchedRecoTheta   = EtaToTheta(RecoJetEta[Best]);
          MatchedRecoPhi     = RecoJetPhi[Best];
          MatchedRecoN       = RecoJetN[Best];
-         MatchedDR          = sqrt(BestDR2);
+         MatchedAngle       = sqrt(BestAngle);
 
          RecoUsed[Best] = true;
 

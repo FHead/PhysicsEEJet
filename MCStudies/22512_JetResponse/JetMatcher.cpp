@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
          if(Best < 0)   // no match
             continue;
 
-         JEC.SetJetPT(RecoJetPT[Best]);
+         JEC.SetJetP(RecoJetPT[Best] * cosh(RecoJetEta[Best]));
          JEC.SetJetTheta(EtaToTheta(RecoJetEta[Best]));
          JEC.SetJetPhi(RecoJetPhi[Best]);
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
          MatchedGenPhi      = GenJetPhi[iJ];
          MatchedGenN        = GenJetN[iJ];
          MatchedRecoPT      = RecoJetPT[Best];
-         MatchedCorrectedPT = JEC.GetCorrectedPT();
+         MatchedCorrectedPT = RecoJetPT[Best] * JEC.GetCorrection();
          MatchedRecoEta     = RecoJetEta[Best];
          MatchedRecoTheta   = EtaToTheta(RecoJetEta[Best]);
          MatchedRecoPhi     = RecoJetPhi[Best];
