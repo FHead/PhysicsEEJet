@@ -3,6 +3,9 @@
 #include <vector>
 using namespace std;
 
+#include "fastjet/ClusterSequence.hh"
+using namespace fastjet;
+
 #include "TFile.h"
 #include "TTree.h"
 
@@ -10,7 +13,6 @@ using namespace std;
 #include "CommandLine.h"
 
 #include "CATree.h"
-#include "JetCorrector.h"
 
 #define MAX 1000
 
@@ -22,32 +24,26 @@ int main(int argc, char *argv[])
    CommandLine CL(argc, argv);
 
    vector<string> InputFileNames = CL.GetStringVector("input");
-   string InputTreeName = CL.Get("tree", "akR8ESchemeJetTree");
+   string InputTreeName = CL.Get("tree", "tgen");
    string OutputFileName = CL.Get("output", "meow.root");
-   vector<string> JECFileNames = CL.GetStringVector("JEC", vector<string>());
-   double MaxAngle = CL.GetDouble("maxangle", 0.8);
+   double JetR = CL.GetDouble("r", 0.8);
+   double MaxAngle = CL.GetDouble("maxangle", JetR);
    double Fraction = CL.GetDouble("fraction", 1.00);
    double MinParticleP = CL.GetDouble("minp", 1);
-
-   for(auto s : JECFileNames)
-      cout << s << endl;
-
-   JetCorrector JEC(JECFileNames);
+   bool NoBall = CL.GetBool("noball", false);
 
    TFile OutputFile(OutputFileName.c_str(), "RECREATE");
 
    TTree OutputTree("Tree", "Tree");
 
    int JetCount;
-   double J1P, J1Corr, J1Theta, J1Phi;
-   double J2P, J2Corr, J2Theta, J2Phi;
+   double J1P, J1Theta, J1Phi;
+   double J2P, J2Theta, J2Phi;
    OutputTree.Branch("JetCount", &JetCount, "JetCount/I");
    OutputTree.Branch("J1P",      &J1P,      "J1P/D");
-   OutputTree.Branch("J1Corr",   &J1Corr,   "J1Corr/D");
    OutputTree.Branch("J1Theta",  &J1Theta,  "J1Theta/D");
    OutputTree.Branch("J1Phi",    &J1Phi,    "J1Phi/D");
    OutputTree.Branch("J2P",      &J2P,      "J2P/D");
-   OutputTree.Branch("J2Corr",   &J2Corr,   "J2Corr/D");
    OutputTree.Branch("J2Theta",  &J2Theta,  "J2Theta/D");
    OutputTree.Branch("J2Phi",    &J2Phi,    "J2Phi/D");
 
@@ -87,44 +83,62 @@ int main(int argc, char *argv[])
 
       TFile InputFile(FileName.c_str());
 
-      TTree *Tree = (TTree *)InputFile.Get("t");
       TTree *InputTree = (TTree *)InputFile.Get(InputTreeName.c_str());
-      if(Tree == nullptr || InputTree == nullptr)
+      if(InputTree == nullptr)
          continue;
 
       int NParticle;
-      float PX[MAX], PY[MAX], PZ[MAX], Mass[MAX], PMag[MAX];
-      Tree->SetBranchAddress("nParticle", &NParticle);
-      Tree->SetBranchAddress("px", &PX);
-      Tree->SetBranchAddress("py", &PY);
-      Tree->SetBranchAddress("pz", &PZ);
-      Tree->SetBranchAddress("pmag", &PMag);
-      Tree->SetBranchAddress("mass", &Mass);
+      float PX[MAX], PY[MAX], PZ[MAX], Mass[MAX], PMag[MAX], E[MAX];
+      int pid[MAX], status[MAX], SubEvent[MAX];
+      InputTree->SetBranchAddress("nParticle", &NParticle);
+      InputTree->SetBranchAddress("px", &PX);
+      InputTree->SetBranchAddress("py", &PY);
+      InputTree->SetBranchAddress("pz", &PZ);
+      InputTree->SetBranchAddress("e", &E);
+      InputTree->SetBranchAddress("pmag", &PMag);
+      InputTree->SetBranchAddress("mass", &Mass);
+      InputTree->SetBranchAddress("pid", &pid);
+      InputTree->SetBranchAddress("status", &status);
+      InputTree->SetBranchAddress("subevent", &SubEvent);
 
       int NJet;
       float JetPT[MAX], JetEta[MAX], JetPhi[MAX];
-      InputTree->SetBranchAddress("nref", &NJet);
-      InputTree->SetBranchAddress("jtpt", &JetPT);
-      InputTree->SetBranchAddress("jteta", &JetEta);
-      InputTree->SetBranchAddress("jtphi", &JetPhi);
+      // InputTree->SetBranchAddress("nref", &NJet);
+      // InputTree->SetBranchAddress("jtpt", &JetPT);
+      // InputTree->SetBranchAddress("jteta", &JetEta);
+      // InputTree->SetBranchAddress("jtphi", &JetPhi);
 
       int EntryCount = InputTree->GetEntries() * Fraction;
       for(int iE = 0; iE < EntryCount; iE++)
       {
-         Tree->GetEntry(iE);
          InputTree->GetEntry(iE);
 
-         double JetCorr[MAX] = {-1};
-
-         for(int iJ = 0; iJ < NJet; iJ++)
+         // Cluster jets: in this gen tree we do not have jets pre-calculated
+         vector<PseudoJet> FastJetParticles;
+         for(int i = 0; i < NParticle; i++)
          {
-            FourVector J;
-            J.SetPtEtaPhi(JetPT[iJ], JetEta[iJ], JetPhi[iJ]);
-            JEC.SetJetP(J.GetP());
-            JEC.SetJetTheta(J.GetTheta());
-            JEC.SetJetPhi(J.GetPhi());
-            JetPT[iJ] = JEC.GetCorrection() * JetPT[iJ];
-            JetCorr[iJ] = JEC.GetCorrection();
+            if(NoBall == true && SubEvent[i] != 0)
+               continue;
+
+            FourVector P(E[i], PX[i], PY[i], PZ[i]);
+
+            if(status[i] != 1)                  continue;
+            if(pid[i] == 12 || pid[i] == -12)   continue;
+            if(pid[i] == 14 || pid[i] == -14)   continue;
+            if(pid[i] == 16 || pid[i] == -16)   continue;
+
+            FastJetParticles.push_back(PseudoJet(PX[i], PY[i], PZ[i], E[i]));
+         }
+         JetDefinition Definition(ee_genkt_algorithm, JetR, -1);
+         ClusterSequence Sequence(FastJetParticles, Definition);
+         vector<PseudoJet> FastJets = Sequence.inclusive_jets(0.5);
+
+         NJet = FastJets.size();
+         for(int i = 0; i < NJet; i++)
+         {
+            JetPT[i] = FastJets[i].perp();
+            JetEta[i] = FastJets[i].eta();
+            JetPhi[i] = FastJets[i].phi();
          }
 
          vector<FourVector> Particles;
@@ -132,8 +146,10 @@ int main(int argc, char *argv[])
          {
             if(PMag[iP] < MinParticleP)
                continue;
-            double E = sqrt(PX[iP] * PX[iP] + PY[iP] * PY[iP] + PZ[iP] * PZ[iP] + Mass[iP] * Mass[iP]);
-            Particles.emplace_back(E, PX[iP], PY[iP], PZ[iP]);
+            if(NoBall == true && SubEvent[iP] != 0)
+               continue;
+            double Energy = sqrt(PX[iP] * PX[iP] + PY[iP] * PY[iP] + PZ[iP] * PZ[iP] + Mass[iP] * Mass[iP]);
+            Particles.emplace_back(Energy, PX[iP], PY[iP], PZ[iP]);
          }
 
          map<double, int, greater<double>> Jets;
@@ -164,12 +180,10 @@ int main(int argc, char *argv[])
          J1.SetPtEtaPhi(JetPT[IJ1], JetEta[IJ1], JetPhi[IJ1]);
          J2.SetPtEtaPhi(JetPT[IJ2], JetEta[IJ2], JetPhi[IJ2]);
 
-         J1Corr  = JetCorr[IJ1];
          J1P     = J1.GetP();
          J1Theta = J1.GetTheta();
          J1Phi   = J1.GetPhi();
 
-         J2Corr  = JetCorr[IJ2];
          J2P     = J2.GetP();
          J2Theta = J2.GetTheta();
          J2Phi   = J2.GetPhi();

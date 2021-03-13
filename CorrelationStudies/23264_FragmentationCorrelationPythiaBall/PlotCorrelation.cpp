@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
    CommandLine CL(argc, argv);
 
-   string InputData = CL.Get("data");
+   string InputBall = CL.Get("ball");
    string InputMC   = CL.Get("mc");
    string Output    = CL.Get("output");
 
@@ -66,12 +66,12 @@ int main(int argc, char *argv[])
    Configurations.push_back({"DR (0.5, 1.5)",  25, 0.0, 0.5,  false, 1,  TYPE_DR});
    int N = Configurations.size();
 
-   vector<vector<TH2D *>> HM12CorrData(Configurations.size()), HM12CorrMC(Configurations.size());
+   vector<vector<TH2D *>> HM12CorrBall(Configurations.size()), HM12CorrMC(Configurations.size());
    vector<vector<TH2D *>> HM12CorrRatio(Configurations.size());
 
    for(int i1 = 0; i1 < (int)Configurations.size(); i1++)
    {
-      HM12CorrData[i1].resize(Configurations.size(), nullptr);
+      HM12CorrBall[i1].resize(Configurations.size(), nullptr);
       HM12CorrMC[i1].resize(Configurations.size(), nullptr);
       HM12CorrRatio[i1].resize(Configurations.size(), nullptr);
 
@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
          Configuration &C1 = Configurations[i1];
          Configuration &C2 = Configurations[i2];
 
-         HM12CorrData[i1][i2] = new TH2D(Form("HM12CorrData_%d_%d", i1, i2),
-            Form("Data;J1 %s;J2 %s", C1.Label.c_str(), C2.Label.c_str()),
+         HM12CorrBall[i1][i2] = new TH2D(Form("HM12CorrBall_%d_%d", i1, i2),
+            Form("Ball;J1 %s;J2 %s", C1.Label.c_str(), C2.Label.c_str()),
             C1.Bin, C1.Min, C1.Max, C2.Bin, C2.Min, C2.Max);
          HM12CorrMC[i1][i2] = new TH2D(Form("HM12CorrMC_%d_%d", i1, i2),
             Form("MC;J1 %s;J2 %s", C1.Label.c_str(), C2.Label.c_str()),
@@ -92,22 +92,22 @@ int main(int argc, char *argv[])
       }
    }
 
-   PlotCorrelations(PdfFile, InputData, Configurations, 0.25 * M_PI, 30, HM12CorrData);
+   PlotCorrelations(PdfFile, InputBall, Configurations, 0.25 * M_PI, 30, HM12CorrBall);
    PlotCorrelations(PdfFile, InputMC, Configurations, 0.25 * M_PI, 30, HM12CorrMC);
 
-   PdfFile.AddTextPage("Data/MC ratios");
+   PdfFile.AddTextPage("Ball/MC ratios");
 
    for(int i = 0; i < N; i++)
    {
       for(int j = 0; j < N; j++)
       {
-         for(int i1 = 1; i1 <= HM12CorrData[i][j]->GetNbinsX(); i1++)
+         for(int i1 = 1; i1 <= HM12CorrBall[i][j]->GetNbinsX(); i1++)
          {
-            for(int i2 = 1; i2 <= HM12CorrData[i][j]->GetNbinsY(); i2++)
+            for(int i2 = 1; i2 <= HM12CorrBall[i][j]->GetNbinsY(); i2++)
             {
-               double V1 = HM12CorrData[i][j]->GetBinContent(i1, i2);
+               double V1 = HM12CorrBall[i][j]->GetBinContent(i1, i2);
                double V2 = HM12CorrMC[i][j]->GetBinContent(i1, i2);
-               double E1 = HM12CorrData[i][j]->GetBinError(i1, i2);
+               double E1 = HM12CorrBall[i][j]->GetBinError(i1, i2);
                double E2 = HM12CorrMC[i][j]->GetBinError(i1, i2);
 
                double RE1 = E1 / V1;
@@ -130,14 +130,14 @@ int main(int argc, char *argv[])
    }
 
    TH2D HPullRMSMC("HPullRMSMC", "MC Pull RMS;;", N, 0, N, N, 0, N);
-   TH2D HPullRMSData("HPullRMSData", "Data Pull RMS;;", N, 0, N, N, 0, N);
+   TH2D HPullRMSBall("HPullRMSBall", "Ball Pull RMS;;", N, 0, N, N, 0, N);
    TH2D HPullRMSRatio("HPullRMSRatio", "Ratio Pull RMS;;", N, 0, N, N, 0, N);
    for(int i = 1; i <= N; i++)
    {
       HPullRMSMC.GetXaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
       HPullRMSMC.GetYaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
-      HPullRMSData.GetXaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
-      HPullRMSData.GetYaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
+      HPullRMSBall.GetXaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
+      HPullRMSBall.GetYaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
       HPullRMSRatio.GetXaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
       HPullRMSRatio.GetYaxis()->SetBinLabel(i, Configurations[i-1].Label.c_str());
    }
@@ -147,28 +147,28 @@ int main(int argc, char *argv[])
       for(int j = 1; j <= N; j++)
       {
          HPullRMSMC.SetBinContent(i, j, GetPullRMS(HM12CorrMC[i-1][j-1]));
-         HPullRMSData.SetBinContent(i, j, GetPullRMS(HM12CorrData[i-1][j-1]));
+         HPullRMSBall.SetBinContent(i, j, GetPullRMS(HM12CorrBall[i-1][j-1]));
          HPullRMSRatio.SetBinContent(i, j, GetPullRMS(HM12CorrRatio[i-1][j-1]));
       }
    }
    HPullRMSMC.SetStats(0);
-   HPullRMSData.SetStats(0);
+   HPullRMSBall.SetStats(0);
    HPullRMSRatio.SetStats(0);
 
    HPullRMSMC.SetMinimum(0.0);
    HPullRMSMC.SetMaximum(2.0);
-   HPullRMSData.SetMinimum(0.0);
-   HPullRMSData.SetMaximum(2.0);
+   HPullRMSBall.SetMinimum(0.0);
+   HPullRMSBall.SetMaximum(2.0);
    HPullRMSRatio.SetMinimum(0.0);
    HPullRMSRatio.SetMaximum(2.0);
 
    PdfFile.AddTextPage("Summary plots");
 
    PdfFile.AddPlot(HPullRMSMC, "colz");
-   PdfFile.AddPlot(HPullRMSData, "colz");
+   PdfFile.AddPlot(HPullRMSBall, "colz");
    PdfFile.AddPlot(HPullRMSRatio, "colz");
 
-   for(auto v : HM12CorrData)
+   for(auto v : HM12CorrBall)
       for(auto h : v)
          if(h != nullptr)
             delete h;
