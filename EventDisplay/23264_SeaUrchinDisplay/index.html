@@ -1,0 +1,164 @@
+<html>
+   <head>
+      <title>Sea Urchin Event Display</title>
+      <link rel="stylesheet" href="style.css" />
+      <link rel="shortcut icon" href="Alien.png" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+      <script src="three.js"></script>
+      <script src="control.js"></script>
+   </head>
+   <body>
+      <div class="PageContainer">
+         <div class="Header">
+            Sea Urchin Event Display
+         </div>
+         <div class="Columns">
+            <div class="LeftColumn" id="DisplayDiv" tabindex="0">
+               <div class="OverlayRight" id="ColorOverlay">&nbsp;</div>
+               <div class="OverlayLeft" id="ParticleOverlay">&nbsp;</div>
+               <div class="OverlayTop" id="QuickTipOverlay">
+                  Axis: <span style="color: #F00">x</span> <span style="color: #0D0">y</span> <span style="color: #00F">z</span><br />
+                  Knot: 1, 5, 10, 25, 100,
+                     <div style="background-color: #FFF; color: #AAA;" class="Button">+</div>
+                     <div style="background-color: #777; color: #333;" class="Button">&ndash;</div><br />
+                  <!-- Keys: WASD/QE/RF, &uarr;&larr;&darr;&rarr;<br /> -->
+                  <!-- &nbsp;&nbsp;&nbsp;Home/End/PageUp/PageDown<br /> -->
+                  Keys: WASD/QE/RF<br />
+                  Mouse: Left drag, middle scroll
+               </div>
+            </div>
+            <div class="RightColumn">
+               <div class="InformationDiv">
+                  <div class="Tooltip"><span>Controls</span>
+                     <ul>
+                        <li>You may need to click on the display area to focus before keys could work.</li>
+                        <li>Moving: "ASDF" or arrow keys to move around.  We can also drag with left mouse button.</li>
+                        <li>Rotate: "Q"/"PageUp" to rotate left, "E"/"PageDown" to rotate right</li>
+                        <li>Zooming: "R" or "home" to zoom in, "F" or "end" to zoom out.  We can also use mouse middle button scroll.</li>
+                        <li>Right click and save image!</li>
+                     </ul>
+                  </div>
+                  <div class="Tooltip" id="DisplayGuideTooltip"><span>Display guide</span>
+                     <ul>
+                        <li>Yellow ball is the origin</li>
+                        <li>Axes are (red = x, green = y, blue = z).</li>
+                        <li>The knots are at 1, 5, 10, 25, 100 GeV.  Darker knots are negative.</li>
+                        <li>Note that there is some camera distortion when distances are large.</li>
+                     </ul>
+                  </div>
+                  <div class="Tooltip"><span>Particle format</span>
+                     <ul>
+                        <li>Each line is one particle</li>
+                        <li>Each particle contains four numbers separated by space (and/or comma): 3-momentum, and ID.</li>
+                        <li>Add a "#" to indicate comments.  Those lines will be ignored</li>
+                        <li>The ID is used to determine the line color, and it goes from 1 to 6.  If you need more colors let Yi know.</li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="TextAreaTitleDiv">
+                  Particles (Px, Py, Pz, ID)
+               </div>
+               <div class="TextAreaDiv">
+                  <textarea id="ParticleInput"># Add your particles here
+# 1 = ball
+# 2 = lepton
+# 3 = photon
+# 4 = PID > 100
+# 5 = neutrino
+# 6 = other
+-0.456159 -0.634075 -4.52595 3
+-0.0099406 -0.11522 0.74056 3
+-0.0131332 -0.000724631 0.297407 3
+0.827313 -8.66825 4.86786 4
+-0.488123 -0.0808232 -0.801679 4
+-0.72056 1.58176 -1.47731 4
+1.25242 -0.306149 0.949051 4
+-0.381287 -0.778278 -1.26597 4
+0.0997221 -0.390316 0.10278 4
+0.0273318 0.149319 -0.0617217 4
+-2.34599 3.59093 -1.10917 4
+0.295183 -0.853329 -0.431999 4
+0.21815 0.502118 -0.440796 4
+0.0966118 -0.193768 -0.309388 4
+-1.45353 1.57776 -0.541123 4
+0.421202 -1.34966 0.465968 3
+0.141216 -0.588206 0.283847 3
+1.07832 -2.22797 1.30308 2
+0.0105584 0.0365803 0.111378 5
+-2.41029 5.37233 -1.14508 4
+-0.714001 1.44812 -0.525754 4
+0.481574 0.338738 0.518398 4
+3.66751 -0.0818267 1.3618 4
+0.0707907 0.111387 -0.119061 4
+0.184947 -0.0711172 0.0763464 4
+0.110831 -0.236714 -0.159837 4
+-0.141747 -0.154144 -0.128233 4
+-0.0695371 -0.0544779 -0.00294964 3
+-0.265195 -0.0311695 0.18484 3
+-0.0105653 0.0631132 -0.00648993 3
+-1.19205 2.75341 -0.886804 3
+0.436311 -0.231104 -0.88128 3
+0.0260119 -0.0621588 -0.0832505 3
+0.0369605 -0.164987 0.0613113 3
+0.122743 -1.20737 0.812443 3
+0.000400759 -0.73606 0.504892 3
+0.0550619 -1.35708 0.726585 3
+0.0750296 -1.2994 0.722086 3
+0.160033 -1.41269 0.657168 3
+-0.0906449 -1.48773 1.92478 4
+-2.00689 4.02969 -0.780471 3
+-0.111195 0.212286 -0.0731678 3
+0.525978 0.19313 0.174514 3
+-0.00160146 0.0218712 0.00274179 3
+-0.035305 -0.060128 0.0960397 3
+0.0501879 -0.0113719 -0.0166765 3
+0.0899361 0.0661222 0.0738199 3
+0.0404754 -0.0182749 -0.0435658 3
+0.0288531 -0.180551 -0.580664 3
+0.066629 -0.00700315 -0.233135 3
+-0.196775 0.767438 -0.0266936 1
+0.472066 1.03615 0.342638 1
+-0.260323 0.201375 -0.10994 1
+-0.00430578 -0.212926 0.0649499 1
+-0.178504 -0.121322 -0.292202 1
+-0.244849 0.194754 0.109913 1
+0.0407215 0.865997 0.337193 1
+0.0405695 0.18796 0.129162 1
+0.798559 -0.417091 0.360174 1
+-0.210263 0.320568 0.363436 1
+0.14547 0.00643862 -0.0252653 1
+-0.325477 0.182582 -0.0860312 1
+0.0354734 -0.108497 -0.144619 1
+0.0290612 -0.149233 -0.145032 1
+0.112073 0.41473 -0.374264 1
+1.19653 0.590686 -0.562509 1
+0.170896 -0.128727 0.761069 1
+-0.0982551 0.185356 0.814612 1
+0.218591 0.250115 -0.146826 1
+0.0174592 0.0504821 -0.166864 1
+0.0817625 0.245625 -0.679715 1
+0.0744388 -0.0609966 0.015926 1
+-0.223999 0.80775 0.0564416 1
+-0.572014 -0.143524 -0.591804 1
+-0.180478 -0.3478 -0.148535 1
+0.832511 -0.392288 0.534075 1
+0.658518 0.328008 0.25251 1
+0.528213 -0.0125482 0.0835297 1
+-0.192344 0.0853404 0.0765714 1
+-0.0536686 -1.45086 -0.340133 1
+-0.171324 -0.310171 -0.354484 1
+0.240048 0.144496 -0.00648886 1
+-0.56093 -0.00640621 -0.488962 1</textarea>
+               </div>
+               <div class="ButtonDiv">
+                  <button type="button" id="ResetButton">Reset View</button>
+                  <button type="button" id="UpdateButton">Update Particles</button>
+               </div>
+            </div>
+         </div>
+         <div class="Footer">
+            Developed by FHead.  Last updated: Jan 28, 2021
+         </div>
+      </div>
+   </body>
+</html>
