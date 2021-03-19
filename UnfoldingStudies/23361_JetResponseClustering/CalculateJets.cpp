@@ -14,9 +14,11 @@ using namespace fastjet;
 #include "Code/DrawRandom.h"
 #include "Code/TauHelperFunctions3.h"
 #include "CommandLine.h"
+#include "ProgressBar.h"
 
 #include "JetCorrector.h"
 #include "CATree.h"
+#include "Matching.h"
 
 #define MAX 1000
 
@@ -31,10 +33,11 @@ int main(int argc, char *argv[])
    string OutputFileName         = CL.Get("Output");
    bool IsMC                     = CL.GetBool("MC", false);
    bool BaselineCut              = CL.GetBool("BaselineCut", false);
-   double ThetaGap               = CL.GetDouble("ThetaGap", 0.2 * M_PI);
+   double ThetaGap               = CL.GetDouble("ThetaGap", 0.10 * M_PI);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
+   int MatchingScheme            = CL.GetInt("MatchingScheme", 2);
 
    JetCorrector JEC(JECFiles);
 
@@ -185,8 +188,16 @@ int main(int argc, char *argv[])
       RecoTree->SetBranchAddress("passesSTheta", &RecoPassSTheta);
 
       int EntryCount = RecoTree->GetEntries() * Fraction;
+      ProgressBar Bar(cout, EntryCount);
+      Bar.SetStyle(6);
       for(int iE = 0; iE < EntryCount; iE++)
       {
+         if(EntryCount < 1000 || (iE % (EntryCount / 300)) == 0)
+         {
+            Bar.Update(iE);
+            Bar.Print();
+         }
+
          NGen = 0;
          NReco = 0;
 
@@ -201,11 +212,6 @@ int main(int argc, char *argv[])
             if(IsMC == true && GenPassSTheta == false)
                continue;
          }
-
-         // if(fabs(cos(RecoSTheta)) > 0.8)
-         //    continue;
-         // if(IsMC == true && fabs(cos(GenSTheta)) > 0.8)
-         //    continue;
 
          double PSum = 0;
          for(int i = 0; i < NReco; i++)
@@ -395,6 +401,16 @@ int main(int argc, char *argv[])
             GenJetPhi[iR]   = GenJets[iR].GetPhi();
          }
 
+         // Matching
+         double (*Distance)(FourVector, FourVector) = GetAngle;
+         map<int, int> GenRecoMatch;
+         if(MatchingScheme == 0)
+            GenRecoMatch = MatchJetsGreedy<FourVector, FourVector>(Distance, GenJets, RecoJets);
+         if(MatchingScheme == 1)
+            GenRecoMatch = MatchJetsBruteForce<FourVector, FourVector>(Distance, GenJets, RecoJets);
+         if(MatchingScheme == 2)
+            GenRecoMatch = MatchJetsHungarian<FourVector, FourVector>(Distance, GenJets, RecoJets);
+
          // Match reco to gen jets
          MatchedJetPX.resize(NGenJets);
          MatchedJetPY.resize(NGenJets);
@@ -413,26 +429,18 @@ int main(int argc, char *argv[])
          for(int iG = 0; iG < (int)GenJets.size(); iG++)
          {
             MatchedJetAngle[iG] = -1;
-
-            int BestIndex = -1;
-            double BestAngle = -1;
-            for(int iR = 0; iR < (int)RecoJets.size(); iR++)
-            {
-               double Angle = GetAngle(GenJets[iG], RecoJets[iR]);
-               if(BestAngle < 0 || Angle < BestAngle)
-               {
-                  BestIndex = iR;
-                  BestAngle = Angle;
-               }
-            }
-
             MatchedJetZG[iG].resize(NSD, -1);
             MatchedJetRG[iG].resize(NSD, -1);
             MatchedJetPG[iG].resize(NSD, -1);
             MatchedJetNG[iG].resize(NSD, -1);
 
-            if(BestIndex < 0)   // WTF
+            int BestIndex = -1;
+            if(GenRecoMatch.find(iG) != GenRecoMatch.end())
+               BestIndex = GenRecoMatch[iG];
+            if(BestIndex < 0 || BestIndex >= (int)RecoJets.size())   // WTF
                continue;
+
+            double BestAngle = GetAngle(GenJets[iG], RecoJets[BestIndex]);
 
             // Fill output tree with matched jets
             MatchedJetPX[iG]    = RecoJets[BestIndex][1];
@@ -457,6 +465,10 @@ int main(int argc, char *argv[])
          OutputTree.Fill();
       }
 
+      Bar.Update(EntryCount);
+      Bar.Print();
+      Bar.PrintLine();
+
       InputFile.Close();
    }
 
@@ -477,7 +489,6 @@ int FindBin(int N, double Bins[], double X)
          return i - 1;
    return N - 1;
 }
-
 
 
 

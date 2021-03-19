@@ -4,6 +4,7 @@ using namespace std;
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TH1D.h"
+#include "TGraph.h"
 #include "TLegend.h"
 
 #include "SetStyle.h"
@@ -13,6 +14,10 @@ int main(int argc, char *argv[])
 {
    SetThesisStyle();
    vector<int> Colors = GetPrimaryColors();
+
+   TGraph GLine;
+   GLine.SetPoint(0, 0, 1);
+   GLine.SetPoint(1, 10000, 1);
 
    TFile FA("HEPData-ins636645-v1-Table54.root");
    TH1D *HA = (TH1D *)FA.Get("Table 54/Hist1D_y1");
@@ -79,6 +84,9 @@ int main(int argc, char *argv[])
 
    Canvas.SetLogy();
    PdfFile.AddCanvas(Canvas);
+   
+   H1.GetXaxis()->SetTitle("Thrust");
+   H1.GetYaxis()->SetTitle("Ratio to HEPData");
 
    H1.Divide(HA);
    H2.Divide(HA);
@@ -93,10 +101,14 @@ int main(int argc, char *argv[])
    Legend2.AddEntry(&H1, "Unfolded", "lp");
    Legend2.AddEntry(&H2, "Input", "lp");
 
+   H1.SetMinimum(0.0);
+   H1.SetMaximum(2.5);
+
    H1.Draw();
    H1.Draw("hist same");
    H2.Draw("same");
    H2.Draw("hist same");
+   GLine.Draw("l");
    
    Legend2.Draw();
 
@@ -116,6 +128,9 @@ int main(int argc, char *argv[])
 
    HC->SetStats(0);
 
+   HC->Scale(1 / HC->Integral() / 0.01);
+   HB2->Scale(1 / HB2->Integral() / 0.01);
+
    HC->Draw();
    HB2->Draw("same");
 
@@ -133,12 +148,19 @@ int main(int argc, char *argv[])
    Canvas.SetLogy();
    PdfFile.AddCanvas(Canvas);
 
+   HB2->SetMinimum(0.0);
+   HB2->SetMaximum(2.5);
+   
    HB2->Divide(HC);
 
    HB2->SetStats(0);
    HB2->GetYaxis()->SetTitle("Sample / Folded HEPData");
 
-   PdfFile.AddPlot(HB2);
+   HB2->Draw();
+   GLine.Draw("l");
+
+   Canvas.SetLogy(false);
+   PdfFile.AddCanvas(Canvas);
 
    PdfFile.AddTimeStampPage();
    PdfFile.Close();

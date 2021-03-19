@@ -1,5 +1,5 @@
 
-default: TestRun
+default: TestRun TestRunThrust TestRunData TestRunDataRound2 TestRunDataRound3 TestRunDataRound4 TestRunDataRound5 TestRunDataRound6
 
 TestRunThrust: Execute
 	./Execute --MC Input/MCThrustNominal.root \

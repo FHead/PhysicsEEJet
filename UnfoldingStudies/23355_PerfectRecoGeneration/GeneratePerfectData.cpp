@@ -43,6 +43,9 @@ int main(int argc, char *argv[])
 
    TH2D *HResponse = (TH2D *)MCFile.Get("HResponse");
    TH1D *HMCTruth  = (TH1D *)GenFile.Get(GenHistogramName.c_str());
+   
+   TH2D *HNormalizedResponse = (TH2D *)HResponse->Clone("HNormalizedResponse");
+   HNormalizedResponse->Reset();
 
    OutputFile.cd();
    HMCTruth->Clone("HMCGen")->Write();
@@ -70,11 +73,14 @@ int main(int argc, char *argv[])
       {
          double R = HResponse->GetBinContent(iR, iG);
          HDataReco->AddBinContent(iR, V * R / N);
+
+         HNormalizedResponse->SetBinContent(iR, iG, R / N);
       }
    }
    HDataReco->Scale(TargetEventCount / HDataReco->Integral());
 
    HDataReco->Write();
+   HNormalizedResponse->Write();
 
    GenFile.Close();
    MCFile.Close();

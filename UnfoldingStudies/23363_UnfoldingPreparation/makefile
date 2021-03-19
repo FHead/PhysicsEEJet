@@ -18,58 +18,84 @@ default: ThrustNominalRun ThrustNoCutRun
 RunAll: DataNominalRun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun DataJECRun DataJERRun \
 	ThrustNominalRun ThrustNoCutRun
 
+MCDebugRun: Execute
+	time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetPNominal.root \
+		--Observable JetP --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetPBins) \
+		--ObservableRecoBins $(RecoJetPBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetPNominalNoThetaGap.root \
+		--Observable JetP --ObservableIndex -1 --Binning None --BinningIndex -1 --CheckThetaGap false \
+		--ObservableGenBins $(GenJetPBins) \
+		--ObservableRecoBins $(RecoJetPBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetZGNominal.root \
+	# 	--Observable JetZG --ObservableIndex 0 --Binning JetP --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetZGBins) \
+	# 	--ObservableRecoBins $(RecoJetZGBins) \
+	# 	--BinningGenBins $(GenJetPCoarseBins) \
+	# 	--BinningRecoBins $(RecoJetPCoarseBins) --Fraction 0.01
+	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetRGNominal.root \
+	# 	--Observable JetRG --ObservableIndex 0 --Binning JetP --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetRGBins) \
+	# 	--ObservableRecoBins $(RecoJetRGBins) \
+	# 	--BinningGenBins $(GenJetPCoarseBins) \
+	# 	--BinningRecoBins $(RecoJetPCoarseBins) --Fraction 0.01
+
+
 ThrustNominalRun: Execute
 	time ./Execute --MC MC.root --Data Data.root --Output Output/DataThrustNominal.root --CheckMatchAngle false \
-		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 --CheckThetaGap false \
 		--ObservableGenBins $(GenThrustBins) \
 		--ObservableRecoBins $(RecoThrustBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	time ./Execute --MC MC.root --Data MC.root --Output Output/MCThrustNominal.root --CheckMatchAngle false \
-		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 --CheckThetaGap false  \
 		--ObservableGenBins $(GenThrustBins) \
 		--ObservableRecoBins $(RecoThrustBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	time ./Execute --MC MC.root --Data Data.root --Output Output/DataThrustUniform.root --CheckMatchAngle false \
-		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1  --CheckThetaGap false \
 		--ObservableGenBins $(GenThrustUniformBins) \
 		--ObservableRecoBins $(RecoThrustUniformBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	time ./Execute --MC MC.root --Data MC.root --Output Output/MCThrustUniform.root --CheckMatchAngle false \
-		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1  --CheckThetaGap false \
 		--ObservableGenBins $(GenThrustUniformBins) \
 		--ObservableRecoBins $(RecoThrustUniformBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 
 ThrustNoCutRun: Execute
-	time ./Execute --MC MCNoCut.root --Data DataNoCut.root --Output Output/DataNoCutThrustNominal.root --CheckMatchAngle false \
+	time ./Execute --MC MCNoCut.root --Data DataNoCut.root --Output Output/DataNoCutThrustNominal.root --CheckMatchAngle false --CheckThetaGap false \
 		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenThrustBins) \
 		--ObservableRecoBins $(RecoThrustBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
-	time ./Execute --MC MCNoCut.root --Data MCNoCut.root --Output Output/MCNoCutThrustNominal.root --CheckMatchAngle false \
+	time ./Execute --MC MCNoCut.root --Data MCNoCut.root --Output Output/MCNoCutThrustNominal.root --CheckMatchAngle false --CheckThetaGap false \
 		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenThrustBins) \
 		--ObservableRecoBins $(RecoThrustBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
-	time ./Execute --MC MCNoCut.root --Data DataNoCut.root --Output Output/DataNoCutThrustUniform.root --CheckMatchAngle false \
+	time ./Execute --MC MCNoCut.root --Data DataNoCut.root --Output Output/DataNoCutThrustUniform.root --CheckMatchAngle false --CheckThetaGap false \
 		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenThrustUniformBins) \
 		--ObservableRecoBins $(RecoThrustUniformBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
-	time ./Execute --MC MCNoCut.root --Data MCNoCut.root --Output Output/MCNoCutThrustUniform.root --CheckMatchAngle false \
+	time ./Execute --MC MCNoCut.root --Data MCNoCut.root --Output Output/MCNoCutThrustUniform.root --CheckMatchAngle false --CheckThetaGap false \
 		--Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenThrustUniformBins) \
 		--ObservableRecoBins $(RecoThrustUniformBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
-
 
 DataNominalRun: Execute
 	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetPNominal.root \
