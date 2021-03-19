@@ -138,7 +138,6 @@ std::map<int, int> MatchJetsHungarian(double (*Metric)(O,o), std::vector<O> Jets
       for(int iB = 0; iB < N; iB++)
          Cost[iA][iB] = Cost[iA][iB] - MinimumCost;
    }
-   // PrintMatrix(N, Cost);
    for(int iB = 0; iB < N; iB++)
    {
       double MinimumCost = Cost[0][iB];
@@ -148,7 +147,6 @@ std::map<int, int> MatchJetsHungarian(double (*Metric)(O,o), std::vector<O> Jets
       for(int iA = 0; iA < N; iA++)
          Cost[iA][iB] = Cost[iA][iB] - MinimumCost;
    }
-   // PrintMatrix(N, Cost);
 
    int Assignment[HungarianMAX] = {-1};
  
