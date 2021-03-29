@@ -150,6 +150,11 @@ int main(int argc, char *argv[])
    Legend2.Draw();
    PdfFile.AddCanvas(Canvas);
 
+   TH1D *HTotalPlus = (TH1D *)File.Get("HTotalPlus");
+   PdfFile.AddPlot(HTotalPlus);
+   TH1D *HTotalMinus = (TH1D *)File.Get("HTotalMinus");
+   PdfFile.AddPlot(HTotalMinus);
+
    File.Close();
 
    PdfFile.AddTimeStampPage();

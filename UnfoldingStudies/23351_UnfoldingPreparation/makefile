@@ -93,6 +93,20 @@ DataNominalRun: Execute
 		--BinningGenBins $(GenJetPCoarseBins) \
 		--BinningRecoBins $(RecoJetPCoarseBins) \
 		--BinningUncertaintySmear 1.025
+	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetZG2Nominal.root \
+		--Observable JetZG --ObservableIndex 1 --Binning JetP --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetPCoarseBins) \
+		--BinningRecoBins $(RecoJetPCoarseBins) \
+		--BinningUncertaintySmear 1.025
+	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetRG2Nominal.root \
+		--Observable JetRG --ObservableIndex 1 --Binning JetP --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetPCoarseBins) \
+		--BinningRecoBins $(RecoJetPCoarseBins) \
+		--BinningUncertaintySmear 1.025
 
 DataJECRun: Execute
 	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetPJECUp.root \

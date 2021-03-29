@@ -65,6 +65,20 @@ int main(int argc, char *argv[])
    for(TH1 *H : HUnfolded)
       if(H != nullptr)
          H->Write();
+
+   InputFile.Get("HGenPrimaryBinMin")->Clone()->Write();
+   InputFile.Get("HGenPrimaryBinMax")->Clone()->Write();
+   InputFile.Get("HGenBinningBinMin")->Clone()->Write();
+   InputFile.Get("HGenBinningBinMax")->Clone()->Write();
+   InputFile.Get("HRecoPrimaryBinMin")->Clone()->Write();
+   InputFile.Get("HRecoPrimaryBinMax")->Clone()->Write();
+   InputFile.Get("HRecoBinningBinMin")->Clone()->Write();
+   InputFile.Get("HRecoBinningBinMax")->Clone()->Write();
+   InputFile.Get("HMatchedPrimaryBinMin")->Clone()->Write();
+   InputFile.Get("HMatchedPrimaryBinMax")->Clone()->Write();
+   InputFile.Get("HMatchedBinningBinMin")->Clone()->Write();
+   InputFile.Get("HMatchedBinningBinMax")->Clone()->Write();
+
    OutputFile.Close();
 
    InputFile.Close();

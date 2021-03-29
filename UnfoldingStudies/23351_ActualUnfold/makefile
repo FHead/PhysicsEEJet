@@ -138,6 +138,8 @@ RunDataUnfoldNominal: Execute ExecutePlot
 	./Execute --Input Input/DataJetPNominal.root --Output Unfolded/DataJetPNominal.root
 	./Execute --Input Input/DataJetZGNominal.root --Output Unfolded/DataJetZGNominal.root
 	./Execute --Input Input/DataJetRGNominal.root --Output Unfolded/DataJetRGNominal.root
+	./Execute --Input Input/DataJetZG2Nominal.root --Output Unfolded/DataJetZG2Nominal.root
+	./Execute --Input Input/DataJetRG2Nominal.root --Output Unfolded/DataJetRG2Nominal.root
 	./ExecutePlot --Input Unfolded/DataJetPNominal.root --Original Input/DataJetPNominal.root \
 		--Output Plots/DataJetPNominal.pdf --Iteration 14
 	./ExecutePlot --Input Unfolded/DataJetZGNominal.root --Original Input/DataJetZGNominal.root \
@@ -145,6 +147,12 @@ RunDataUnfoldNominal: Execute ExecutePlot
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.5 --Iteration 11
 	./ExecutePlot --Input Unfolded/DataJetRGNominal.root --Original Input/DataJetRGNominal.root \
 		--Output Plots/DataJetRGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
+	./ExecutePlot --Input Unfolded/DataJetZG2Nominal.root --Original Input/DataJetZG2Nominal.root \
+		--Output Plots/DataJetZG2Nominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 0.5 --Iteration 11
+	./ExecutePlot --Input Unfolded/DataJetRG2Nominal.root --Original Input/DataJetRG2Nominal.root \
+		--Output Plots/DataJetRG2Nominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
 
 RunDataUnfold: Execute ExecutePlot
