@@ -21,6 +21,26 @@ TestRun: Execute
 		--Yield Input/DataJetRGNominal.root \
 		--Output Output/ToyJetRGNominal.root
 
+TestRunStatistics: Execute
+	for i in `seq 1001 1250`; do \
+		echo $$i; \
+		./Execute --MC Input/MCJetPNominal.root \
+			--Shape PerfectInput/PerfectDataJetPNominal.root \
+			--Yield Input/DataJetPNominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataJetPStatistics_$${i}.root; \
+		./Execute --MC Input/MCJetZGNominal.root \
+			--Shape PerfectInput/PerfectDataJetZGNominal.root \
+			--Yield Input/DataJetZGNominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataJetZGStatistics_$${i}.root; \
+		./Execute --MC Input/MCJetRGNominal.root \
+			--Shape PerfectInput/PerfectDataJetRGNominal.root \
+			--Yield Input/DataJetRGNominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataJetRGStatistics_$${i}.root; \
+	done
+
 TestRunData: Execute
 	./Execute --MC Input/MCJetPNominal.root \
 		--Shape PerfectInput/PerfectDataJetPNominal.root \

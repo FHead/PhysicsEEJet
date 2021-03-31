@@ -10,6 +10,9 @@ using namespace std;
 #include "CommandLine.h"
 #include "Code/DrawRandom.h"
 
+int main(int argc, char *argv[]);
+double GetRandom(TH1D *H);
+
 int main(int argc, char *argv[])
 {
    CommandLine CL(argc, argv);
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
    TH1D *HNewData = (TH1D *)HShape->Clone();
    HNewData->Reset();
    for(int i = 0; i < ActualEvent; i++)
-      HNewData->Fill(HShape->GetRandom());
+      HNewData->Fill(GetRandom(HShape));
    HNewData->SetName("HDataReco");
    HNewData->Write();
 
@@ -69,6 +72,23 @@ int main(int argc, char *argv[])
    return 0;
 }
 
+double GetRandom(TH1D *H)
+{
+   if(H == nullptr)
+      return 0;
+
+   double Value = DrawRandom(0, H->Integral());
+
+   double SoFar = 0;
+   for(int i = 1; i <= H->GetNbinsX(); i++)
+   {
+      SoFar = SoFar + H->GetBinContent(i);
+      if(SoFar >= Value)
+         return H->GetBinCenter(i);
+   }
+
+   return 0;
+}
 
 
 
