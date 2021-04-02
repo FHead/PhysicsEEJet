@@ -38,21 +38,22 @@ int main(int argc, char *argv[])
 
    TFile File(InputFileName.c_str());
 
-   TH1D *HNominal = (TH1D *)File.Get("HNominal");
-   Assert(HNominal != nullptr, "Nominal histogram not found");
-   HNominal->SetStats(0);
-   HNominal->SetLineWidth(2);
-   HNominal->SetLineColor(Colors[0]);
-   HNominal->SetMarkerColor(Colors[0]);
-   HNominal->SetMarkerStyle(20);
-
+   vector<TH1D *> HBase;
    vector<TH1D *> HVariation;
    for(int i = 0; i < (int)Variations.size(); i++)
    {
       TH1D *H = (TH1D *)File.Get(Variations[i].c_str());
+      TH1D *HB = (TH1D *)File.Get((Variations[i] + "Base").c_str());
 
       Assert(H != nullptr, ("Histogram for " + Labels[i] + " not found").c_str());
+      Assert(HB != nullptr, ("Base histogram for " + Labels[i] + " not found").c_str());
 
+      HB->SetStats(0);
+      HB->SetLineWidth(2);
+      HB->SetLineColor(Colors[0]);
+      HB->SetMarkerColor(Colors[0]);
+      HB->SetMarkerStyle(20);
+      
       H->SetLineWidth(2);
       H->SetLineColor(Colors[(i+1)%7]);
       H->SetMarkerColor(Colors[(i+1)%7]);
@@ -61,20 +62,21 @@ int main(int argc, char *argv[])
          H->SetLineStyle(kDashed);
 
       HVariation.push_back(H);
+      HBase.push_back(HB);
    }
 
    for(int i = 0; i < (int)Variations.size(); i++)
    {
       TCanvas Canvas;
 
-      HNominal->SetTitle(("Variation for " + Labels[i]).c_str());
+      HBase[i]->SetTitle(("Variation for " + Labels[i]).c_str());
       HVariation[i]->SetTitle(("Variation for " + Labels[i]).c_str());
    
-      HNominal->GetXaxis()->SetTitle("Unfolded bin index");
+      HBase[i]->GetXaxis()->SetTitle("Unfolded bin index");
       HVariation[i]->GetXaxis()->SetTitle("Unfolded bin index");
 
-      HNominal->Draw("");
-      HNominal->Draw("hist same");
+      HBase[i]->Draw("");
+      HBase[i]->Draw("hist same");
       HVariation[i]->Draw("same");
       HVariation[i]->Draw("hist same");
 
@@ -83,7 +85,7 @@ int main(int argc, char *argv[])
       Legend.SetTextSize(0.035);
       Legend.SetBorderSize(0);
       Legend.SetFillStyle(0);
-      Legend.AddEntry(HNominal, "Nominal", "pl");
+      Legend.AddEntry(HBase[i], "Nominal", "pl");
       Legend.AddEntry(HVariation[i], "Variation", "pl");
       Legend.Draw();
 
@@ -92,15 +94,15 @@ int main(int argc, char *argv[])
       Canvas.SetLogy(false);
       PdfFile.AddCanvas(Canvas);
       
-      HNominal->Draw("hist");
-      HNominal->Draw("same");
+      HBase[i]->Draw("hist");
+      HBase[i]->Draw("same");
       HVariation[i]->Draw("hist same");
       HVariation[i]->Draw("same");
       Legend.Draw();
       Canvas.SetLogy(true);
       PdfFile.AddCanvas(Canvas);
 
-      HVariation[i]->Divide(HNominal);
+      HVariation[i]->Divide(HBase[i]);
       HVariation[i]->SetStats(0);
       HVariation[i]->GetYaxis()->SetTitle("Ratio to nominal");
       HVariation[i]->SetMinimum(0.75);

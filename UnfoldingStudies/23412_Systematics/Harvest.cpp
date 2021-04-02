@@ -17,18 +17,22 @@ int main(int argc, char *argv[])
 {
    CommandLine CL(argc, argv);
 
-   vector<string> FileNames      = CL.GetStringVector("Input");
-   vector<string> HistogramNames = CL.GetStringVector("Histogram");
-   vector<string> Labels         = CL.GetStringVector("Label");
-   vector<int> Groupings         = CL.GetIntVector("Group");
-   string BinMappingFileName     = CL.Get("BinMapping");
-   string OutputFileName         = CL.Get("Output");
-   bool DoSelfNormalize          = CL.GetBool("DoSelfNormalize", false);
+   vector<string> BaseFileNames      = CL.GetStringVector("BaseInput");
+   vector<string> FileNames          = CL.GetStringVector("Input");
+   vector<string> BaseHistogramNames = CL.GetStringVector("BaseHistogram");
+   vector<string> HistogramNames     = CL.GetStringVector("Histogram");
+   vector<string> Labels             = CL.GetStringVector("Label");
+   vector<int> Groupings             = CL.GetIntVector("Group");
+   string BinMappingFileName         = CL.Get("BinMapping");
+   string OutputFileName             = CL.Get("Output");
+   bool DoSelfNormalize              = CL.GetBool("DoSelfNormalize", false);
 
    Assert(FileNames.size() > 0, "No file names specified");
    Assert(FileNames.size() == HistogramNames.size(), "Inconsistent file name and histogram name");
    Assert(FileNames.size() == Labels.size(), "Inconsistent file name and label name");
    Assert(FileNames.size() == Groupings.size(), "Unknown uncertainty grouping");
+   Assert(FileNames.size() == BaseFileNames.size(), "Inconsistent file name and base file name");
+   Assert(FileNames.size() == BaseHistogramNames.size(), "Inconsistent file name and base histogram name");
 
    TFile OutputFile(OutputFileName.c_str(), "RECREATE");
 
@@ -53,34 +57,41 @@ int main(int argc, char *argv[])
 
    BinMappingFile.Close();
 
-   TH1D *HNominal = nullptr;
    TH1D *HTotalPlus = nullptr;
    TH1D *HTotalMinus = nullptr;
 
-   for(int i = 0; i < (int)FileNames.size(); i++)
+   int N = FileNames.size();
+
+   for(int i = 0; i < N; i++)
    {
       TFile File(FileNames[i].c_str());
+      TFile BaseFile(BaseFileNames[i].c_str());
 
       TH1D *H = (TH1D *)File.Get(HistogramNames[i].c_str());
+      TH1D *HB = (TH1D *)BaseFile.Get(BaseHistogramNames[i].c_str());
 
-      if(H != nullptr)
+      if(H != nullptr && HB != nullptr)
       {
          OutputFile.cd();
          TH1D *HCloned = (TH1D *)H->Clone(Form("H%s", Labels[i].c_str()));
-         if(HNominal == nullptr)
+         TH1D *HBCloned = (TH1D *)HB->Clone(Form("H%sBase", Labels[i].c_str()));
+         if(HTotalPlus == nullptr && HTotalMinus == nullptr)
          {
-            HNominal = HCloned;
             HTotalPlus = (TH1D *)HCloned->Clone("HTotalPlus");
             HTotalMinus = (TH1D *)HCloned->Clone("HTotalMinus");
             HTotalPlus->Reset();
             HTotalMinus->Reset();
          }
          if(DoSelfNormalize == true)
+         {
             SelfNormalize(HCloned, NormalizationGroupSize);
+            SelfNormalize(HBCloned, NormalizationGroupSize);
+         }
          HCloned->Write();
+         HBCloned->Write();
 
          if(Groupings[i] == 1)
-            AddQuadrature(*HTotalPlus, *HTotalMinus, *HNominal, *HCloned);
+            AddQuadrature(*HTotalPlus, *HTotalMinus, *HBCloned, *HCloned);
       }
 
       File.Close();
