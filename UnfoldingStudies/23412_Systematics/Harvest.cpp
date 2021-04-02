@@ -12,6 +12,9 @@ int main(int argc, char *argv[]);
 vector<double> DetectBins(TH1D *HMin, TH1D *HMax);
 void SelfNormalize(TH1D *H, int NormalizationGroupSize = -1);
 void AddQuadrature(TH1D &HTotalPlus, TH1D &HTotalMinus, TH1D &HNominal, TH1D &HVariation);
+void DoBridging(TH1D *HB, TH1D *H, int Pattern = 0);
+void DoBridgingPattern1(TH1D *HB, TH1D *H);
+void DoBridgingPattern2(TH1D *HB, TH1D *H);
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +26,8 @@ int main(int argc, char *argv[])
    vector<string> HistogramNames     = CL.GetStringVector("Histogram");
    vector<string> Labels             = CL.GetStringVector("Label");
    vector<int> Groupings             = CL.GetIntVector("Group");
+   vector<int> Bridging              = CL.GetIntVector("Bridging");
+   vector<double> ExtraScaling       = CL.GetDoubleVector("ExtraScaling");
    string BinMappingFileName         = CL.Get("BinMapping");
    string OutputFileName             = CL.Get("Output");
    bool DoSelfNormalize              = CL.GetBool("DoSelfNormalize", false);
@@ -33,6 +38,9 @@ int main(int argc, char *argv[])
    Assert(FileNames.size() == Groupings.size(), "Unknown uncertainty grouping");
    Assert(FileNames.size() == BaseFileNames.size(), "Inconsistent file name and base file name");
    Assert(FileNames.size() == BaseHistogramNames.size(), "Inconsistent file name and base histogram name");
+
+   if(ExtraScaling.size() < FileNames.size())
+      ExtraScaling.insert(ExtraScaling.end(), FileNames.size() - ExtraScaling.size(), 1);
 
    TFile OutputFile(OutputFileName.c_str(), "RECREATE");
 
@@ -75,6 +83,9 @@ int main(int argc, char *argv[])
          OutputFile.cd();
          TH1D *HCloned = (TH1D *)H->Clone(Form("H%s", Labels[i].c_str()));
          TH1D *HBCloned = (TH1D *)HB->Clone(Form("H%sBase", Labels[i].c_str()));
+
+         HCloned->Scale(ExtraScaling[i]);
+
          if(HTotalPlus == nullptr && HTotalMinus == nullptr)
          {
             HTotalPlus = (TH1D *)HCloned->Clone("HTotalPlus");
@@ -87,6 +98,8 @@ int main(int argc, char *argv[])
             SelfNormalize(HCloned, NormalizationGroupSize);
             SelfNormalize(HBCloned, NormalizationGroupSize);
          }
+         if(Bridging[i] > 0)
+            DoBridging(HBCloned, HCloned, Bridging[i]);
          HCloned->Write();
          HBCloned->Write();
 
@@ -179,5 +192,102 @@ void AddQuadrature(TH1D &HTotalPlus, TH1D &HTotalMinus, TH1D &HNominal, TH1D &HV
       HTotalPlus.SetBinContent(i, TotalPlus);
       HTotalMinus.SetBinContent(i, -TotalMinus);
    }
+}
+
+void DoBridging(TH1D *HB, TH1D *H, int Pattern)
+{
+   if(Pattern == 0)
+      return;
+
+   if(Pattern == 1)
+      DoBridgingPattern1(HB, H);
+   if(Pattern == 2)
+      DoBridgingPattern2(HB, H);
+}
+
+void DoBridgingPattern1(TH1D *HB, TH1D *H)
+{
+   if(HB == nullptr || H == nullptr)
+      return;
+
+   int N = HB->GetNbinsX();
+   vector<double> V(N);
+   for(int i = 1; i <= N; i++)
+      V[i-1] = fabs(H->GetBinContent(i) / HB->GetBinContent(i) - 1);
+
+   double StartFraction = 0.5;
+   int DecreaseBin = -1;
+   for(int i = StartFraction * N; i < N - 1; i++)
+   {
+      if(V[i] > V[i-1])
+      {
+         DecreaseBin = i;
+         break;
+      }
+   }
+
+   if(DecreaseBin < 0)
+      return;
+
+   for(int i = DecreaseBin + 1; i < N - 2; i++)
+      V[i] = V[DecreaseBin] + (V[N-1] - V[DecreaseBin]) / (N - 1 - DecreaseBin) * (i - DecreaseBin);
+
+   for(int i = 1; i <= N; i++)
+      H->SetBinContent(i, HB->GetBinContent(i) * (1 + V[i-1]));
+}
+
+void DoBridgingPattern2(TH1D *HB, TH1D *H)
+{
+   int Ignore = 1;
+
+   if(HB == nullptr || H == nullptr)
+      return;
+
+   int N = HB->GetNbinsX();
+   vector<double> V(N);
+   for(int i = 1; i <= N; i++)
+      V[i-1] = H->GetBinContent(i) / HB->GetBinContent(i) - 1;
+
+   vector<int> Maximum(N);
+   for(int i = 1; i < N - 1 - Ignore; i++)
+   {
+      if(V[i] > V[i-1] && V[i] > V[i+1] && V[i] > 0)
+         Maximum[i] = 1;
+      if(V[i] < V[i-1] && V[i] < V[i+1] && V[i] < 0)
+         Maximum[i] = -1;
+   }
+   if(V[N-1-Ignore] > V[N-2-Ignore] && V[N-1-Ignore] > 0)
+      Maximum[N-1-Ignore] = 1;
+   if(V[N-1-Ignore] < V[N-2-Ignore] && V[N-1-Ignore] < 0)
+      Maximum[N-1-Ignore] = -1;
+
+   for(int i = 0; i < N; i++)
+      V[i] = fabs(V[i]);
+
+   int Start = -1;
+   for(int i = 0; i < N; i++)
+   {
+      if(Maximum[i] == 0)
+         continue;
+
+      if(Start < 0)
+      {
+         Start = i;
+         continue;
+      }
+
+      if(Maximum[Start] == Maximum[i])
+      {
+         Start = i;
+         continue;
+      }
+
+      for(int j = Start + 1; j < i; j++)
+         V[j] = V[Start] + (V[i] - V[Start]) / (i - Start) * (j - Start);
+      Start = i;
+   }   
+   
+   for(int i = 1; i <= N; i++)
+      H->SetBinContent(i, HB->GetBinContent(i) * (1 + V[i-1]));
 }
 

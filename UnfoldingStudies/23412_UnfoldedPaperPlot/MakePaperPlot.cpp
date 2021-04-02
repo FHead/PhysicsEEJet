@@ -18,6 +18,7 @@ using namespace std;
 #include "PlotHelper4.h"
 #include "CommandLine.h"
 #include "SetStyle.h"
+#include "CustomAssert.h"
 
 int main(int argc, char *argv[]);
 vector<double> DetectBins(TH1D *HMin, TH1D *HMax);
@@ -32,6 +33,7 @@ void SetPad(TPad *P);
 void SetAxis(TGaxis &A);
 void SetWorld(TH2D *H);
 TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2);
+double CalculateIntegral(TGraphAsymmErrors &G, double MinX = -999);
 
 int main(int argc, char *argv[])
 {
@@ -50,6 +52,8 @@ int main(int argc, char *argv[])
    double RecoPrimaryMaxOverwrite = CL.GetDouble("RecoPrimaryMax", 999);
    string PrimaryName             = CL.Get("PrimaryName", "HUnfoldedBayes14");
    bool DoSelfNormalize           = CL.GetBool("DoSelfNormalize", false);
+   bool DoEventNormalize          = CL.GetBool("DoEventNormalize", false);
+   double ExtraScale              = CL.GetDouble("ExtraScale", 1.00);
 
    double MarkerModifier          = CL.GetDouble("MarkerModifier", 1.0);
 
@@ -73,11 +77,16 @@ int main(int argc, char *argv[])
    double LegendY                 = CL.GetDouble("LegendY", 0.5);
    double LegendSize              = CL.GetDouble("LegendSize", 0.075);
 
+   Assert(DoSelfNormalize == false || DoEventNormalize == false, "Multiple normalization option chosen!");
+
    PdfFileHelper PdfFile(OutputFileName);
    PdfFile.AddTextPage("Unfolding plots");
 
    TFile InputFile(InputFileName.c_str());
    TFile SystematicFile(SystematicFileName.c_str());
+
+   if(DoEventNormalize == true)
+      Assert(InputFile.Get("DataEventCount") != nullptr, "No event count found in input file but option enabled");
 
    vector<double> GenBins1
       = DetectBins((TH1D *)InputFile.Get("HGenPrimaryBinMin"), (TH1D *)InputFile.Get("HGenPrimaryBinMax"));
@@ -109,6 +118,20 @@ int main(int argc, char *argv[])
       double ScalingFactor = H1["HInput"]->Integral() / H1["HMCMeasured"]->Integral();
       H1["HMCMeasured"]->Scale(ScalingFactor);
       H1["HMCTruth"]->Scale(ScalingFactor);
+      
+      if(DoEventNormalize == true)
+      {
+         double EventCount = atof(InputFile.Get("DataEventCount")->GetTitle());
+         cout << "Event Count = " << EventCount << endl;
+         H1["HMCTruth"]->Scale(1 / EventCount);
+         H1[PrimaryName]->Scale(1 / EventCount);
+      }
+
+      if(ExtraScale > 0)
+      {
+         H1["HMCTruth"]->Scale(ExtraScale);
+         H1[PrimaryName]->Scale(ExtraScale);
+      }
    }
 
    H1["HSystematicsRatioPlus"] = (TH1D *)SystematicFile.Get("HTotalPlus");
@@ -148,6 +171,9 @@ int main(int argc, char *argv[])
    vector<TGraphAsymmErrors> GResult = Transcribe(H1[PrimaryName], GenBins1, GenBins2, nullptr);
    vector<TGraphAsymmErrors> GSystematics = Transcribe(H1["HSystematicsPlus"], GenBins1, GenBins2, H1["HSystematicsMinus"]);
    vector<TGraphAsymmErrors> GMC = Transcribe(H1["HMCTruth"], GenBins1, GenBins2, nullptr);
+   
+   for(TGraphAsymmErrors G : GResult)
+      cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
 
    vector<TGraphAsymmErrors> GRResult, GRSystematics, GRMC;
    for(int i = 0; i < (int)GResult.size(); i++)
@@ -555,4 +581,27 @@ TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2)
 
    return G;
 }
+
+double CalculateIntegral(TGraphAsymmErrors &G, double MinX)
+{
+   double Total = 0;
+
+   int N = G.GetN();
+   for(int i = 0; i < N; i++)
+   {
+      double EX1, EX2, X, Y;
+
+      G.GetPoint(i, X, Y);
+      EX1 = G.GetErrorXlow(i);
+      EX2 = G.GetErrorXhigh(i);
+
+      if(X < MinX)
+         continue;
+
+      Total = Total + Y * (EX1 + EX2);
+   }
+
+   return Total;
+}
+
 

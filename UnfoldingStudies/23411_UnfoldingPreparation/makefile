@@ -24,6 +24,7 @@ RecoThrustUniformBins = 0.59,0.60,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0
 default: ThrustNominalRun ThrustNoCutRun
 
 RunAll: Preparation DataNominalRun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun DataJECRun DataJERRun \
+	DataLargeThetaGapRun MCLargeThetaGapRun \
 	ThrustNominalRun ThrustNoCutRun
 
 Preparation:
@@ -82,6 +83,51 @@ ThrustNoCutRun: Execute
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 
+DataLargeThetaGapRun: Execute
+	time ./Execute --MC MCLargeThetaGap.root --Data DataLargeThetaGap.root --Output Output/DataJetELargeThetaGap.root \
+		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetEBins) \
+		--ObservableRecoBins $(RecoJetEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1 \
+		--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCLargeThetaGap.root --Data DataLargeThetaGap.root --Output Output/DataJetZGLargeThetaGap.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins) \
+		--BinningUncertaintySmear 1.025
+	time ./Execute --MC MCLargeThetaGap.root --Data DataLargeThetaGap.root --Output Output/DataJetRGLargeThetaGap.root \
+		--Observable JetRG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins) \
+		--BinningUncertaintySmear 1.025
+
+MCLargeThetaGapRun: Execute
+	time ./Execute --MC MCLargeThetaGap.root --Data MCLargeThetaGap.root --Output Output/MCJetELargeThetaGap.root \
+		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetEBins) \
+		--ObservableRecoBins $(RecoJetEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1 \
+		--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCLargeThetaGap.root --Data MCLargeThetaGap.root --Output Output/MCJetZGLargeThetaGap.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins) \
+		--BinningUncertaintySmear 1.025
+	time ./Execute --MC MCLargeThetaGap.root --Data MCLargeThetaGap.root --Output Output/MCJetRGLargeThetaGap.root \
+		--Observable JetRG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins) \
+		--BinningUncertaintySmear 1.025
 
 DataNominalRun: Execute
 	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetENominal.root \

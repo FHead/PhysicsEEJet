@@ -1,6 +1,6 @@
 Fraction = 1
 
-default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC
+default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \
@@ -26,6 +26,28 @@ TestRunCut: Execute
 		--Fraction $(Fraction) \
 		--Output MC.root --MC true --BaselineCut true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+
+TestRunStock: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output Data.root --MC false --BaselineCut true --UseStored true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+	time ./Execute --Input `ls SamplesMC/* | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MC.root --MC true --BaselineCut true --UseStored true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+
+TestRunLargeThetaGap: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataLargeThetaGap.root --MC false --BaselineCut true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--ThetaGap 0.8
+	time ./Execute --Input `ls SamplesMC/* | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCLargeThetaGap.root --MC true --BaselineCut true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--ThetaGap 0.8
 
 TestRunNoResidual: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \

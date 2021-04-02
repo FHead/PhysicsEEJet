@@ -426,6 +426,11 @@ int main(int argc, char *argv[])
    TFile FData(DataFileName.c_str());
    TFile FOutput(OutputFileName.c_str(), "RECREATE");
 
+   if(FData.Get("EventCount") != nullptr)
+      FData.Get("EventCount")->Clone("DataEventCount")->Write();
+   if(FMC.Get("EventCount") != nullptr)
+      FMC.Get("EventCount")->Clone("MCEventCount")->Write();
+
    int GenBinCount = PrimaryGenBins.size() + 1;
    if(BinningType != ObservableNone)
       GenBinCount = GenBinCount * (BinningGenBins.size() + 1);

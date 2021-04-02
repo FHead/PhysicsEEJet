@@ -9,11 +9,20 @@ Prepare:
 
 RunTest: Execute
 	./Execute --Input Input/DataJetENominal.root \
-		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowP.$(Format) \
+		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominalCount.pdf --FinalOutput Plots/MeowPCount.$(Format) \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize false \
 		--WorldXMin 10 --WorldXMax 50 --WorldYMin 9000 --WorldYMax 500000 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
 		--XLabel "Jet E (GeV)" --YLabel "dN / d(Jet E)" --Binning "None" \
+		--LegendX 0.2 --LegendY 0.5 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--IgnoreGroup 0 --Row 1 --Column 1
+	./Execute --Input Input/DataJetENominal.root \
+		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowP.$(Format) \
+		--PrimaryName HUnfoldedBayes17 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1.23607 \
+		--WorldXMin 10 --WorldXMax 50 --WorldYMin 0.007 --WorldYMax 0.6 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
+		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.2 --LegendY 0.5 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--IgnoreGroup 0 --Row 1 --Column 1

@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
    string OutputFileName         = CL.Get("Output");
    bool IsMC                     = CL.GetBool("MC", false);
    bool BaselineCut              = CL.GetBool("BaselineCut", false);
+   bool UseStored                = CL.GetBool("UseStored", true);
    double ThetaGap               = CL.GetDouble("ThetaGap", 0.2 * M_PI);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
@@ -137,12 +138,16 @@ int main(int argc, char *argv[])
    OutputTree.Branch("MatchedJetJEU",   &MatchedJetJEU);
    OutputTree.Branch("MatchedThrust",   &RecoThrust);
 
+   int PassedEventCount = 0;
+
    for(string FileName : InputFileName)
    {
       TFile InputFile(FileName.c_str());
 
       TTree *RecoTree = (TTree *)InputFile.Get("t");
       TTree *GenTree = (TTree *)InputFile.Get("tgen");
+      TTree *RecoJetTree = (TTree *)InputFile.Get("akR4ESchemeJetTree");
+      TTree *GenJetTree = (TTree *)InputFile.Get("akR4ESchemeGenJetTree");
 
       if(RecoTree == nullptr)
          continue;
@@ -185,16 +190,51 @@ int main(int argc, char *argv[])
       RecoTree->SetBranchAddress("Thrust",       &RecoThrust);
       RecoTree->SetBranchAddress("passesAll",    &RecoPassAll);
       RecoTree->SetBranchAddress("passesSTheta", &RecoPassSTheta);
+      
+      int NStoredRecoJet;
+      float StoredRecoJetPT[MAX];
+      float StoredRecoJetEta[MAX];
+      float StoredRecoJetPhi[MAX];
+      float StoredRecoJetM[MAX];
+      if(RecoJetTree != nullptr)
+      {
+         RecoJetTree->SetBranchAddress("nref",  &NStoredRecoJet);
+         RecoJetTree->SetBranchAddress("jtpt",  &StoredRecoJetPT);
+         RecoJetTree->SetBranchAddress("jteta", &StoredRecoJetEta);
+         RecoJetTree->SetBranchAddress("jtphi", &StoredRecoJetPhi);
+         RecoJetTree->SetBranchAddress("jtm",   &StoredRecoJetM);
+      }
+
+      int NStoredGenJet;
+      float StoredGenJetPT[MAX];
+      float StoredGenJetEta[MAX];
+      float StoredGenJetPhi[MAX];
+      float StoredGenJetM[MAX];
+      if(GenJetTree != nullptr)
+      {
+         GenJetTree->SetBranchAddress("nref",  &NStoredGenJet);
+         GenJetTree->SetBranchAddress("jtpt",  &StoredGenJetPT);
+         GenJetTree->SetBranchAddress("jteta", &StoredGenJetEta);
+         GenJetTree->SetBranchAddress("jtphi", &StoredGenJetPhi);
+         GenJetTree->SetBranchAddress("jtm",   &StoredGenJetM);
+      }
 
       int EntryCount = RecoTree->GetEntries() * Fraction;
       for(int iE = 0; iE < EntryCount; iE++)
       {
          NGen = 0;
          NReco = 0;
+         NStoredGenJet = 0;
+         NStoredRecoJet = 0;
 
          if(IsMC == true)
             GenTree->GetEntry(iE);
          RecoTree->GetEntry(iE);
+
+         if(RecoJetTree != nullptr)
+            RecoJetTree->GetEntry(iE);
+         if(GenJetTree != nullptr)
+            GenJetTree->GetEntry(iE);
 
          if(BaselineCut == true)
          {
@@ -215,6 +255,8 @@ int main(int argc, char *argv[])
          if(PSum > 200)   // Mercedes Benz rejection
             continue;
 
+         PassedEventCount = PassedEventCount + 1;
+
          vector<FourVector> GenParticles;
          vector<PseudoJet> GenFJParticles;
          for(int i = 0; i < NGen; i++)
@@ -224,7 +266,7 @@ int main(int argc, char *argv[])
             GenParticles.emplace_back(P);
             GenFJParticles.emplace_back(P[1], P[2], P[3], P[0]);
          }
-         
+
          vector<FourVector> RecoParticles;
          vector<PseudoJet> RecoFJParticles;
          for(int i = 0; i < NReco; i++)
@@ -235,30 +277,45 @@ int main(int argc, char *argv[])
             RecoFJParticles.emplace_back(P[1], P[2], P[3], P[0]);
          }
 
-         JetDefinition Definition(ee_genkt_algorithm, JetR, -1);
-         ClusterSequence GenSequence(GenFJParticles, Definition);
-         vector<PseudoJet> GenFastJets = GenSequence.inclusive_jets(0.5);
-         ClusterSequence RecoSequence(RecoFJParticles, Definition);
-         vector<PseudoJet> RecoFastJets = RecoSequence.inclusive_jets(0.5);
-
          vector<FourVector> GenJets;
-         for(int i = 0 ; i < (int)GenFastJets.size(); i++)
-         {
-            FourVector P(GenFastJets[i].e(), GenFastJets[i].px(), GenFastJets[i].py(), GenFastJets[i].pz());
-            if(P.GetTheta() < ThetaGap || P.GetTheta() > M_PI - ThetaGap)
-               continue;
-            GenJets.emplace_back(P);
-         }
-         sort(GenJets.begin(), GenJets.end(), DecreasingEnergy);
-
          vector<FourVector> RecoJets;
-         for(int i = 0 ; i < (int)RecoFastJets.size(); i++)
+
+         if(UseStored == true)
          {
-            FourVector P(RecoFastJets[i].e(), RecoFastJets[i].px(), RecoFastJets[i].py(), RecoFastJets[i].pz());
-            if(P.GetTheta() < ThetaGap || P.GetTheta() > M_PI - ThetaGap)
-               continue;
-            RecoJets.emplace_back(P);
+            GenJets.resize(NStoredGenJet);
+            for(int i = 0; i < NStoredGenJet; i++)
+               GenJets[i].SetPtEtaPhiMass(StoredGenJetPT[i], StoredGenJetEta[i], StoredGenJetPhi[i], StoredGenJetM[i]);
+
+            RecoJets.resize(NStoredRecoJet);
+            for(int i = 0; i < NStoredRecoJet; i++)
+               RecoJets[i].SetPtEtaPhiMass(StoredRecoJetPT[i], StoredRecoJetEta[i], StoredRecoJetPhi[i], StoredRecoJetM[i]);
          }
+         else
+         {
+            JetDefinition Definition(ee_genkt_algorithm, JetR, -1);
+            ClusterSequence GenSequence(GenFJParticles, Definition);
+            vector<PseudoJet> GenFastJets = GenSequence.inclusive_jets(0.5);
+            ClusterSequence RecoSequence(RecoFJParticles, Definition);
+            vector<PseudoJet> RecoFastJets = RecoSequence.inclusive_jets(0.5);
+
+            for(int i = 0 ; i < (int)GenFastJets.size(); i++)
+            {
+               FourVector P(GenFastJets[i].e(), GenFastJets[i].px(), GenFastJets[i].py(), GenFastJets[i].pz());
+               if(P.GetTheta() < ThetaGap || P.GetTheta() > M_PI - ThetaGap)
+                  continue;
+               GenJets.emplace_back(P);
+            }
+
+            for(int i = 0 ; i < (int)RecoFastJets.size(); i++)
+            {
+               FourVector P(RecoFastJets[i].e(), RecoFastJets[i].px(), RecoFastJets[i].py(), RecoFastJets[i].pz());
+               if(P.GetTheta() < ThetaGap || P.GetTheta() > M_PI - ThetaGap)
+                  continue;
+               RecoJets.emplace_back(P);
+            }
+         }
+            
+         sort(GenJets.begin(), GenJets.end(), DecreasingEnergy);
          sort(RecoJets.begin(), RecoJets.end(), DecreasingEnergy);
 
          GenJetZG.resize(GenJets.size());
@@ -466,6 +523,10 @@ int main(int argc, char *argv[])
 
    OutputFile.cd();
    OutputTree.Write();
+
+   TNamed Count;
+   Count.SetNameTitle("EventCount", Form("%d", PassedEventCount));
+   Count.Write();
 
    OutputFile.Close();
 

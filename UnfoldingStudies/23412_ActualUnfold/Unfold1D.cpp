@@ -58,9 +58,13 @@ int main(int argc, char *argv[])
    HUnfolded.push_back((TH1 *)(InvertUnfold.Hreco()->Clone("HUnfoldedInvert")));
    Covariance.insert(pair<string, TMatrixD>("MUnfoldedInvert", InvertUnfold.Ereco()));
    
-   RooUnfoldSvd SVDUnfold(Response, HInput, 10);
-   HUnfolded.push_back((TH1 *)(SVDUnfold.Hreco()->Clone("HUnfoldedSVD")));
-   Covariance.insert(pair<string, TMatrixD>("MUnfoldedSVD", SVDUnfold.Ereco()));
+   vector<double> SVDRegularization{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 80, 90, 100, 125, 150};
+   for(double D : SVDRegularization)
+   {
+      RooUnfoldSvd SVDUnfold(Response, HInput, D);
+      HUnfolded.push_back((TH1 *)(SVDUnfold.Hreco()->Clone(Form("HUnfoldedSVD%.1f", D))));
+      Covariance.insert(pair<string, TMatrixD>(Form("MUnfoldedSVD%.1f", D), SVDUnfold.Ereco()));
+   }
 
    TFile OutputFile(Output.c_str(), "RECREATE");
    HMeasured->Clone("HMCMeasured")->Write();
@@ -86,6 +90,11 @@ int main(int argc, char *argv[])
    InputFile.Get("HMatchedPrimaryBinMax")->Clone()->Write();
    InputFile.Get("HMatchedBinningBinMin")->Clone()->Write();
    InputFile.Get("HMatchedBinningBinMax")->Clone()->Write();
+
+   if(InputFile.Get("MCEventCount") != nullptr)
+      InputFile.Get("MCEventCount")->Clone("MCEventCount")->Write();
+   if(InputFile.Get("DataEventCount") != nullptr)
+      InputFile.Get("DataEventCount")->Clone("DataEventCount")->Write();
 
    OutputFile.Close();
 
