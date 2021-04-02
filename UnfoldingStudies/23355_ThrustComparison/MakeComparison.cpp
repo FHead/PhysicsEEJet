@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
    for(int i = 1; i <= HA->GetNbinsX(); i++)
       HA->SetBinError(i, 0);
 
+   TFile FT("ThrustCorrection.root");
+   TH1D *HR = (TH1D *)FT.Get("HR");
+
    TFile FB("Input/DataThrustUniform.root");
    TH1D *HB1 = (TH1D *)FB.Get("HUnfoldedSVD");
    TH1D *HB2 = (TH1D *)FB.Get("HInput");
@@ -91,15 +94,20 @@ int main(int argc, char *argv[])
    H1.Divide(HA);
    H2.Divide(HA);
 
+   HR->SetLineWidth(2);
+   HR->SetLineColor(Colors[4]);
+   HR->SetMarkerColor(Colors[4]);
+
    H1.SetStats(0);
    
-   TLegend Legend2(0.5, 0.6, 0.8, 0.6 + 0.04 * 2);
+   TLegend Legend2(0.5, 0.65, 0.8, 0.65 + 0.04 * 3);
    Legend2.SetTextSize(0.035);
    Legend2.SetTextFont(42);
    Legend2.SetBorderSize(0);
    Legend2.SetFillStyle(0);
    Legend2.AddEntry(&H1, "Unfolded", "lp");
    Legend2.AddEntry(&H2, "Input", "lp");
+   Legend2.AddEntry(HR, "Correction", "lp");
 
    H1.SetMinimum(0.0);
    H1.SetMaximum(2.5);
@@ -108,11 +116,17 @@ int main(int argc, char *argv[])
    H1.Draw("hist same");
    H2.Draw("same");
    H2.Draw("hist same");
+   HR->Draw("same");
+   HR->Draw("hist same");
    GLine.Draw("l");
    
    Legend2.Draw();
 
    Canvas.SetLogy(false);
+   PdfFile.AddCanvas(Canvas);
+   
+   H1.SetMinimum(0.5);
+   H1.SetMaximum(1.5);
    PdfFile.AddCanvas(Canvas);
 
    TFile FC("Perfect/PerfectHEPDataThrustUniform.root");

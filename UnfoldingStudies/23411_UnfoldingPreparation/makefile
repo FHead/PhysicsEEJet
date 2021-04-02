@@ -23,8 +23,12 @@ RecoThrustUniformBins = 0.59,0.60,0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0
 
 default: ThrustNominalRun ThrustNoCutRun
 
-RunAll: DataNominalRun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun DataJECRun DataJERRun \
+RunAll: Preparation DataNominalRun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun DataJECRun DataJERRun \
 	ThrustNominalRun ThrustNoCutRun
+
+Preparation:
+	ln -sf ../23411_JetResponseClustering/*root .
+	mkdir -p Output/
 
 ThrustNominalRun: Execute
 	time ./Execute --MC MC.root --Data Data.root --Output Output/DataThrustNominal.root --CheckMatchAngle false \
@@ -87,7 +91,7 @@ DataNominalRun: Execute
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetENominal.root \
+	time ./Execute --MC MC.root --Data Data.root --Output Output/DataLeadingJetENominal.root \
 		--Observable LeadingJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenJetEBins) \
 		--ObservableRecoBins $(RecoJetEBins) \

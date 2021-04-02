@@ -1,6 +1,11 @@
 
 default: TestRun TestRunThrust TestRunData TestRunStatistics
 
+Prepare:
+	ln -sf ../23412_PerfectRecoGeneration/Output PerfectInput
+	ln -sf ../23411_UnfoldingPreparation/Output Input
+	mkdir -p Output
+
 TestRunThrust: Execute
 	./Execute --MC Input/MCThrustNominal.root \
 		--Shape PerfectInput/PerfectThrustNominal.root \

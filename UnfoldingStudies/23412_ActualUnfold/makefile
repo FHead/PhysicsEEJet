@@ -1,9 +1,14 @@
 
 default: RunThrustUnfold
 
+UnfoldAll: RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunThrustUnfold UnfoldIterations
+
 UnfoldIterations: RunIterationStudies RunDataIterationStudies
 
-UnfoldAll: RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunThrustUnfold
+Prepare:
+	ln -sf ../23411_UnfoldingPreparation/Output Input
+	ln -sf ../23412_FakeData/Output InputToy
+	mkdir -p Unfolded Plots
 
 RunStatistics: Execute
 	for i in `seq 1207 1250`; do \

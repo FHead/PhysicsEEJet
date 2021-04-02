@@ -2,10 +2,15 @@ Format = pdf
 
 default: RunTest
 
+Prepare:
+	ln -sf ../23412_ActualUnfold/Unfolded Input
+	ln -sf ../23412_Systematics/ Systematics
+	mkdir -p Plots
+
 RunTest: Execute
 	./Execute --Input Input/DataJetENominal.root \
 		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowP.$(Format) \
-		--PrimaryName HUnfoldedBayes19 \
+		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize false \
 		--WorldXMin 10 --WorldXMax 50 --WorldYMin 9000 --WorldYMax 500000 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
 		--XLabel "Jet E (GeV)" --YLabel "dN / d(Jet E)" --Binning "None" \
@@ -52,7 +57,7 @@ RunTest: Execute
 		--LegendX 0.5 --LegendY 0.5 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--IgnoreGroup 2 --Row 2 --Column 4
-	cp Plots/Meow*.pdf ~/WindowsHome/Downloads/
+	# cp -f Plots/Meow*.pdf ~/WindowsHome/Downloads/
 
 Execute: MakePaperPlot.cpp
 	CompileRootMacro MakePaperPlot.cpp Execute

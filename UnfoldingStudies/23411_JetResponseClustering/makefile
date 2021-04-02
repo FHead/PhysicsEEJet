@@ -1,6 +1,6 @@
 Fraction = 1
 
-default: TestRun
+default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \

@@ -1,6 +1,11 @@
 
 default: ThrustRun TestRun TestRunData
 
+Prepare:
+	mkdir -p Output
+	ln -sf ../23411_UnfoldingPreparation/Output Input
+	ln -sf ../23412_ActualUnfold/Unfolded UnfoldedInput
+
 ThrustRun: Execute
 	./Execute --MC Input/MCThrustNominal.root --Yield Input/MCThrustNominal.root \
 		--Output Output/PerfectThrustNominal.root

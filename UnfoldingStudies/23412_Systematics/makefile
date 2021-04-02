@@ -1,11 +1,15 @@
 default: RunData RunDataPlot
 
+Prepare:
+	ln -sf ../23412_ActualUnfold/Unfolded Input
+	ln -sf ../23411_UnfoldingPreparation/Output BinMapping
+
 RunData: Execute
 	./Execute \
 		--BaseInput Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/MCJetENominal.root \
 		--Input Input/DataJetEJECUp.root,Input/DataJetEJECDown.root,Input/DataJetEJECHalfUp.root,Input/DataJetEJECHalfDown.root,Input/DataJetEJERUp.root,Input/DataJetEJERDown.root,Input/DataJetEMCPrior.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/DataJetENominal.root,Input/MCJetENominal.root \
-		--BaseHistogram HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HMCTruth \
-		--Histogram HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes19,HUnfoldedBayes17,HUnfoldedBayes21,HUnfoldedSVD,HUnfoldedBayes14 \
+		--BaseHistogram HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HMCTruth \
+		--Histogram HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes15,HUnfoldedBayes19,HUnfoldedSVD,HUnfoldedBayes14 \
 		--Label JECUp,JECDown,JECHalfUp,JECHalfDown,JERUp,JERDown,MCPrior,IterationDown,IterationUp,SVD,MCClosure \
 		--Group 1,1,0,0,1,1,1,1,1,1,1 \
 		--BinMapping BinMapping/DataJetENominal.root \
