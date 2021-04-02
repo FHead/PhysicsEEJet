@@ -1,7 +1,7 @@
 
 default: all
 
-all: library/BasicUtilities.o library/CATree.o library/Dictionary.o library/Matching.o
+all: library/BasicUtilities.o library/CATree.o library/Dictionary.o 
 
 library/BasicUtilities.o: source/BasicUtilities.cpp include/BasicUtilities.h
 	g++ source/BasicUtilities.cpp -I. -c -o library/BasicUtilities.o -I$(HOME)/FHeadHelperCode/RootMacros/ -std=c++11

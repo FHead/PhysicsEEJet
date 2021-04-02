@@ -9,6 +9,7 @@ void BuildCATree(std::vector<Node *> &Nodes);
 void BuildCATree2(std::vector<Node *> &Nodes);
 NodePair FindClosestPair(std::vector<Node *> &Nodes, std::vector<std::pair<double, int>> &NodeEta);
 Node *FindSDNode(Node *HeadNode, double ZCut = 0.1, double Beta = 0, double R0 = 0.4);
+Node *FindSDNodeE(Node *HeadNode, double ZCut = 0.1, double Beta = 0, double R0 = 0.4);
 std::vector<std::pair<double, double>> CountSD(Node *HeadNode, double ZCut = 0.1, double Beta = 0, double R0 = 0.4, double AngleCut = 0.1);
 int NodeDistance(Node *Child, Node *Root);
 double SDCSum(std::vector<std::pair<double, double>> &Z, double Kappa);
