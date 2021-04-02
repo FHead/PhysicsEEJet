@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
    string OutputFileName         = CL.Get("Output");
    bool IsMC                     = CL.GetBool("MC", false);
    bool BaselineCut              = CL.GetBool("BaselineCut", false);
-   bool UseStored                = CL.GetBool("UseStored", true);
+   bool UseStored                = CL.GetBool("UseStored", false);
    double ThetaGap               = CL.GetDouble("ThetaGap", 0.2 * M_PI);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
