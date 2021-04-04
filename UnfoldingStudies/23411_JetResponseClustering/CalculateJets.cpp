@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
    bool IsMC                     = CL.GetBool("MC", false);
    bool BaselineCut              = CL.GetBool("BaselineCut", false);
    bool UseStored                = CL.GetBool("UseStored", false);
-   double ThetaGap               = CL.GetDouble("ThetaGap", 0.2 * M_PI);
+   double ThetaMin               = CL.GetDouble("ThetaMin", 0.2 * M_PI);
+   double ThetaMax               = CL.GetDouble("ThetaMax", 0.8 * M_PI);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
@@ -149,7 +150,7 @@ int main(int argc, char *argv[])
       TTree *RecoJetTree = (TTree *)InputFile.Get("akR4ESchemeJetTree");
       TTree *GenJetTree = (TTree *)InputFile.Get("akR4ESchemeGenJetTree");
 
-      if(RecoTree == nullptr)
+      if(RecoTree == nullptr && GenTree == nullptr)
          continue;
       if(IsMC == true && GenTree == nullptr)
          continue;
@@ -161,35 +162,44 @@ int main(int argc, char *argv[])
       float RecoP[MAX];
       float RecoMass[MAX];
       bool RecoHighPurity[MAX];
-      bool RecoPassSTheta;
-      bool RecoPassAll;
+      bool RecoPassSTheta = true;
+      bool RecoPassAll = true;
       int NGen;
       float GenPX[MAX];
       float GenPY[MAX];
       float GenPZ[MAX];
       float GenMass[MAX];
-      bool GenPassSTheta;
+      int GenStatus[MAX];
+      bool GenPassSTheta = true;
 
-      if(IsMC == true)
+      for(int i = 0; i < MAX; i++)
+         GenStatus[i] = 1;
+      
+      if(GenTree != nullptr)
       {
          GenTree->SetBranchAddress("nParticle",    &NGen);
          GenTree->SetBranchAddress("px",           &GenPX);
          GenTree->SetBranchAddress("py",           &GenPY);
          GenTree->SetBranchAddress("pz",           &GenPZ);
          GenTree->SetBranchAddress("mass",         &GenMass);
+         if(GenTree->GetBranch("status") != nullptr)
+            GenTree->SetBranchAddress("status",       &GenStatus);
          GenTree->SetBranchAddress("Thrust",       &GenThrust);
          GenTree->SetBranchAddress("passesSTheta", &GenPassSTheta);
       }
-      RecoTree->SetBranchAddress("nParticle",    &NReco);
-      RecoTree->SetBranchAddress("px",           &RecoPX);
-      RecoTree->SetBranchAddress("py",           &RecoPY);
-      RecoTree->SetBranchAddress("pz",           &RecoPZ);
-      RecoTree->SetBranchAddress("pmag",         &RecoP);
-      RecoTree->SetBranchAddress("mass",         &RecoMass);
-      RecoTree->SetBranchAddress("highPurity",   &RecoHighPurity);
-      RecoTree->SetBranchAddress("Thrust",       &RecoThrust);
-      RecoTree->SetBranchAddress("passesAll",    &RecoPassAll);
-      RecoTree->SetBranchAddress("passesSTheta", &RecoPassSTheta);
+      if(RecoTree != nullptr)
+      {
+         RecoTree->SetBranchAddress("nParticle",    &NReco);
+         RecoTree->SetBranchAddress("px",           &RecoPX);
+         RecoTree->SetBranchAddress("py",           &RecoPY);
+         RecoTree->SetBranchAddress("pz",           &RecoPZ);
+         RecoTree->SetBranchAddress("pmag",         &RecoP);
+         RecoTree->SetBranchAddress("mass",         &RecoMass);
+         RecoTree->SetBranchAddress("highPurity",   &RecoHighPurity);
+         RecoTree->SetBranchAddress("Thrust",       &RecoThrust);
+         RecoTree->SetBranchAddress("passesAll",    &RecoPassAll);
+         RecoTree->SetBranchAddress("passesSTheta", &RecoPassSTheta);
+      }
       
       int NStoredRecoJet;
       float StoredRecoJetPT[MAX];
@@ -219,7 +229,11 @@ int main(int argc, char *argv[])
          GenJetTree->SetBranchAddress("jtm",   &StoredGenJetM);
       }
 
-      int EntryCount = RecoTree->GetEntries() * Fraction;
+      int EntryCount = 0;
+      if(RecoTree != nullptr)
+         EntryCount = RecoTree->GetEntries() * Fraction;
+      else if(GenTree != nullptr)
+         EntryCount = GenTree->GetEntries() * Fraction;
       for(int iE = 0; iE < EntryCount; iE++)
       {
          NGen = 0;
@@ -227,14 +241,11 @@ int main(int argc, char *argv[])
          NStoredGenJet = 0;
          NStoredRecoJet = 0;
 
-         if(IsMC == true)
-            GenTree->GetEntry(iE);
-         RecoTree->GetEntry(iE);
+         if(GenTree != nullptr)       GenTree->GetEntry(iE);
+         if(RecoTree != nullptr)      RecoTree->GetEntry(iE);
 
-         if(RecoJetTree != nullptr)
-            RecoJetTree->GetEntry(iE);
-         if(GenJetTree != nullptr)
-            GenJetTree->GetEntry(iE);
+         if(RecoJetTree != nullptr)   RecoJetTree->GetEntry(iE);
+         if(GenJetTree != nullptr)    GenJetTree->GetEntry(iE);
 
          if(BaselineCut == true)
          {
@@ -261,6 +272,8 @@ int main(int argc, char *argv[])
          vector<PseudoJet> GenFJParticles;
          for(int i = 0; i < NGen; i++)
          {
+            if(GenStatus[i] != 1)
+               continue;
             FourVector P(0, GenPX[i], GenPY[i], GenPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + GenMass[i] * GenMass[i]);
             GenParticles.emplace_back(P);
@@ -301,7 +314,7 @@ int main(int argc, char *argv[])
             for(int i = 0 ; i < (int)GenFastJets.size(); i++)
             {
                FourVector P(GenFastJets[i].e(), GenFastJets[i].px(), GenFastJets[i].py(), GenFastJets[i].pz());
-               if(P.GetTheta() < ThetaGap || P.GetTheta() > M_PI - ThetaGap)
+               if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                   continue;
                GenJets.emplace_back(P);
             }
@@ -309,7 +322,7 @@ int main(int argc, char *argv[])
             for(int i = 0 ; i < (int)RecoFastJets.size(); i++)
             {
                FourVector P(RecoFastJets[i].e(), RecoFastJets[i].px(), RecoFastJets[i].py(), RecoFastJets[i].pz());
-               if(P.GetTheta() < ThetaGap || P.GetTheta() > M_PI - ThetaGap)
+               if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                   continue;
                RecoJets.emplace_back(P);
             }

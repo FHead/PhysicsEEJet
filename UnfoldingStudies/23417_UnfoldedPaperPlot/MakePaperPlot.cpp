@@ -34,6 +34,10 @@ void SetAxis(TGaxis &A);
 void SetWorld(TH2D *H);
 TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2);
 double CalculateIntegral(TGraphAsymmErrors &G, double MinX = -999);
+double AddUp(TH1D *H, double XMin, double XMax, vector<double> Bins);
+vector<TGraphAsymmErrors> TranscribeMC(string FileName, string HistogramName,
+   double MinOverwrite, double MaxOverwrite, double XMin, double XMax,
+   bool DoSelfNormalize = false, double Scale = 1);
 
 int main(int argc, char *argv[])
 {
@@ -54,6 +58,11 @@ int main(int argc, char *argv[])
    bool DoSelfNormalize           = CL.GetBool("DoSelfNormalize", false);
    bool DoEventNormalize          = CL.GetBool("DoEventNormalize", false);
    double ExtraScale              = CL.GetDouble("ExtraScale", 1.00);
+
+   vector<string> MCFileNames     = CL.GetStringVector("MCFile", vector<string>{InputFileName});
+   vector<string> MCHistNames     = CL.GetStringVector("MCHistogram", vector<string>{"HMCTruth"});
+   vector<string> MCLabels        = CL.GetStringVector("MCLabel", vector<string>{"PYTHIA6"});
+   vector<int> MCColors           = CL.GetIntVector("MCColors", vector<int>{0, 1, 3, 4, 5, 7});
 
    vector<string> Texts           = CL.GetStringVector("Texts", vector<string>());
 
@@ -81,6 +90,12 @@ int main(int argc, char *argv[])
 
    Assert(DoSelfNormalize == false || DoEventNormalize == false, "Multiple normalization option chosen!");
 
+   int MCCount = MCFileNames.size();
+   Assert(MCCount == MCFileNames.size(), "MC file count not match");
+   Assert(MCCount == MCHistNames.size(), "MC histogram count not match");
+   Assert(MCCount == MCLabels.size(), "MC label count not match");
+   Assert(MCCount <= MCColors.size(), "Not enough colors for MC");
+
    Assert(Texts.size() % 4 == 0, "Wrong additional text format!  It should be a collection of quadruplets: pad_index,x,y,text");
 
    PdfFileHelper PdfFile(OutputFileName);
@@ -99,8 +114,6 @@ int main(int argc, char *argv[])
    GenBins1[0] = GenPrimaryMinOverwrite;
    GenBins1[GenBins1.size()-1] = GenPrimaryMaxOverwrite;
 
-   cout << GenBins1.size() << endl;
-
    vector<string> H1Names{"HInput", "HMCMeasured", "HMCTruth"};
 
    if(find(H1Names.begin(), H1Names.end(), PrimaryName) == H1Names.end())
@@ -111,31 +124,16 @@ int main(int argc, char *argv[])
       H1[Name] = (TH1D *)InputFile.Get(Name.c_str());
 
    if(DoSelfNormalize == true)
-   {
-      // Self-normalize
       SelfNormalize(H1[PrimaryName], GenBins1, GenBins2);
-      SelfNormalize(H1["HMCTruth"], GenBins1, GenBins2);
-   }
    else
    {
-      // Scale MC curve to have the same yield as the data
-      double ScalingFactor = H1["HInput"]->Integral() / H1["HMCMeasured"]->Integral();
-      H1["HMCMeasured"]->Scale(ScalingFactor);
-      H1["HMCTruth"]->Scale(ScalingFactor);
-      
       if(DoEventNormalize == true)
       {
          double EventCount = atof(InputFile.Get("DataEventCount")->GetTitle());
-         cout << "Event Count = " << EventCount << endl;
-         H1["HMCTruth"]->Scale(1 / EventCount);
          H1[PrimaryName]->Scale(1 / EventCount);
       }
-
       if(ExtraScale > 0)
-      {
-         H1["HMCTruth"]->Scale(ExtraScale);
          H1[PrimaryName]->Scale(ExtraScale);
-      }
    }
 
    H1["HSystematicsRatioPlus"] = (TH1D *)SystematicFile.Get("HTotalPlus");
@@ -174,25 +172,34 @@ int main(int argc, char *argv[])
 
    vector<TGraphAsymmErrors> GResult = Transcribe(H1[PrimaryName], GenBins1, GenBins2, nullptr);
    vector<TGraphAsymmErrors> GSystematics = Transcribe(H1["HSystematicsPlus"], GenBins1, GenBins2, H1["HSystematicsMinus"]);
-   vector<TGraphAsymmErrors> GMC = Transcribe(H1["HMCTruth"], GenBins1, GenBins2, nullptr);
    
-   for(TGraphAsymmErrors G : GResult)
-      cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
+   double PrimaryScale = AddUp(H1[PrimaryName], WorldXMin, WorldXMax, GenBins1);
+   vector<vector<TGraphAsymmErrors>> GMC(MCCount);
+   for(int i = 0; i < MCCount; i++)
+      GMC[i] = TranscribeMC(MCFileNames[i], MCHistNames[i],
+         GenPrimaryMinOverwrite, GenPrimaryMaxOverwrite,
+         WorldXMin, WorldXMax, DoSelfNormalize, PrimaryScale);
+   
+   // for(TGraphAsymmErrors G : GResult)
+   //    cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
 
-   vector<TGraphAsymmErrors> GRResult, GRSystematics, GRMC;
+   vector<TGraphAsymmErrors> GRResult, GRSystematics;
+   vector<vector<TGraphAsymmErrors>> GRMC(MCCount);
    for(int i = 0; i < (int)GResult.size(); i++)
    {
       GRResult.push_back(CalculateRatio(GResult[i], GResult[i]));
       GRSystematics.push_back(CalculateRatio(GSystematics[i], GResult[i]));
-      GRMC.push_back(CalculateRatio(GMC[i], GResult[i]));
+      for(int j = 0; j < MCCount; j++)
+         GRMC[j].push_back(CalculateRatio(GMC[j][i], GResult[i]));
    }
 
    for(TGraphAsymmErrors G : GResult)
       PdfFile.AddPlot(G, "ap");
    for(TGraphAsymmErrors G : GSystematics)
       PdfFile.AddPlot(G, "ap");
-   for(TGraphAsymmErrors G : GMC)
-      PdfFile.AddPlot(G, "ap");
+   for(vector<TGraphAsymmErrors> &V : GMC)
+      for(TGraphAsymmErrors G : V)
+         PdfFile.AddPlot(G, "ap");
 
    TCanvas Canvas("Canvas", "", CanvasWidth, CanvasHeight);
 
@@ -203,8 +210,6 @@ int main(int argc, char *argv[])
    {
       int R = (i - IgnoreGroup) / Column;
       int C = (i - IgnoreGroup) % Column;
-
-      cout << i << " " << IgnoreGroup << " " << R << " " << C << endl;
 
       double XMin = PadX0 + PadDX * C;
       double XMax = PadX0 + PadDX * (C + 1);
@@ -272,8 +277,6 @@ int main(int argc, char *argv[])
    {
       int Index = i - IgnoreGroup;
 
-      cout << Index << endl;
-      
       Pads[Index]->cd();
       HWorld.emplace_back(new TH2D(Form("HWorld%d", i), "", 100, WorldXMin, WorldXMax, 100, WorldYMin, WorldYMax));
       SetWorld(HWorld[Index]);
@@ -310,13 +313,14 @@ int main(int argc, char *argv[])
    }
 
    // Make the legend
-   TLegend Legend(LegendX, LegendY, LegendX + 0.3, LegendY + 0.15);
+   TLegend Legend(LegendX, LegendY, LegendX + 0.3, LegendY + 0.07 * (1 + MCCount));
    Legend.SetTextFont(42);
    Legend.SetTextSize(LegendSize);
    Legend.SetFillStyle(0);
    Legend.SetBorderSize(0);
    Legend.AddEntry(&GSystematics[BinningCount-1], "Data", "plf");
-   Legend.AddEntry(&GMC[BinningCount-1], "PYTHIA6", "l");
+   for(int j = 0; j < MCCount; j++)
+      Legend.AddEntry(&GMC[j][BinningCount-1], MCLabels[j].c_str(), "l");
 
    // Plot the actual curves & legend
    for(int i = IgnoreGroup; i < BinningCount; i++)
@@ -325,26 +329,30 @@ int main(int argc, char *argv[])
 
       Pads[Index]->cd();
 
-      GMC[i].SetLineWidth(2);
-      GMC[i].SetLineColor(Colors[0]);
-      GMC[i].SetMarkerStyle(1);
-      GMC[i].SetMarkerColor(Colors[0]);
+      for(int j = 0; j < MCCount; j++)
+      {
+         GMC[j][i].SetLineWidth(2);
+         GMC[j][i].SetLineColor(Colors[MCColors[j]]);
+         GMC[j][i].SetMarkerStyle(1);
+         GMC[j][i].SetMarkerColor(Colors[MCColors[j]]);
+      }
       
       GSystematics[i].SetLineWidth(2);
-      GSystematics[i].SetLineColor(Colors[1]);
+      GSystematics[i].SetLineColor(Colors[6]);
       GSystematics[i].SetFillColor(Colors[2]);
       GSystematics[i].SetMarkerStyle(20);
       GSystematics[i].SetMarkerSize(MarkerModifier);
-      GSystematics[i].SetMarkerColor(Colors[1]);
+      GSystematics[i].SetMarkerColor(Colors[6]);
       
       GResult[i].SetLineWidth(2);
-      GResult[i].SetLineColor(Colors[1]);
+      GResult[i].SetLineColor(Colors[6]);
       GResult[i].SetMarkerStyle(20);
       GResult[i].SetMarkerSize(MarkerModifier);
-      GResult[i].SetMarkerColor(Colors[1]);
+      GResult[i].SetMarkerColor(Colors[6]);
 
       GSystematics[i].Draw("2");
-      GMC[i].Draw("lz");
+      for(int j = 0; j < MCCount; j++)
+         GMC[j][i].Draw("lz");
       GResult[i].Draw("pz");
 
       HWorld[Index]->Draw("axis same");
@@ -359,8 +367,6 @@ int main(int argc, char *argv[])
          if(PadIndex != Index)
             continue;
 
-         cout << X << " " << Y << " " << Text << endl;
-
          Latex.SetNDC();
          Latex.SetTextFont(42);
          Latex.SetTextSize(0.035);
@@ -373,26 +379,30 @@ int main(int argc, char *argv[])
 
       RPads[Index]->cd();
 
-      GRMC[i].SetLineWidth(2);
-      GRMC[i].SetLineColor(Colors[0]);
-      GRMC[i].SetMarkerStyle(1);
-      GRMC[i].SetMarkerColor(Colors[0]);
-      
+      for(int j = 0; j < MCCount; j++)
+      {
+         GRMC[j][i].SetLineWidth(2);
+         GRMC[j][i].SetLineColor(Colors[MCColors[j]]);
+         GRMC[j][i].SetMarkerStyle(1);
+         GRMC[j][i].SetMarkerColor(Colors[MCColors[j]]);
+      }
+
       GRSystematics[i].SetLineWidth(2);
-      GRSystematics[i].SetLineColor(Colors[1]);
+      GRSystematics[i].SetLineColor(Colors[6]);
       GRSystematics[i].SetFillColor(Colors[2]);
       GRSystematics[i].SetMarkerStyle(20);
       GRSystematics[i].SetMarkerSize(MarkerModifier);
-      GRSystematics[i].SetMarkerColor(Colors[1]);
+      GRSystematics[i].SetMarkerColor(Colors[6]);
       
       GRResult[i].SetLineWidth(2);
-      GRResult[i].SetLineColor(Colors[1]);
+      GRResult[i].SetLineColor(Colors[6]);
       GRResult[i].SetMarkerStyle(20);
       GRResult[i].SetMarkerSize(MarkerModifier);
-      GRResult[i].SetMarkerColor(Colors[1]);
+      GRResult[i].SetMarkerColor(Colors[6]);
 
       GRSystematics[i].Draw("2");
-      GRMC[i].Draw("lz");
+      for(int j = 0; j < MCCount; j++)
+         GRMC[j][i].Draw("lz");
       GRResult[i].Draw("pz");
       
       HWorldR[Index]->Draw("axis same");
@@ -409,8 +419,6 @@ int main(int argc, char *argv[])
 
       if(PadIndex != -1)
          continue;
-
-      cout << X << " " << Y << " " << Text << endl;
 
       Latex.SetNDC();
       Latex.SetTextFont(42);
@@ -648,4 +656,59 @@ double CalculateIntegral(TGraphAsymmErrors &G, double MinX)
    return Total;
 }
 
+double AddUp(TH1D *H, double XMin, double XMax, vector<double> Bins)
+{
+   double Total = 0;
+
+   for(int i = 1; i < (int)Bins.size(); i++)
+   {
+      double Min = Bins[i-1];
+      double Max = Bins[i];
+
+      double V = H->GetBinContent(i);
+
+      if(Min > XMin && Max <= XMax)
+         Total = Total + V;
+      if(Min <= XMin && Max > XMin)
+         Total = Total + V * (Max - XMin) / (Max - Min);
+      if(Min <= XMax && Max > XMax)
+         Total = Total + V * (XMax - Min) / (Max - Min);
+   }
+
+   return Total;
+}
+
+vector<TGraphAsymmErrors> TranscribeMC(string FileName, string HistogramName,
+   double MinOverwrite, double MaxOverwrite, double XMin, double XMax,  bool DoSelfNormalize, double Scale)
+{
+   vector<TGraphAsymmErrors> G;
+
+   TFile File(FileName.c_str());
+
+   TH1D *H = (TH1D *)File.Get(HistogramName.c_str());
+   if(H == nullptr)
+   {
+      File.Close();
+      return G;
+   }
+
+   vector<double> GenBins1
+      = DetectBins((TH1D *)File.Get("HGenPrimaryBinMin"), (TH1D *)File.Get("HGenPrimaryBinMax"));
+   vector<double> GenBins2
+      = DetectBins((TH1D *)File.Get("HGenBinningBinMin"), (TH1D *)File.Get("HGenBinningBinMax"));
+   GenBins1[0] = MinOverwrite;
+   GenBins1[GenBins1.size()-1] = MaxOverwrite;
+
+   double Total = AddUp(H, XMin, XMax, GenBins1);
+   H->Scale(Scale / Total);
+
+   if(DoSelfNormalize == true)
+      SelfNormalize(H, GenBins1, GenBins2);
+
+   G = Transcribe(H, GenBins1, GenBins2);
+
+   File.Close();
+
+   return G;
+}
 

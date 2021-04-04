@@ -1,6 +1,11 @@
 Fraction = 1
 
-default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock
+default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8
+
+Prepare:
+	ln -sf ../../MCStudies/23417_PythiaWholeEvent/ Pythia8Samples
+	ln -sf ../../Samples/ALEPH SamplesData
+	ln -sf ../../Samples/ALEPHMC SamplesMC
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \
@@ -30,11 +35,11 @@ TestRunCut: Execute
 TestRunStock: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
-		--Output Data.root --MC false --BaselineCut true --UseStored true \
+		--Output DataStock.root --MC false --BaselineCut true --UseStored true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
 	time ./Execute --Input `ls SamplesMC/* | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
-		--Output MC.root --MC true --BaselineCut true --UseStored true \
+		--Output MCStock.root --MC true --BaselineCut true --UseStored true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
 
 TestRunLargeThetaGap: Execute
@@ -42,12 +47,34 @@ TestRunLargeThetaGap: Execute
 		--Fraction $(Fraction) \
 		--Output DataLargeThetaGap.root --MC false --BaselineCut true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
-		--ThetaGap 0.8
+		--ThetaMin 0.8 --ThetaMax 2.3415926535
 	time ./Execute --Input `ls SamplesMC/* | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCLargeThetaGap.root --MC true --BaselineCut true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
-		--ThetaGap 0.8
+		--ThetaMin 0.8 --ThetaMax 2.3415926535
+
+TestRunThetaSides: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataPositiveTheta.root --MC false --BaselineCut true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--ThetaMin 1.570796 --ThetaMax 2.513274
+	time ./Execute --Input `ls SamplesMC/* | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCPositiveTheta.root --MC true --BaselineCut true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--ThetaMin 1.570796 --ThetaMax 2.513274
+	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataNegativeTheta.root --MC false --BaselineCut true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--ThetaMin 0.628319 --ThetaMax 1.570796
+	time ./Execute --Input `ls SamplesMC/* | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCNegativeTheta.root --MC true --BaselineCut true \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--ThetaMin 0.628319 --ThetaMax 1.570796
 
 TestRunNoResidual: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994* | tr '\n' ',' | sed "s/,$$//"` \
@@ -63,4 +90,8 @@ TestRunNoJEC: Execute
 		--Fraction $(Fraction) \
 		--Output MCNoJEC.root --MC true --BaselineCut true
 
+TestRunPythia8: Execute
+	time ./Execute --Input Pythia8Samples/PurePythia91.root \
+		--Fraction $(Fraction) \
+		--Output MCPythia8.root --MC true --BaselineCut false
 

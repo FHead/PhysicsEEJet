@@ -443,7 +443,9 @@ int main(int argc, char *argv[])
 
    TH1D HMCGen("HMCGen", ";Gen", GenBinCount, 0, GenBinCount);
    TH1D HMCMatched("HMCMatched", ";Matched", MatchedBinCount, 0, MatchedBinCount);
+   TH1D HMCMatchedGenBin("HMCMatchedGenBin", ";Matched (Gen)", GenBinCount, 0, GenBinCount);
    TH1D HMCReco("HMCReco", ";Reco", RecoBinCount, 0, RecoBinCount);
+   TH1D HMCRecoGenBin("HMCRecoGenBin", ";Reco (Gen)", GenBinCount, 0, GenBinCount);
    TH2D HResponse("HResponse", ";Matched;Gen", MatchedBinCount, 0, MatchedBinCount, GenBinCount, 0, GenBinCount);
    TH1D HDataReco("HDataReco", ";Reco", RecoBinCount, 0, RecoBinCount);
 
@@ -497,9 +499,15 @@ int main(int argc, char *argv[])
          int MatchedBin = MMC.GetCompositeBin(Matched,
             PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear,
             BinningType, BinningIndex, iJ, BinningRecoBins, BinningUncertaintyShift, BinningUncertaintySmear);
+         
+         int MatchedGenBin = MMC.GetCompositeBin(Matched,
+            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear,
+            BinningType, BinningIndex, iJ, BinningGenBins, BinningUncertaintyShift, BinningUncertaintySmear);
 
          HMCMatched.Fill(MatchedBin);
          HResponse.Fill(MatchedBin, GenBin);
+         
+         HMCMatchedGenBin.Fill(MatchedGenBin);
       }
 
       NJet = MMC.GetItemCount(Reco, PrimaryType);
@@ -509,6 +517,11 @@ int main(int argc, char *argv[])
             PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, 0, 1,
             BinningType, BinningIndex, iJ, BinningRecoBins, 0, 1);
          HMCReco.Fill(RecoBin);
+         
+         int RecoGenBin = MMC.GetCompositeBin(Reco,
+            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1,
+            BinningType, BinningIndex, iJ, BinningGenBins, 0, 1);
+         HMCRecoGenBin.Fill(RecoGenBin);
       }
    }
 
@@ -531,7 +544,9 @@ int main(int argc, char *argv[])
    FOutput.cd();
    HMCGen.Write();
    HMCMatched.Write();
+   HMCMatchedGenBin.Write();
    HMCReco.Write();
+   HMCRecoGenBin.Write();
    HResponse.Write();
    HDataReco.Write();
    HGenPrimaryBinMin.Write();

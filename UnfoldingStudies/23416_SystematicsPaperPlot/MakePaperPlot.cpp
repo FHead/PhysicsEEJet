@@ -13,7 +13,6 @@ using namespace std;
 #include "TLegend.h"
 #include "TGraphAsymmErrors.h"
 #include "TLatex.h"
-#include "TLegend.h"
 
 #include "PlotHelper4.h"
 #include "CommandLine.h"
@@ -28,7 +27,7 @@ void HumanPlots(PdfFileHelper &PdfFile,
    string BinningObservable = "", string Title = "", string XTitle = "", string YTitle = "");
 void SelfNormalize(TH1D *H, vector<double> Bins1, vector<double> Bins2);
 TH1D *BuildSystematics(TH1D *HResult, TH1D *HVariation);
-vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2, TH1D *H2 = nullptr);
+vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2);
 void SetPad(TPad *P);
 void SetAxis(TGaxis &A);
 void SetWorld(TH2D *H);
@@ -43,17 +42,16 @@ int main(int argc, char *argv[])
    CommandLine CL(argc, argv);
 
    string InputFileName           = CL.Get("Input");
-   string SystematicFileName      = CL.Get("Systematic");
    string OutputFileName          = CL.Get("Output");
    string FinalOutputFileName     = CL.Get("FinalOutput", "Meow.pdf");
    double GenPrimaryMinOverwrite  = CL.GetDouble("GenPrimaryMin", -999);
    double GenPrimaryMaxOverwrite  = CL.GetDouble("GenPrimaryMax", 999);
    double RecoPrimaryMinOverwrite = CL.GetDouble("RecoPrimaryMin", -999);
    double RecoPrimaryMaxOverwrite = CL.GetDouble("RecoPrimaryMax", 999);
-   string PrimaryName             = CL.Get("PrimaryName", "HUnfoldedBayes14");
-   bool DoSelfNormalize           = CL.GetBool("DoSelfNormalize", false);
-   bool DoEventNormalize          = CL.GetBool("DoEventNormalize", false);
-   double ExtraScale              = CL.GetDouble("ExtraScale", 1.00);
+
+   vector<string> Variations      = CL.GetStringVector("Variations");
+   vector<int> SystematicGroups   = CL.GetIntVector("SystematicGroups");
+   vector<string> Labels          = CL.GetStringVector("Labels");
 
    vector<string> Texts           = CL.GetStringVector("Texts", vector<string>());
 
@@ -63,8 +61,6 @@ int main(int argc, char *argv[])
    double WorldXMax               = CL.GetDouble("WorldXMax", 50);
    double WorldYMin               = CL.GetDouble("WorldYMin", 1000);
    double WorldYMax               = CL.GetDouble("WorldYMax", 5e5);
-   double WorldRMin               = CL.GetDouble("WorldRMin", 0.51);
-   double WorldRMax               = CL.GetDouble("WorldRMax", 1.49);
    bool LogY                      = CL.GetBool("LogY", true);
 
    string XLabel                  = CL.Get("XLabel", "Jet P (GeV)");
@@ -73,24 +69,18 @@ int main(int argc, char *argv[])
 
    int XAxisSpacing               = CL.GetInt("XAxis", 505);
    int YAxisSpacing               = CL.GetInt("YAxis", 505);
-   int RAxisSpacing               = CL.GetInt("RAxis", 505);
 
    double LegendX                 = CL.GetDouble("LegendX", 0.5);
    double LegendY                 = CL.GetDouble("LegendY", 0.5);
    double LegendSize              = CL.GetDouble("LegendSize", 0.075);
 
-   Assert(DoSelfNormalize == false || DoEventNormalize == false, "Multiple normalization option chosen!");
-
+   Assert(SystematicGroups.size() == Variations.size(), "Grouping size is not the same as label count");
    Assert(Texts.size() % 4 == 0, "Wrong additional text format!  It should be a collection of quadruplets: pad_index,x,y,text");
 
    PdfFileHelper PdfFile(OutputFileName);
    PdfFile.AddTextPage("Unfolding plots");
 
    TFile InputFile(InputFileName.c_str());
-   TFile SystematicFile(SystematicFileName.c_str());
-
-   if(DoEventNormalize == true)
-      Assert(InputFile.Get("DataEventCount") != nullptr, "No event count found in input file but option enabled");
 
    vector<double> GenBins1
       = DetectBins((TH1D *)InputFile.Get("HGenPrimaryBinMin"), (TH1D *)InputFile.Get("HGenPrimaryBinMax"));
@@ -101,47 +91,43 @@ int main(int argc, char *argv[])
 
    cout << GenBins1.size() << endl;
 
-   vector<string> H1Names{"HInput", "HMCMeasured", "HMCTruth"};
-
-   if(find(H1Names.begin(), H1Names.end(), PrimaryName) == H1Names.end())
-      H1Names.push_back(PrimaryName);
-
    map<string, TH1D *> H1;
-   for(string Name : H1Names)
-      H1[Name] = (TH1D *)InputFile.Get(Name.c_str());
-
-   if(DoSelfNormalize == true)
+   for(string Name : Variations)
    {
-      // Self-normalize
-      SelfNormalize(H1[PrimaryName], GenBins1, GenBins2);
-      SelfNormalize(H1["HMCTruth"], GenBins1, GenBins2);
-   }
-   else
-   {
-      // Scale MC curve to have the same yield as the data
-      double ScalingFactor = H1["HInput"]->Integral() / H1["HMCMeasured"]->Integral();
-      H1["HMCMeasured"]->Scale(ScalingFactor);
-      H1["HMCTruth"]->Scale(ScalingFactor);
-      
-      if(DoEventNormalize == true)
-      {
-         double EventCount = atof(InputFile.Get("DataEventCount")->GetTitle());
-         cout << "Event Count = " << EventCount << endl;
-         H1["HMCTruth"]->Scale(1 / EventCount);
-         H1[PrimaryName]->Scale(1 / EventCount);
-      }
-
-      if(ExtraScale > 0)
-      {
-         H1["HMCTruth"]->Scale(ExtraScale);
-         H1[PrimaryName]->Scale(ExtraScale);
-      }
+      H1[Name]         = (TH1D *)InputFile.Get(Name.c_str());
+      H1[Name+"Base"]  = (TH1D *)InputFile.Get((Name + "Base").c_str());
+      H1[Name+"Ratio"] = BuildSystematics(H1[Name+"Base"], H1[Name]);
    }
 
-   H1["HSystematicsRatioPlus"] = (TH1D *)SystematicFile.Get("HTotalPlus");
-   H1["HSystematicsRatioMinus"] = (TH1D *)SystematicFile.Get("HTotalMinus");
-   H1["HSystematicsPlus"] = BuildSystematics(H1[PrimaryName], H1["HSystematicsRatioPlus"]);
-   H1["HSystematicsMinus"] = BuildSystematics(H1[PrimaryName], H1["HSystematicsRatioMinus"]);
+   int SystematicGroupCount = 0;
+   for(int G : SystematicGroups)
+      if(SystematicGroupCount < G + 1)
+         SystematicGroupCount = G + 1;
+
+   for(int i = 0; i < (int)Variations.size(); i++)
+   {
+      string HName = Form("HG%dRatio", SystematicGroups[i]);
+      if(H1.find(HName) == H1.end())
+      {
+         H1[HName] = (TH1D *)H1[Variations[i]]->Clone(HName.c_str());
+         H1[HName]->Reset();
+      }
+
+      Assert(H1[Variations[i]+"Ratio"] != nullptr, ("Error getting systematic ratio for " + Variations[i]).c_str());
+
+      for(int j = 1; j <= H1[HName]->GetNbinsX(); j++)
+      {
+         double V1 = H1[HName]->GetBinContent(j);
+         double V2 = H1[Variations[i]+"Ratio"]->GetBinContent(j);
+         double V = sqrt(V1 * V1 + V2 * V2);
+         H1[HName]->SetBinContent(j, V);
+      }
+   }
+
+   cout << "SVD 28 " << H1["HSVDRatio"]->GetBinContent(28) << endl;
+
+   H1["HSystematicsRatioPlus"] = (TH1D *)InputFile.Get("HTotalPlus");
+   H1["HSystematicsRatioMinus"] = (TH1D *)InputFile.Get("HTotalMinus");
 
    int IgnoreGroup = CL.GetInt("IgnoreGroup", 2);
    int Column      = CL.GetInt("Column", 4);
@@ -157,48 +143,35 @@ int main(int argc, char *argv[])
 
    int PadWidth     = 250;
    int PadHeight    = 250;
-   int PadRHeight   = 100;
    int MarginLeft   = 50 + (Column - 1) * 15;
    int MarginRight  = 25 + (Column - 1) * 10;
    int MarginTop    = 25 + (Column - 1) * 10;
    int MarginBottom = 50 + (Column - 1) * 15;
 
    double CanvasWidth = MarginLeft + PadWidth * Column + MarginRight;
-   double CanvasHeight = MarginBottom + PadHeight * Row + PadRHeight * Row + MarginTop;
+   double CanvasHeight = MarginBottom + PadHeight * Row + MarginTop;
 
    double PadDX = PadWidth / CanvasWidth;
    double PadDY = PadHeight / CanvasHeight;
    double PadX0 = MarginLeft / CanvasWidth;
    double PadY0 = MarginBottom / CanvasHeight;
-   double PadDR = PadRHeight / CanvasHeight;
 
-   vector<TGraphAsymmErrors> GResult = Transcribe(H1[PrimaryName], GenBins1, GenBins2, nullptr);
-   vector<TGraphAsymmErrors> GSystematics = Transcribe(H1["HSystematicsPlus"], GenBins1, GenBins2, H1["HSystematicsMinus"]);
-   vector<TGraphAsymmErrors> GMC = Transcribe(H1["HMCTruth"], GenBins1, GenBins2, nullptr);
-   
-   for(TGraphAsymmErrors G : GResult)
-      cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
-
-   vector<TGraphAsymmErrors> GRResult, GRSystematics, GRMC;
-   for(int i = 0; i < (int)GResult.size(); i++)
+   vector<vector<TGraphAsymmErrors>> GCurves(SystematicGroupCount);
+   GCurves[0] = Transcribe(H1["HSystematicsRatioPlus"], GenBins1, GenBins2);
+   for(int i = 1; i < SystematicGroupCount; i++)
    {
-      GRResult.push_back(CalculateRatio(GResult[i], GResult[i]));
-      GRSystematics.push_back(CalculateRatio(GSystematics[i], GResult[i]));
-      GRMC.push_back(CalculateRatio(GMC[i], GResult[i]));
+      string HName = Form("HG%dRatio", i);
+      GCurves[i] = Transcribe(H1[HName], GenBins1, GenBins2);
+      for(TGraphAsymmErrors G : GCurves[i])
+         PdfFile.AddPlot(G, "ap");
    }
 
-   for(TGraphAsymmErrors G : GResult)
-      PdfFile.AddPlot(G, "ap");
-   for(TGraphAsymmErrors G : GSystematics)
-      PdfFile.AddPlot(G, "ap");
-   for(TGraphAsymmErrors G : GMC)
-      PdfFile.AddPlot(G, "ap");
+   Labels.insert(Labels.begin(), "Total");
 
    TCanvas Canvas("Canvas", "", CanvasWidth, CanvasHeight);
 
    // Setup pads
    vector<TPad *> Pads;
-   vector<TPad *> RPads;
    for(int i = IgnoreGroup; i < BinningCount; i++)
    {
       int R = (i - IgnoreGroup) / Column;
@@ -208,11 +181,10 @@ int main(int argc, char *argv[])
 
       double XMin = PadX0 + PadDX * C;
       double XMax = PadX0 + PadDX * (C + 1);
-      double YMin = PadY0 + (PadDY + PadDR) * R;
-      double YMax = PadY0 + (PadDY + PadDR) * (R + 1);
+      double YMin = PadY0 + PadDY * R;
+      double YMax = PadY0 + PadDY * (R + 1);
 
-      Pads.emplace_back(new TPad(Form("P%d", i), "", XMin, YMin + PadDR, XMax, YMax));
-      RPads.emplace_back(new TPad(Form("RP%d", i), "", XMin, YMin, XMax, YMin + PadDR));
+      Pads.emplace_back(new TPad(Form("P%d", i), "", XMin, YMin, XMax, YMax));
 
       if(LogY == true)
          Pads[i-IgnoreGroup]->SetLogy();
@@ -220,11 +192,9 @@ int main(int argc, char *argv[])
 
    for(TPad *P : Pads)
       SetPad(P);
-   for(TPad *P : RPads)
-      SetPad(P);
    
    // Setup axes
-   vector<TGaxis *> XAxis, YAxis, RAxis;
+   vector<TGaxis *> XAxis, YAxis;
    for(int i = 0; i < Column; i++)
    {
       XAxis.emplace_back(new TGaxis(PadX0 + PadDX * i, PadY0, PadX0 + PadDX * (i + 1), PadY0, WorldXMin, WorldXMax, XAxisSpacing, ""));
@@ -233,15 +203,12 @@ int main(int argc, char *argv[])
    }
    for(int i = 0; i < Row; i++)
    {
-      double YMin = PadY0 + (PadDY + PadDR) * i;
-      double YMax = YMin + PadDY + PadDR;
+      double YMin = PadY0 + PadDY * i;
+      double YMax = YMin + PadDY;
       string Option = (LogY ? "G" : "");
-      YAxis.emplace_back(new TGaxis(PadX0, YMin + PadDR, PadX0, YMax, WorldYMin, WorldYMax, YAxisSpacing, Option.c_str()));
-      RAxis.emplace_back(new TGaxis(PadX0, YMin, PadX0, YMin + PadDR, WorldRMin, WorldRMax, RAxisSpacing, ""));
+      YAxis.emplace_back(new TGaxis(PadX0, YMin, PadX0, YMax, WorldYMin, WorldYMax, YAxisSpacing, Option.c_str()));
       SetAxis(*YAxis[i]);
-      SetAxis(*RAxis[i]);
       YAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
-      RAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
    }
 
    // Setup axis labels
@@ -256,18 +223,15 @@ int main(int argc, char *argv[])
    Latex.SetTextAngle(90);
    Latex.SetTextAlign(22);
    for(int i = 0; i < Row; i++)
-      Latex.DrawLatex(PadX0 * 0.3, PadY0 + PadDR * (i + 1.0) + PadDY * (i + 0.5), YLabel.c_str());
-   for(int i = 0; i < Row; i++)
-      Latex.DrawLatex(PadX0 * 0.3, PadY0 + PadDR * (i + 0.5) + PadDY * i, "Ratio to Data");
+      Latex.DrawLatex(PadX0 * 0.3, PadY0 + PadDY * (i + 0.5), YLabel.c_str());
 
    // Setup general information
    Latex.SetTextAngle(0);
    Latex.SetTextAlign(11);
-   Latex.DrawLatex(PadX0, PadY0 + PadDR * Row + PadDY * Row + 0.01, "ALEPH Archived Data 1994, e^{+}e^{-} #sqrt{s} = 91.2 GeV");
+   Latex.DrawLatex(PadX0, PadY0 + PadDY * Row + 0.01, "ALEPH Archived Data 1994, e^{+}e^{-} #sqrt{s} = 91.2 GeV");
 
    // Setup worlds
    vector<TH2D *> HWorld;
-   vector<TH2D *> HWorldR;
    for(int i = IgnoreGroup; i < BinningCount; i++)
    {
       int Index = i - IgnoreGroup;
@@ -279,12 +243,6 @@ int main(int argc, char *argv[])
       SetWorld(HWorld[Index]);
       HWorld[Index]->GetXaxis()->SetNdivisions(XAxisSpacing);
       HWorld[Index]->GetYaxis()->SetNdivisions(YAxisSpacing);
-      
-      RPads[Index]->cd();
-      HWorldR.emplace_back(new TH2D(Form("HWorldR%d", i), "", 100, WorldXMin, WorldXMax, 100, WorldRMin, WorldRMax));
-      SetWorld(HWorldR[Index]);
-      HWorldR[Index]->GetXaxis()->SetNdivisions(XAxisSpacing);
-      HWorldR[Index]->GetYaxis()->SetNdivisions(RAxisSpacing);
    }
 
    // Adding panel labeling
@@ -304,19 +262,17 @@ int main(int argc, char *argv[])
 
          Latex.SetTextFont(42);
          Latex.SetTextSize(0.075);
-         Latex.SetTextAlign(33);
-         Latex.DrawLatex(0.9, 0.9, BinLabel.c_str());
+         Latex.SetTextAlign(23);
+         Latex.DrawLatex(0.5, 0.9, BinLabel.c_str());
       }
    }
 
    // Make the legend
-   TLegend Legend(LegendX, LegendY, LegendX + 0.3, LegendY + 0.15);
+   TLegend Legend(LegendX, LegendY, LegendX + 0.3, LegendY + LegendSize * 1.1 * GCurves.size());
    Legend.SetTextFont(42);
    Legend.SetTextSize(LegendSize);
    Legend.SetFillStyle(0);
    Legend.SetBorderSize(0);
-   Legend.AddEntry(&GSystematics[BinningCount-1], "Data", "plf");
-   Legend.AddEntry(&GMC[BinningCount-1], "PYTHIA6", "l");
 
    // Plot the actual curves & legend
    for(int i = IgnoreGroup; i < BinningCount; i++)
@@ -325,28 +281,20 @@ int main(int argc, char *argv[])
 
       Pads[Index]->cd();
 
-      GMC[i].SetLineWidth(2);
-      GMC[i].SetLineColor(Colors[0]);
-      GMC[i].SetMarkerStyle(1);
-      GMC[i].SetMarkerColor(Colors[0]);
-      
-      GSystematics[i].SetLineWidth(2);
-      GSystematics[i].SetLineColor(Colors[1]);
-      GSystematics[i].SetFillColor(Colors[2]);
-      GSystematics[i].SetMarkerStyle(20);
-      GSystematics[i].SetMarkerSize(MarkerModifier);
-      GSystematics[i].SetMarkerColor(Colors[1]);
-      
-      GResult[i].SetLineWidth(2);
-      GResult[i].SetLineColor(Colors[1]);
-      GResult[i].SetMarkerStyle(20);
-      GResult[i].SetMarkerSize(MarkerModifier);
-      GResult[i].SetMarkerColor(Colors[1]);
+      for(int j = 0; j < (int)GCurves.size(); j++)
+      {
+         GCurves[j][Index].SetLineWidth(2);
+         GCurves[j][Index].SetMarkerStyle(20);
+         GCurves[j][Index].SetMarkerSize(MarkerModifier);
+         GCurves[j][Index].SetLineColor(Colors[j%9]);
+         GCurves[j][Index].SetMarkerColor(Colors[j%9]);
+                   
+         GCurves[j][Index].Draw("pl");
 
-      GSystematics[i].Draw("2");
-      GMC[i].Draw("lz");
-      GResult[i].Draw("pz");
-
+         if(Index == 0)
+            Legend.AddEntry(&GCurves[j][Index], Labels[j].c_str(), "lp");
+      }
+      
       HWorld[Index]->Draw("axis same");
 
       for(int j = 0; j < (int)Texts.size(); j = j + 4)
@@ -370,32 +318,6 @@ int main(int argc, char *argv[])
 
       if(i == BinningCount - 1)
          Legend.Draw();
-
-      RPads[Index]->cd();
-
-      GRMC[i].SetLineWidth(2);
-      GRMC[i].SetLineColor(Colors[0]);
-      GRMC[i].SetMarkerStyle(1);
-      GRMC[i].SetMarkerColor(Colors[0]);
-      
-      GRSystematics[i].SetLineWidth(2);
-      GRSystematics[i].SetLineColor(Colors[1]);
-      GRSystematics[i].SetFillColor(Colors[2]);
-      GRSystematics[i].SetMarkerStyle(20);
-      GRSystematics[i].SetMarkerSize(MarkerModifier);
-      GRSystematics[i].SetMarkerColor(Colors[1]);
-      
-      GRResult[i].SetLineWidth(2);
-      GRResult[i].SetLineColor(Colors[1]);
-      GRResult[i].SetMarkerStyle(20);
-      GRResult[i].SetMarkerSize(MarkerModifier);
-      GRResult[i].SetMarkerColor(Colors[1]);
-
-      GRSystematics[i].Draw("2");
-      GRMC[i].Draw("lz");
-      GRResult[i].Draw("pz");
-      
-      HWorldR[Index]->Draw("axis same");
    }
 
    Canvas.cd();
@@ -422,14 +344,10 @@ int main(int argc, char *argv[])
    Canvas.SaveAs(FinalOutputFileName.c_str());
 
    for(TH2D *H : HWorld)    delete H;
-   for(TH2D *H : HWorldR)   delete H;
    for(TGaxis *A : XAxis)   delete A;
    for(TGaxis *A : YAxis)   delete A;
-   for(TGaxis *A : RAxis)   delete A;
    for(TPad *P : Pads)      delete P;
-   for(TPad *P : RPads)     delete P;
 
-   SystematicFile.Close();
    InputFile.Close();
 
    PdfFile.AddTimeStampPage();
@@ -493,28 +411,28 @@ void SelfNormalize(TH1D *H, vector<double> Bins1, vector<double> Bins2)
    }
 }
 
-TH1D *BuildSystematics(TH1D *HResult, TH1D *HVariation)
+TH1D *BuildSystematics(TH1D *HBase, TH1D *HVariation)
 {
-   if(HResult == nullptr)
+   if(HBase == nullptr)
       return nullptr;
 
-   TH1D *HSystematics = (TH1D *)HResult->Clone();
+   TH1D *HSystematics = (TH1D *)HBase->Clone();
 
    if(HVariation == nullptr)
       return HSystematics;
 
    HSystematics->Reset();
-   for(int i = 1; i <= HResult->GetNbinsX(); i++)
+   for(int i = 1; i <= HBase->GetNbinsX(); i++)
    {
-      double V = HResult->GetBinContent(i);
+      double V = HBase->GetBinContent(i);
       double R = HVariation->GetBinContent(i);
-      HSystematics->SetBinContent(i, V * (R + 1));
+      HSystematics->SetBinContent(i, fabs(R / V - 1));
    }
 
    return HSystematics;
 }
 
-vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2, TH1D *H2)
+vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2)
 {
    int BinningCount = Bins2.size() - 1;
    if(BinningCount <= 0)
@@ -545,21 +463,14 @@ vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<doubl
          double DX = (PrimaryBins[i+1] - PrimaryBins[i]) / 2;
          double Y = 0, DY = 0;
 
-         if(H2 == nullptr)
-         {
-            Y = H->GetBinContent(i + iB * PrimaryBinCount + 1);
-            DY = H->GetBinError(i + iB * PrimaryBinCount + 1);
-         }
-         else
-         {
-            double YUp = H->GetBinContent(i + iB * PrimaryBinCount + 1);
-            double YDown = H2->GetBinContent(i + iB * PrimaryBinCount + 1);
+         // Hack for now
+         DX = 0;
 
-            Y = (YUp + YDown) / 2;
-            DY = fabs(YUp - YDown) / 2;
-         }
+         Y = H->GetBinContent(i + iB * PrimaryBinCount + 1);
+         DY = H->GetBinError(i + iB * PrimaryBinCount + 1);
 
-         double Width = PrimaryBins[i+1] - PrimaryBins[i];
+         // double Width = PrimaryBins[i+1] - PrimaryBins[i];
+         double Width = 1;
 
          Result[iB].SetPoint(i, X, Y / Width);
          Result[iB].SetPointError(i, DX, DX, DY / Width, DY / Width);

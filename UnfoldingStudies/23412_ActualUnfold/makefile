@@ -109,6 +109,12 @@ RunDataUnfold: Execute ExecutePlot
 	./Execute --Input Input/DataJetELargeThetaGap.root --Output Unfolded/DataJetELargeThetaGap.root
 	./Execute --Input Input/DataJetZGLargeThetaGap.root --Output Unfolded/DataJetZGLargeThetaGap.root
 	./Execute --Input Input/DataJetRGLargeThetaGap.root --Output Unfolded/DataJetRGLargeThetaGap.root
+	./Execute --Input Input/DataJetEPositiveTheta.root --Output Unfolded/DataJetEPositiveTheta.root
+	./Execute --Input Input/DataJetZGPositiveTheta.root --Output Unfolded/DataJetZGPositiveTheta.root
+	./Execute --Input Input/DataJetRGPositiveTheta.root --Output Unfolded/DataJetRGPositiveTheta.root
+	./Execute --Input Input/DataJetENegativeTheta.root --Output Unfolded/DataJetENegativeTheta.root
+	./Execute --Input Input/DataJetZGNegativeTheta.root --Output Unfolded/DataJetZGNegativeTheta.root
+	./Execute --Input Input/DataJetRGNegativeTheta.root --Output Unfolded/DataJetRGNegativeTheta.root
 	./Execute --Input Input/DataJetENoResidual.root --Output Unfolded/DataJetENoResidual.root
 	./Execute --Input Input/DataJetZGNoResidual.root --Output Unfolded/DataJetZGNoResidual.root
 	./Execute --Input Input/DataJetRGNoResidual.root --Output Unfolded/DataJetRGNoResidual.root
