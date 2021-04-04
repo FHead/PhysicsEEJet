@@ -5,7 +5,7 @@ default: Systematics FinalPlot
 RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot
 
 JetClustering:
-	(cd 23411_JetResponseClustering/ && make TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap)
+	(cd 23411_JetResponseClustering/ && make Prepare TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunThetaSides TestRunStock TestRunPythia8)
 
 UnfoldPreparation:
 	(cd 23411_UnfoldingPreparation/ && make RunAll)
@@ -43,6 +43,8 @@ Systematics:
 	(cd 23412_Systematics && make Prepare RunData RunDataPlot)
 
 FinalPlot:
-	(cd 23412_UnfoldedPaperPlot && make Prepare RunTest)
+	(cd 23417_UnfoldedPaperPlot && make Prepare RunTest)
+	(cd 23416_SystematicsPaperPlot && make Prepare RunTest)
+	(cd 23416_SmearingMatrixPaperPlot && make Prepare RunTest)
 
 
