@@ -493,6 +493,42 @@ MCExtra: Execute
 		--ObservableRecoBins $(RecoJetRGBins) \
 		--BinningGenBins $(GenJetECoarseBins) \
 		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCHerwig.root --Data MCHerwig.root --Output Output/MCHerwigJetE.root \
+		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetEBins) \
+		--ObservableRecoBins $(RecoJetEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MCHerwig.root --Data MCHerwig.root --Output Output/MCHerwigJetZG.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCHerwig.root --Data MCHerwig.root --Output Output/MCHerwigJetRG.root \
+		--Observable JetRG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCSherpa.root --Data MCSherpa.root --Output Output/MCSherpaJetE.root \
+		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetEBins) \
+		--ObservableRecoBins $(RecoJetEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MCSherpa.root --Data MCSherpa.root --Output Output/MCSherpaJetZG.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCSherpa.root --Data MCSherpa.root --Output Output/MCSherpaJetRG.root \
+		--Observable JetRG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
 
 Execute: PrepareUnfold.cpp
 	CompileRootMacro PrepareUnfold.cpp Execute \

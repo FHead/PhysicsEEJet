@@ -1,11 +1,13 @@
 Fraction = 1
 
-default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8
+default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8 TestRunHerwig TestRunSherpa
 
 Prepare:
 	ln -sf ../../MCStudies/23417_PythiaWholeEvent/ Pythia8Samples
 	ln -sf ../../Samples/ALEPH SamplesData
 	ln -sf ../../Samples/ALEPHMC SamplesMC
+	ln -sf ../../Samples/HERWIG7 HerwigSamples
+	ln -sf ../../Samples/SHERPA/ SherpaSamples
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \
@@ -94,4 +96,16 @@ TestRunPythia8: Execute
 	time ./Execute --Input Pythia8Samples/PurePythia91.root \
 		--Fraction $(Fraction) \
 		--Output MCPythia8.root --MC true --BaselineCut false
+
+TestRunHerwig: Execute
+	time ./Execute --Input HerwigSamples/run_00/Belle_0_0.root \
+		--Fraction $(Fraction) \
+		--Output MCHerwig.root --MC true --BaselineCut false \
+		--GenTreeName t --RecoTreeName treco
+
+TestRunSherpa: Execute
+	time ./Execute --Input SherpaSamples/run_00/Belle_0_0.root \
+		--Fraction $(Fraction) \
+		--Output MCSherpa.root --MC true --BaselineCut false \
+		--GenTreeName t --RecoTreeName treco
 

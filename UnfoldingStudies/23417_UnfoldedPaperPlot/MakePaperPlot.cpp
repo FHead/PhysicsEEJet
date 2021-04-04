@@ -13,7 +13,6 @@ using namespace std;
 #include "TLegend.h"
 #include "TGraphAsymmErrors.h"
 #include "TLatex.h"
-#include "TLegend.h"
 
 #include "PlotHelper4.h"
 #include "CommandLine.h"
@@ -62,7 +61,7 @@ int main(int argc, char *argv[])
    vector<string> MCFileNames     = CL.GetStringVector("MCFile", vector<string>{InputFileName});
    vector<string> MCHistNames     = CL.GetStringVector("MCHistogram", vector<string>{"HMCTruth"});
    vector<string> MCLabels        = CL.GetStringVector("MCLabel", vector<string>{"PYTHIA6"});
-   vector<int> MCColors           = CL.GetIntVector("MCColors", vector<int>{0, 1, 3, 4, 5, 7});
+   vector<int> MCColors           = CL.GetIntVector("MCColors", vector<int>{0, 1, 3, 5, 4, 7});
 
    vector<string> Texts           = CL.GetStringVector("Texts", vector<string>());
 
@@ -313,7 +312,7 @@ int main(int argc, char *argv[])
    }
 
    // Make the legend
-   TLegend Legend(LegendX, LegendY, LegendX + 0.3, LegendY + 0.07 * (1 + MCCount));
+   TLegend Legend(LegendX, LegendY, LegendX + 0.3, LegendY + 0.065 * (1 + MCCount));
    Legend.SetTextFont(42);
    Legend.SetTextSize(LegendSize);
    Legend.SetFillStyle(0);

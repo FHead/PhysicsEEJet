@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
+   string RecoTreeName           = CL.Get("RecoTreeName", "t");
+   string GenTreeName            = CL.Get("GenTreeName", "tgen");
 
    JetCorrector JEC(JECFiles);
 
@@ -145,10 +147,10 @@ int main(int argc, char *argv[])
    {
       TFile InputFile(FileName.c_str());
 
-      TTree *RecoTree = (TTree *)InputFile.Get("t");
-      TTree *GenTree = (TTree *)InputFile.Get("tgen");
+      TTree *RecoTree    = (TTree *)InputFile.Get(RecoTreeName.c_str());
+      TTree *GenTree     = (TTree *)InputFile.Get(GenTreeName.c_str());
       TTree *RecoJetTree = (TTree *)InputFile.Get("akR4ESchemeJetTree");
-      TTree *GenJetTree = (TTree *)InputFile.Get("akR4ESchemeGenJetTree");
+      TTree *GenJetTree  = (TTree *)InputFile.Get("akR4ESchemeGenJetTree");
 
       if(RecoTree == nullptr && GenTree == nullptr)
          continue;
