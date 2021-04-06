@@ -1,4 +1,4 @@
-N = 100000
+N = 1000000
 
 default:
 	echo Hello world
@@ -25,6 +25,9 @@ RunPythia: Execute
 	time ./Execute --Output PurePythia91.root --N $(N) --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
 	time ./Execute --Output PurePythia92.root --N $(N) --EPythia 92.2 --EBall 0 --Mean 0.2 --ExcludeE true
 	time ./Execute --Output PurePythia93.root --N $(N) --EPythia 93.2 --EBall 0 --Mean 0.2 --ExcludeE true
+	
+RunPythiaOnShell: Execute
+	time ./Execute --Output PurePythia91.root --N $(N) --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
 
 TestRun: Execute
 	# time ./Execute --Output PythiaBall0_Mean020.root --N $(N) --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
