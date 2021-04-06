@@ -3,6 +3,7 @@ default: ThrustRun TestRun TestRunData
 
 Prepare:
 	mkdir -p Output
+	rm -f Input UnfoldedInput
 	ln -sf ../23411_UnfoldingPreparation/Output Input
 	ln -sf ../23412_ActualUnfold/Unfolded UnfoldedInput
 

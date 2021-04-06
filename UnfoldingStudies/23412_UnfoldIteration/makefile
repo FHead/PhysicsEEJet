@@ -2,6 +2,7 @@
 default: TestRun TestRunData
 
 Prepare:
+	rm -f Input
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 
 TestRun: Execute

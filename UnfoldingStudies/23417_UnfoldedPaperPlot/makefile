@@ -3,6 +3,7 @@ Format = pdf
 default: RunTest
 
 Prepare:
+	rm -f OriginalInput Input Systematics
 	ln -sf ../23411_UnfoldingPreparation/Output OriginalInput
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 	ln -sf ../23412_Systematics/ Systematics

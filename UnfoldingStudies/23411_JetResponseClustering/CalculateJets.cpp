@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
    vector<vector<float>> RecoJetZG;   // first index is SD index, second index is jet
    vector<vector<float>> RecoJetRG;
    vector<vector<float>> RecoJetPG;
+   vector<vector<float>> RecoJetMG;
    vector<vector<float>> RecoJetNG;
    float RecoThrust;
    int NGenJets;
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
    vector<vector<float>> GenJetZG;
    vector<vector<float>> GenJetRG;
    vector<vector<float>> GenJetPG;
+   vector<vector<float>> GenJetMG;
    vector<vector<float>> GenJetNG;
    float GenThrust;
    vector<float> MatchedJetPX;
@@ -89,6 +91,7 @@ int main(int argc, char *argv[])
    vector<vector<float>> MatchedJetZG;
    vector<vector<float>> MatchedJetRG;
    vector<vector<float>> MatchedJetPG;
+   vector<vector<float>> MatchedJetMG;
    vector<vector<float>> MatchedJetNG;
    vector<float> MatchedJetJEC;
    vector<float> MatchedJetJEU;
@@ -110,6 +113,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("RecoJetZG",       &RecoJetZG);
    OutputTree.Branch("RecoJetRG",       &RecoJetRG);
    OutputTree.Branch("RecoJetPG",       &RecoJetPG);
+   OutputTree.Branch("RecoJetMG",       &RecoJetMG);
    OutputTree.Branch("RecoJetNG",       &RecoJetNG);
    OutputTree.Branch("RecoThrust",      &RecoThrust);
    OutputTree.Branch("NGenJets",        &NGenJets, "NGenJets/I");
@@ -123,6 +127,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("GenJetZG",        &GenJetZG);
    OutputTree.Branch("GenJetRG",        &GenJetRG);
    OutputTree.Branch("GenJetPG",        &GenJetPG);
+   OutputTree.Branch("GenJetMG",        &GenJetMG);
    OutputTree.Branch("GenJetNG",        &GenJetNG);
    OutputTree.Branch("GenThrust",       &GenThrust);
    OutputTree.Branch("MatchedJetPX",    &MatchedJetPX);
@@ -135,6 +140,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("MatchedJetZG",    &MatchedJetZG);
    OutputTree.Branch("MatchedJetRG",    &MatchedJetRG);
    OutputTree.Branch("MatchedJetPG",    &MatchedJetPG);
+   OutputTree.Branch("MatchedJetMG",    &MatchedJetMG);
    OutputTree.Branch("MatchedJetNG",    &MatchedJetNG);
    OutputTree.Branch("MatchedJetAngle", &MatchedJetAngle);
    OutputTree.Branch("MatchedJetJEC",   &MatchedJetJEC);
@@ -336,6 +342,7 @@ int main(int argc, char *argv[])
          GenJetZG.resize(GenJets.size());
          GenJetRG.resize(GenJets.size());
          GenJetPG.resize(GenJets.size());
+         GenJetMG.resize(GenJets.size());
          GenJetNG.resize(GenJets.size());
          for(int i = 0; i < (int)GenJets.size(); i++)
          {
@@ -348,6 +355,7 @@ int main(int argc, char *argv[])
             GenJetZG[i].resize(NSD);
             GenJetRG[i].resize(NSD);
             GenJetPG[i].resize(NSD);
+            GenJetMG[i].resize(NSD);
             GenJetNG[i].resize(NSD);
 
             if(Nodes.size() > 0)
@@ -362,6 +370,7 @@ int main(int argc, char *argv[])
                      GenJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
                      GenJetRG[i][iSD] = GetAngle(P1, P2);
                      GenJetPG[i][iSD] = SDNode->P.GetP();
+                     GenJetMG[i][iSD] = SDNode->P.GetMass();
                      GenJetNG[i][iSD] = CountFinalNode(SDNode);
                   }
                   else
@@ -369,6 +378,7 @@ int main(int argc, char *argv[])
                      GenJetZG[i][iSD] = -1;
                      GenJetRG[i][iSD] = -1;
                      GenJetPG[i][iSD] = -1;
+                     GenJetMG[i][iSD] = -1;
                      GenJetNG[i][iSD] = -1;
                   }
                }
@@ -378,6 +388,7 @@ int main(int argc, char *argv[])
          RecoJetZG.resize(RecoJets.size());
          RecoJetRG.resize(RecoJets.size());
          RecoJetPG.resize(RecoJets.size());
+         RecoJetMG.resize(RecoJets.size());
          RecoJetNG.resize(RecoJets.size());
          for(int i = 0; i < (int)RecoJets.size(); i++)
          {
@@ -390,6 +401,7 @@ int main(int argc, char *argv[])
             RecoJetZG[i].resize(NSD);
             RecoJetRG[i].resize(NSD);
             RecoJetPG[i].resize(NSD);
+            RecoJetMG[i].resize(NSD);
             RecoJetNG[i].resize(NSD);
 
             if(Nodes.size() > 0)
@@ -404,6 +416,7 @@ int main(int argc, char *argv[])
                      RecoJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
                      RecoJetRG[i][iSD] = GetAngle(P1, P2);
                      RecoJetPG[i][iSD] = SDNode->P.GetP();
+                     RecoJetMG[i][iSD] = SDNode->P.GetMass();
                      RecoJetNG[i][iSD] = CountFinalNode(SDNode);
                   }
                   else
@@ -411,6 +424,7 @@ int main(int argc, char *argv[])
                      RecoJetZG[i][iSD] = -1;
                      RecoJetRG[i][iSD] = -1;
                      RecoJetPG[i][iSD] = -1;
+                     RecoJetMG[i][iSD] = -1;
                      RecoJetNG[i][iSD] = -1;
                   }
                }
@@ -485,6 +499,7 @@ int main(int argc, char *argv[])
          MatchedJetZG.resize(NGenJets);
          MatchedJetRG.resize(NGenJets);
          MatchedJetPG.resize(NGenJets);
+         MatchedJetMG.resize(NGenJets);
          MatchedJetNG.resize(NGenJets);
          for(int iG = 0; iG < (int)GenJets.size(); iG++)
          {
@@ -505,6 +520,7 @@ int main(int argc, char *argv[])
             MatchedJetZG[iG].resize(NSD, -1);
             MatchedJetRG[iG].resize(NSD, -1);
             MatchedJetPG[iG].resize(NSD, -1);
+            MatchedJetMG[iG].resize(NSD, -1);
             MatchedJetNG[iG].resize(NSD, -1);
 
             if(BestIndex < 0)   // WTF
@@ -526,6 +542,7 @@ int main(int argc, char *argv[])
                MatchedJetZG[iG][iSD] = RecoJetZG[BestIndex][iSD];
                MatchedJetRG[iG][iSD] = RecoJetRG[BestIndex][iSD];
                MatchedJetPG[iG][iSD] = RecoJetPG[BestIndex][iSD];
+               MatchedJetMG[iG][iSD] = RecoJetMG[BestIndex][iSD];
                MatchedJetNG[iG][iSD] = RecoJetNG[BestIndex][iSD];
             }
          }

@@ -1,6 +1,7 @@
 default: RunData RunDataPlot
 
 Prepare:
+	rm -f Input BinMapping
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 	ln -sf ../23411_UnfoldingPreparation/Output BinMapping
 

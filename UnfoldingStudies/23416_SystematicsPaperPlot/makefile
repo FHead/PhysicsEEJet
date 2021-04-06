@@ -3,6 +3,7 @@ Format = pdf
 default: RunTest
 
 Prepare:
+	rm Input Systematics
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 	ln -sf ../23412_Systematics/ Systematics
 	mkdir -p Plots

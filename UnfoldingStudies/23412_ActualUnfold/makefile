@@ -6,6 +6,7 @@ UnfoldAll: RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunThrustUnfold Unfold
 UnfoldIterations: RunIterationStudies RunDataIterationStudies
 
 Prepare:
+	rm -f Input InputToy
 	ln -sf ../23411_UnfoldingPreparation/Output Input
 	ln -sf ../23412_FakeData/Output InputToy
 	mkdir -p Unfolded Plots

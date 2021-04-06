@@ -2,6 +2,7 @@
 default: TestRun TestRunThrust TestRunData TestRunStatistics
 
 Prepare:
+	rm -f PerfectInput Input
 	ln -sf ../23412_PerfectRecoGeneration/Output PerfectInput
 	ln -sf ../23411_UnfoldingPreparation/Output Input
 	mkdir -p Output
