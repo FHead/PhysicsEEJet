@@ -59,10 +59,10 @@ RunTest: Execute
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin 0 --GenPrimaryMax 0.5 \
-		--WorldXMin 0 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--WorldXMin 0 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.8 --WorldRMax 1.18 --LogY false \
 		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
 		--LegendX 0.5 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.25 \
 		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4",-1,0.76,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
 		--IgnoreGroup 2 --Row 2 --Column 4
 	./Execute --Input Input/DataJetRGNominal.root \
