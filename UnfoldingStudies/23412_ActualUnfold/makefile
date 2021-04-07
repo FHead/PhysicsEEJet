@@ -75,8 +75,8 @@ RunIterationStudies: Execute ExecutePlot
 		--Output Plots/ToyJetRGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/ToyJetMGNominal.root --Original InputToy/ToyJetMGNominal.root \
-		--Output Plots/ToyJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/ToyJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 
 RunDataIterationStudies: Execute ExecutePlot
 	./Execute --Input InputToy/ToyDataJetENominal.root --Output Unfolded/ToyDataJetENominal.root
@@ -95,8 +95,8 @@ RunDataIterationStudies: Execute ExecutePlot
 		--Output Plots/ToyDataJetRGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/ToyDataJetMGNominal.root --Original InputToy/ToyDataJetMGNominal.root \
-		--Output Plots/ToyDataJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/ToyDataJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 
 RunDataUnfoldNominal: Execute ExecutePlot
 	./Execute --Input Input/DataJetENominal.root --Output Unfolded/DataJetENominal.root
@@ -117,8 +117,8 @@ RunDataUnfoldNominal: Execute ExecutePlot
 		--Output Plots/DataJetRGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
 	./ExecutePlot --Input Unfolded/DataJetMGNominal.root --Original Input/DataJetMGNominal.root \
-		--Output Plots/DataJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
+		--Output Plots/DataJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15 --Iteration 7
 	./ExecutePlot --Input Unfolded/DataJetZG2Nominal.root --Original Input/DataJetZG2Nominal.root \
 		--Output Plots/DataJetZG2Nominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.5 --Iteration 11
@@ -193,8 +193,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGMCPrior.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
 	./ExecutePlot --Input Unfolded/DataJetMGMCPrior.root --Original Input/DataJetMGNominal.root \
-		--Output Plots/DataJetMGMCPrior.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
+		--Output Plots/DataJetMGMCPrior.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15 --Iteration 7
 	./ExecutePlot --Input Unfolded/DataJetENoResidual.root --Original Input/DataJetENoResidual.root \
 		--Output Plots/DataJetENoResidual.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetENoResidual.root --Original Input/DataLeadingDiJetENoResidual.root \
@@ -206,8 +206,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGNoResidual.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGNoResidual.root --Original Input/DataJetMGNoResidual.root \
-		--Output Plots/DataJetMGNoResidual.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGNoResidual.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 	./ExecutePlot --Input Unfolded/DataJetEJECUp.root --Original Input/DataJetEJECUp.root \
 		--Output Plots/DataJetEJECUp.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECUp.root --Original Input/DataLeadingDiJetEJECUp.root \
@@ -219,8 +219,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGJECUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGJECUp.root --Original Input/DataJetMGJECUp.root \
-		--Output Plots/DataJetMGJECUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGJECUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 	./ExecutePlot --Input Unfolded/DataJetEJECDown.root --Original Input/DataJetEJECDown.root \
 		--Output Plots/DataJetEJECDown.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECDown.root --Original Input/DataLeadingDiJetEJECDown.root \
@@ -232,8 +232,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGJECDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGJECDown.root --Original Input/DataJetMGJECDown.root \
-		--Output Plots/DataJetMGJECDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGJECDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 	./ExecutePlot --Input Unfolded/DataJetEJECHalfUp.root --Original Input/DataJetEJECHalfUp.root \
 		--Output Plots/DataJetEJECHalfUp.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECHalfUp.root --Original Input/DataLeadingDiJetEJECHalfUp.root \
@@ -245,8 +245,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGJECHalfUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGJECHalfUp.root --Original Input/DataJetMGJECHalfUp.root \
-		--Output Plots/DataJetMGJECHalfUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGJECHalfUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 	./ExecutePlot --Input Unfolded/DataJetEJECHalfDown.root --Original Input/DataJetEJECHalfDown.root \
 		--Output Plots/DataJetEJECHalfDown.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECHalfDown.root --Original Input/DataLeadingDiJetEJECHalfDown.root \
@@ -258,8 +258,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGJECHalfDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGJECHalfDown.root --Original Input/DataJetMGJECHalfDown.root \
-		--Output Plots/DataJetMGJECHalfDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGJECHalfDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 	./ExecutePlot --Input Unfolded/DataJetEJERUp.root --Original Input/DataJetEJERUp.root \
 		--Output Plots/DataJetEJERUp.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJERUp.root --Original Input/DataLeadingDiJetEJERUp.root \
@@ -271,8 +271,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGJERUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGJERUp.root --Original Input/DataJetMGJERUp.root \
-		--Output Plots/DataJetMGJERUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGJERUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 	./ExecutePlot --Input Unfolded/DataJetEJERDown.root --Original Input/DataJetEJERDown.root \
 		--Output Plots/DataJetEJERDown.pdf
 	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJERDown.root --Original Input/DataLeadingDiJetEJERDown.root \
@@ -284,8 +284,8 @@ RunDataUnfold: Execute ExecutePlot
 		--Output Plots/DataJetRGJERDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
 	./ExecutePlot --Input Unfolded/DataJetMGJERDown.root --Original Input/DataJetMGJERDown.root \
-		--Output Plots/DataJetMGJERDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75
+		--Output Plots/DataJetMGJERDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15
 
 RunMCUnfold: Execute ExecutePlot
 	./Execute --Input Input/MCJetENominal.root --Output Unfolded/MCJetENominal.root
@@ -304,8 +304,8 @@ RunMCUnfold: Execute ExecutePlot
 		--Output Plots/MCJetRGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 2
 	./ExecutePlot --Input Unfolded/MCJetMGNominal.root --Original Input/MCJetMGNominal.root \
-		--Output Plots/MCJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.75 \
-		--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 2
+		--Output Plots/MCJetMGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 15 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 15 --Iteration 2
 
 RunMCNoJECUnfold: Execute ExecutePlot
 	./Execute --Input Input/MCJetENoJEC.root --Output Unfolded/MCJetENoJEC.root

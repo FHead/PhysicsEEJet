@@ -216,140 +216,55 @@ public:
       if(Type == ObservableThrust && Step == Matched)
          return MatchedThrust;
 
+      // Gen and reco jets are sorted.  Matched is same order as gen
       if(Type == ObservableLeadingJetE && Step == Gen)
-      {
-         double BestE = -1;
-         for(int i = 0; i < GenJetE->size(); i++)
-            if(BestE < (*GenJetE)[i])
-               BestE = (*GenJetE)[i];
-         return BestE;
-      }
+         return ((GenJetE->size() >= 1) ? (*GenJetE)[0] : -1);
       if(Type == ObservableLeadingJetE && Step == Reco)
       {
-         double BestE = -1;
-         for(int i = 0; i < RecoJetE->size(); i++)
-         {
-            double E = (*RecoJetE)[i] * (1 + Shift * (*RecoJetJEU)[i] / (*RecoJetJEC)[i]);
-            if(BestE < E)
-               BestE = E;
-         }
-         return BestE;
+         double Value = ((RecoJetE->size() >= 1) ? (*RecoJetE)[0] : -1);
+         Value = Value * (1 + Shift * (*RecoJetJEU)[0] / (*RecoJetJEC)[0]);
+         return Value;
       }
-      if(Type == ObservableLeadingJetE && Step == Matched)
+      if(Type == ObservableLeadingJetE && Step == Matched)   // returning the jet matched to leading gen jet
       {
-         double BestE = -1;
-         for(int i = 0; i < MatchedJetE->size(); i++)
-         {
-            double E = (*MatchedJetE)[i] * (1 + Shift * (*MatchedJetJEU)[i] / (*MatchedJetJEC)[i]);
-            E = (E - (*GenJetE)[i]) * Smear + (*GenJetE)[i];
-            if(BestE < E)
-               BestE = E;
-         }
-         return BestE;
+         double Value = ((MatchedJetE->size() >= 1) ? (*MatchedJetE)[0] : -1);
+         Value = Value * (1 + Shift * (*MatchedJetJEU)[0] / (*MatchedJetJEC)[0]);
+         Value = (Value - (*GenJetE)[0]) * Smear + (*GenJetE)[0];
+         return Value;
       }
 
+      // Gen and reco jets are sorted.  Matched is same order as gen
       if(Type == ObservableLeadingDiJetE && Step == Gen)
-      {
-         double BestE1 = -1, BestE2 = -1;
-         for(int i = 0; i < GenJetE->size(); i++)
-         {
-            if(BestE1 < (*GenJetE)[i])
-            {
-               BestE2 = BestE1;
-               BestE1 = (*GenJetE)[i];
-            }
-            else if(BestE2 < (*GenJetE)[i])
-               BestE2 = (*GenJetE)[i];
-         }
-         if(Item == 0)
-            return BestE1;
-         return BestE2;
-      }
+         return ((GenJetE->size() > Item) ? (*GenJetE)[Item] : -1);
       if(Type == ObservableLeadingDiJetE && Step == Reco)
       {
-         double BestE1 = -1, BestE2 = -1;
-         for(int i = 0; i < RecoJetE->size(); i++)
-         {
-            double E = (*RecoJetE)[i] * (1 + Shift * (*RecoJetJEU)[i] / (*RecoJetJEC)[i]);
-            if(BestE1 < E)
-            {
-               BestE2 = BestE1;
-               BestE1 = E;
-            }
-            else if(BestE2 < E)
-               BestE2 = E;
-         }
-         if(Item == 0)
-            return BestE1;
-         return BestE2;
+         double Value = ((RecoJetE->size() > Item) ? (*RecoJetE)[Item] : -1);
+         Value = Value * (1 + Shift * (*RecoJetJEU)[Item] / (*RecoJetJEC)[Item]);
+         return Value;
       }
       if(Type == ObservableLeadingDiJetE && Step == Matched)
       {
-         double BestE1 = -1, BestE2 = -1;
-         for(int i = 0; i < MatchedJetE->size(); i++)
-         {
-            double E = (*MatchedJetE)[i] * (1 + Shift * (*MatchedJetJEU)[i] / (*MatchedJetJEC)[i]);
-            E = (E - (*GenJetE)[i]) * Smear + (*GenJetE)[i];
-            if(BestE1 < E)
-            {
-               BestE2 = BestE1;
-               BestE1 = E;
-            }
-            else if(BestE2 < E)
-               BestE2 = E;
-         }
-         if(Item == 0)
-            return BestE1;
-         return BestE2;
+         double Value = ((MatchedJetE->size() > Item) ? (*MatchedJetE)[Item] : -1);
+         Value = Value * (1 + Shift * (*MatchedJetJEU)[Item] / (*MatchedJetJEC)[Item]);
+         Value = (Value - (*GenJetE)[Item]) * Smear + (*GenJetE)[Item];
+         return Value;
       }
 
+      // Gen and reco jets are sorted.  Matched is same order as gen
       if(Type == ObservableSubleadingJetE && Step == Gen)
-      {
-         double BestE1 = -1, BestE2 = -1;
-         for(int i = 0; i < GenJetE->size(); i++)
-         {
-            if(BestE1 < (*GenJetE)[i])
-            {
-               BestE2 = BestE1;
-               BestE1 = (*GenJetE)[i];
-            }
-            else if(BestE2 < (*GenJetE)[i])
-               BestE2 = (*GenJetE)[i];
-         }
-         return BestE2;
-      }
+         return ((GenJetE->size() >= 2) ? (*GenJetE)[1] : -1);
       if(Type == ObservableSubleadingJetE && Step == Reco)
       {
-         double BestE1 = -1, BestE2 = -1;
-         for(int i = 0; i < RecoJetE->size(); i++)
-         {
-            double E = (*RecoJetE)[i] * (1 + Shift * (*RecoJetJEU)[i] / (*RecoJetJEC)[i]);
-            if(BestE1 < E)
-            {
-               BestE2 = BestE1;
-               BestE1 = E;
-            }
-            else if(BestE2 < E)
-               BestE2 = E;
-         }
-         return BestE2;
+         double Value = ((RecoJetE->size() >= 2) ? (*RecoJetE)[1] : -1);
+         Value = Value * (1 + Shift * (*RecoJetJEU)[1] / (*RecoJetJEC)[1]);
+         return Value;
       }
       if(Type == ObservableSubleadingJetE && Step == Matched)
       {
-         double BestE1 = -1, BestE2 = -1;
-         for(int i = 0; i < MatchedJetE->size(); i++)
-         {
-            double E = (*MatchedJetE)[i] * (1 + Shift * (*MatchedJetJEU)[i] / (*MatchedJetJEC)[i]);
-            E = (E - (*GenJetE)[i]) * Smear + (*GenJetE)[i];
-            if(BestE1 < E)
-            {
-               BestE2 = BestE1;
-               BestE1 = E;
-            }
-            else if(BestE2 < E)
-               BestE2 = E;
-         }
-         return BestE2;
+         double Value = ((RecoJetE->size() >= 2) ? (*RecoJetE)[1] : -1);
+         Value = Value * (1 + Shift * (*MatchedJetJEU)[1] / (*MatchedJetJEC)[1]);
+         Value = (Value - (*GenJetE)[1]) * Smear + (*GenJetE)[1];
+         return Value;
       }
 
       if(Type == ObservableJetE && Step == Gen && Item < GenJetE->size())

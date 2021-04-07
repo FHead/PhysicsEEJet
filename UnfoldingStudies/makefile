@@ -5,7 +5,7 @@ default: Systematics FinalPlot
 RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot
 
 JetClustering:
-	(cd 23411_JetResponseClustering/ && make Prepare TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunThetaSides TestRunStock TestRunPythia8 TestRunHerwig)
+	(cd 23411_JetResponseClustering/ && make Prepare TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunThetaSides TestRunStock TestRunPythia8 TestRunHerwig TestRunSherpa)
 
 UnfoldPreparation:
 	(cd 23411_UnfoldingPreparation/ && make RunAll)

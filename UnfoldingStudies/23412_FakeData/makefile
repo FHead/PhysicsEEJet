@@ -18,6 +18,10 @@ TestRun: Execute
 		--Shape PerfectInput/PerfectJetENominal.root \
 		--Yield Input/DataJetENominal.root \
 		--Output Output/ToyJetENominal.root
+	./Execute --MC Input/MCLeadingDiJetENominal.root \
+		--Shape PerfectInput/PerfectLeadingDiJetENominal.root \
+		--Yield Input/DataLeadingDiJetENominal.root \
+		--Output Output/ToyLeadingDiJetENominal.root
 	./Execute --MC Input/MCJetZGNominal.root \
 		--Shape PerfectInput/PerfectJetZGNominal.root \
 		--Yield Input/DataJetZGNominal.root \
@@ -26,6 +30,10 @@ TestRun: Execute
 		--Shape PerfectInput/PerfectJetRGNominal.root \
 		--Yield Input/DataJetRGNominal.root \
 		--Output Output/ToyJetRGNominal.root
+	./Execute --MC Input/MCJetMGNominal.root \
+		--Shape PerfectInput/PerfectJetMGNominal.root \
+		--Yield Input/DataJetMGNominal.root \
+		--Output Output/ToyJetMGNominal.root
 
 TestRunStatistics: Execute
 	for i in `seq 1001 1250`; do \
@@ -35,6 +43,11 @@ TestRunStatistics: Execute
 			--Yield Input/DataJetENominal.root \
 			--Seed $$i \
 			--Output Output/ToyDataJetEStatistics_$${i}.root; \
+		./Execute --MC Input/MCLeadingDiJetENominal.root \
+			--Shape PerfectInput/PerfectDataLeadingDiJetENominal.root \
+			--Yield Input/DataLeadingDiJetENominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataLeadingDiJetEStatistics_$${i}.root; \
 		./Execute --MC Input/MCJetZGNominal.root \
 			--Shape PerfectInput/PerfectDataJetZGNominal.root \
 			--Yield Input/DataJetZGNominal.root \
@@ -45,6 +58,11 @@ TestRunStatistics: Execute
 			--Yield Input/DataJetRGNominal.root \
 			--Seed $$i \
 			--Output Output/ToyDataJetRGStatistics_$${i}.root; \
+		./Execute --MC Input/MCJetMGNominal.root \
+			--Shape PerfectInput/PerfectDataJetMGNominal.root \
+			--Yield Input/DataJetMGNominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataJetMGStatistics_$${i}.root; \
 	done
 
 TestRunData: Execute
@@ -52,6 +70,10 @@ TestRunData: Execute
 		--Shape PerfectInput/PerfectDataJetENominal.root \
 		--Yield Input/DataJetENominal.root \
 		--Output Output/ToyDataJetENominal.root
+	./Execute --MC Input/MCLeadingDiJetENominal.root \
+		--Shape PerfectInput/PerfectDataLeadingDiJetENominal.root \
+		--Yield Input/DataLeadingDiJetENominal.root \
+		--Output Output/ToyDataLeadingDiJetENominal.root
 	./Execute --MC Input/MCJetZGNominal.root \
 		--Shape PerfectInput/PerfectDataJetZGNominal.root \
 		--Yield Input/DataJetZGNominal.root \
@@ -60,6 +82,10 @@ TestRunData: Execute
 		--Shape PerfectInput/PerfectDataJetRGNominal.root \
 		--Yield Input/DataJetRGNominal.root \
 		--Output Output/ToyDataJetRGNominal.root
+	./Execute --MC Input/MCJetMGNominal.root \
+		--Shape PerfectInput/PerfectDataJetMGNominal.root \
+		--Yield Input/DataJetMGNominal.root \
+		--Output Output/ToyDataJetMGNominal.root
 
 Execute: GenerateFakeData.cpp
 	CompileRootMacro GenerateFakeData.cpp Execute
