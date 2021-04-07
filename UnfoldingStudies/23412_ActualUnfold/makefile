@@ -338,6 +338,7 @@ RunMCUnfold: Execute ExecutePlot
 	./Execute --Input Input/MCJetRGNominal.root --Output Unfolded/MCJetRGNominal.root
 	./Execute --Input Input/MCJetMGNominal.root --Output Unfolded/MCJetMGNominal.root
 	./Execute --Input Input/MCJetMGENominal.root --Output Unfolded/MCJetMGENominal.root
+	./Execute --Input Input/MCJetMGELowECut.root --Output Unfolded/MCJetMGELowECut.root
 	./ExecutePlot --Input Unfolded/MCJetENominal.root --Original Input/MCJetENominal.root \
 		--Output Plots/MCJetENominal.pdf --Iteration 2
 	./ExecutePlot --Input Unfolded/MCLeadingDiJetENominal.root --Original Input/MCLeadingDiJetENominal.root \
@@ -353,6 +354,9 @@ RunMCUnfold: Execute ExecutePlot
 		--RecoPrimaryMin 0 --RecoPrimaryMax 15 --Iteration 2
 	./ExecutePlot --Input Unfolded/MCJetMGENominal.root --Original Input/MCJetMGENominal.root \
 		--Output Plots/MCJetMGENominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
+		--RecoPrimaryMin 0 --RecoPrimaryMax 0.3 --Iteration 2
+	./ExecutePlot --Input Unfolded/MCJetMGELowECut.root --Original Input/MCJetMGELowECut.root \
+		--Output Plots/MCJetMGELowECut.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 		--RecoPrimaryMin 0 --RecoPrimaryMax 0.3 --Iteration 2
 
 RunMCNoJECUnfold: Execute ExecutePlot
