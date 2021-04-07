@@ -16,6 +16,13 @@ RunTest: Execute
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
+	./Execute --Input Input/DataLeadingDiJetENominal.root \
+		--Output Plots/DataLeadingDiJetENominal.pdf --FinalOutput Plots/MatrixLeadingDiJet.$(Format) \
+		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 50 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 50 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
+		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
+		--XAxis 505 --YAxis 505 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
 	./Execute --Input Input/DataJetZGNominal.root \
 		--Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/MatrixZG.$(Format) \
 		--WorldXMin 0 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 0.4999 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
@@ -27,6 +34,20 @@ RunTest: Execute
 		--Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/MatrixRG.$(Format) \
 		--WorldXMin 0 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 0.4999 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
 		--GenPrimaryMin 0 --GenPrimaryMax 0.5 --RecoPrimaryMin 0 --RecoPrimaryMax 0.5 \
+		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
+		--XAxis 303 --YAxis 303 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
+	./Execute --Input Input/DataJetMGNominal.root \
+		--Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/MatrixMG.$(Format) \
+		--WorldXMin 0 --WorldXMax 11.999 --WorldYMin 0 --WorldYMax 11.999 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 15 --RecoPrimaryMin 0 --RecoPrimaryMax 15 \
+		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
+		--XAxis 303 --YAxis 303 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
+	./Execute --Input Input/DataJetMGENominal.root \
+		--Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/MatrixMGE.$(Format) \
+		--WorldXMin 0 --WorldXMax 0.3 --WorldYMin 0 --WorldYMax 0.3 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 0.3 --RecoPrimaryMin 0 --RecoPrimaryMax 0.3 \
 		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
