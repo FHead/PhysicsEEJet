@@ -15,6 +15,7 @@ void AddQuadrature(TH1D &HTotalPlus, TH1D &HTotalMinus, TH1D &HNominal, TH1D &HV
 void DoBridging(TH1D *HB, TH1D *H, int Pattern = 0);
 void DoBridgingPattern1(TH1D *HB, TH1D *H);
 void DoBridgingPattern2(TH1D *HB, TH1D *H);
+void DoBridgingPattern3(TH1D *HB, TH1D *H);
 
 int main(int argc, char *argv[])
 {
@@ -203,6 +204,8 @@ void DoBridging(TH1D *HB, TH1D *H, int Pattern)
       DoBridgingPattern1(HB, H);
    if(Pattern == 2)
       DoBridgingPattern2(HB, H);
+   if(Pattern == 3)
+      DoBridgingPattern3(HB, H);
 }
 
 void DoBridgingPattern1(TH1D *HB, TH1D *H)
@@ -286,6 +289,71 @@ void DoBridgingPattern2(TH1D *HB, TH1D *H)
          V[j] = V[Start] + (V[i] - V[Start]) / (i - Start) * (j - Start);
       Start = i;
    }   
+   
+   for(int i = 1; i <= N; i++)
+      H->SetBinContent(i, HB->GetBinContent(i) * (1 + V[i-1]));
+}
+
+void DoBridgingPattern3(TH1D *HB, TH1D *H)
+{
+   int Ignore = 1;
+
+   if(HB == nullptr || H == nullptr)
+      return;
+
+   int N = HB->GetNbinsX();
+   vector<double> V(N);
+   for(int i = 1; i <= N; i++)
+      V[i-1] = H->GetBinContent(i) / HB->GetBinContent(i) - 1;
+
+   vector<int> Maximum(N);
+   for(int i = 1; i < N - 1 - Ignore; i++)
+   {
+      if(V[i] > V[i-1] && V[i] > V[i+1] && V[i] > 0)
+         Maximum[i] = 1;
+      if(V[i] < V[i-1] && V[i] < V[i+1] && V[i] < 0)
+         Maximum[i] = -1;
+   }
+   if(V[N-1-Ignore] > V[N-2-Ignore] && V[N-1-Ignore] > 0)
+      Maximum[N-1-Ignore] = 1;
+   if(V[N-1-Ignore] < V[N-2-Ignore] && V[N-1-Ignore] < 0)
+      Maximum[N-1-Ignore] = -1;
+
+   for(int i = 0; i < N; i++)
+      V[i] = fabs(V[i]);
+
+   int Start = -1;
+   for(int i = 0; i < N; i++)
+   {
+      if(Maximum[i] == 0)
+         continue;
+
+      if(Start < 0)
+      {
+         Start = i;
+         continue;
+      }
+
+      if(Maximum[Start] == Maximum[i])
+      {
+         Start = i;
+         continue;
+      }
+
+      for(int j = Start + 1; j < i; j++)
+         V[j] = V[Start] + (V[i] - V[Start]) / (i - Start) * (j - Start);
+      Start = i;
+   }
+
+   for(int i = N - 1; i >= 0; i--)
+   {
+      if(Maximum[i] == 0)
+         continue;
+
+      for(int j = i; j < N; j++)
+         V[j] = V[i];
+      break;
+   }
    
    for(int i = 1; i <= N; i++)
       H->SetBinContent(i, HB->GetBinContent(i) * (1 + V[i-1]));

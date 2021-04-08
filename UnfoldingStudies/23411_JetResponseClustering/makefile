@@ -1,6 +1,10 @@
 Fraction = 1
 
-default: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8 TestRunHerwig TestRunSherpa
+default:
+
+RunGroup1: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8 TestRunHerwig TestRunSherpa
+
+RunGroup2: TestRunCutSumE TestRunLargeThetaGapSumE TestRunThetaSidesSumE TestRunPythia8SumE TestRunHerwigSumE TestRunSherpaSumE TestRunCutLowerSumE
 
 Prepare:
 	rm -f Pythia8Samples SamplesData SamplesMC HerwigSamples SherpaSamples
@@ -35,6 +39,26 @@ TestRunCut: Execute
 		--Output MC.root --MC true --BaselineCut true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
 
+TestRunCutSumE: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+
+TestRunCutLowerSumE: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataLowerSumE.root --MC false --BaselineCut true --RecoSumECut 81 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCLowerSumE.root --MC true --BaselineCut true --GenSumECut 81 --RecoSumECut 81 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+
 TestRunStock: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
@@ -45,7 +69,19 @@ TestRunStock: Execute
 		--Output MCStock.root --MC true --BaselineCut true --UseStored true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
 
-TestRunLargeThetaGap: Execute
+TestRunLargeThetaGapSumE: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataLargeThetaGapSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--ThetaMin 0.8 --ThetaMax 2.3415926535
+	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCLargeThetaGapSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83\
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--ThetaMin 0.8 --ThetaMax 2.3415926535
+	
+TestRunLargeThetaGap:
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataLargeThetaGap.root --MC false --BaselineCut true \
@@ -56,6 +92,28 @@ TestRunLargeThetaGap: Execute
 		--Output MCLargeThetaGap.root --MC true --BaselineCut true \
 		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
 		--ThetaMin 0.8 --ThetaMax 2.3415926535
+
+TestRunThetaSidesSumE: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataPositiveThetaSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--ThetaMin 1.570796 --ThetaMax 2.513274
+	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCPositiveThetaSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--ThetaMin 1.570796 --ThetaMax 2.513274
+	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataNegativeThetaSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--ThetaMin 0.628319 --ThetaMax 1.570796
+	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCNegativeThetaSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83\
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--ThetaMin 0.628319 --ThetaMax 1.570796
 
 TestRunThetaSides: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
@@ -93,15 +151,32 @@ TestRunNoJEC: Execute
 		--Fraction $(Fraction) \
 		--Output MCNoJEC.root --MC true --BaselineCut true
 
+TestRunPythia8SumE: Execute
+	time ./Execute --Input Pythia8Samples/PurePythia91.root \
+		--Fraction $(Fraction) \
+		--Output MCPythia8SumE.root --MC true --BaselineCut false --GenSumECut 83
+
 TestRunPythia8: Execute
 	time ./Execute --Input Pythia8Samples/PurePythia91.root \
 		--Fraction $(Fraction) \
 		--Output MCPythia8.root --MC true --BaselineCut false
 
+TestRunHerwigSumE: Execute
+	time ./Execute --Input HerwigSamples/run_00/Belle_0_0.root \
+		--Fraction $(Fraction) \
+		--Output MCHerwigSumE.root --MC true --BaselineCut false --GenSumECut 83 \
+		--GenTreeName t --RecoTreeName treco
+
 TestRunHerwig: Execute
 	time ./Execute --Input HerwigSamples/run_00/Belle_0_0.root \
 		--Fraction $(Fraction) \
 		--Output MCHerwig.root --MC true --BaselineCut false \
+		--GenTreeName t --RecoTreeName treco
+
+TestRunSherpaSumE: Execute
+	time ./Execute --Input SherpaSamples/run_00/Belle_0_0.root \
+		--Fraction $(Fraction) \
+		--Output MCSherpaSumE.root --MC true --BaselineCut false --GenSumECut 83 \
 		--GenTreeName t --RecoTreeName treco
 
 TestRunSherpa: Execute

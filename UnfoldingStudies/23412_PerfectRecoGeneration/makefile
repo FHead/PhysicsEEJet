@@ -25,13 +25,15 @@ TestRun: Execute
 		--Output Output/PerfectJetRGNominal.root
 	./Execute --MC Input/MCJetMGNominal.root --Yield Input/MCJetMGNominal.root \
 		--Output Output/PerfectJetMGNominal.root
+	./Execute --MC Input/MCJetMGENominal.root --Yield Input/MCJetMGENominal.root \
+		--Output Output/PerfectJetMGENominal.root
 
 TestRunData: Execute
 	./Execute --MC Input/MCJetENominal.root --Yield Input/DataJetENominal.root \
 		--Gen UnfoldedInput/DataJetENominal.root --GenHistogram HUnfoldedBayes2 \
 		--Output Output/PerfectDataJetENominal.root
 	./Execute --MC Input/MCLeadingDiJetENominal.root --Yield Input/DataLeadingDiJetENominal.root \
-		--Gen UnfoldedInput/DataLeadingDiJetENominal.root --GenHistogram HUnfoldedBayes2 \
+		--Gen UnfoldedInput/DataLeadingDiJetENominal.root --GenHistogram HUnfoldedBayes1 \
 		--Output Output/PerfectDataLeadingDiJetENominal.root
 	./Execute --MC Input/MCJetZGNominal.root --Yield Input/DataJetZGNominal.root \
 		--Gen UnfoldedInput/DataJetZGNominal.root --GenHistogram HUnfoldedBayes2 \
@@ -40,8 +42,11 @@ TestRunData: Execute
 		--Gen UnfoldedInput/DataJetRGNominal.root --GenHistogram HUnfoldedBayes2 \
 		--Output Output/PerfectDataJetRGNominal.root
 	./Execute --MC Input/MCJetMGNominal.root --Yield Input/DataJetMGNominal.root \
-		--Gen UnfoldedInput/DataJetMGNominal.root --GenHistogram HUnfoldedBayes2 \
+		--Gen UnfoldedInput/DataJetMGNominal.root --GenHistogram HUnfoldedBayes5 \
 		--Output Output/PerfectDataJetMGNominal.root
+	./Execute --MC Input/MCJetMGENominal.root --Yield Input/DataJetMGENominal.root \
+		--Gen UnfoldedInput/DataJetMGENominal.root --GenHistogram HUnfoldedBayes2 \
+		--Output Output/PerfectDataJetMGENominal.root
 
 Execute: GeneratePerfectData.cpp
 	CompileRootMacro GeneratePerfectData.cpp Execute

@@ -214,6 +214,14 @@ public:
       return 0;
    }
    double GetValue(ObservableStep Step, ObservableType &Type, int Index, int Item,
+      double Shift = 0, double Smear = 1, double ExtraScale = 1)
+   {
+      double Value = GetValueNoScale(Step, Type, Index, Item, Shift, Smear);
+      if(Value > 0)
+         Value = Value * ExtraScale;
+      return Value;
+   }
+   double GetValueNoScale(ObservableStep Step, ObservableType &Type, int Index, int Item,
       double Shift = 0, double Smear = 1)
    {
       if(Type == ObservableThrust && Step == Gen)
@@ -339,21 +347,21 @@ public:
       if(Type == ObservableMGE)
       {
          ObservableType SubType = ObservableMG;
-         double MG = GetValue(Step, SubType, Index, Item, Shift, Smear);
+         double MG = GetValueNoScale(Step, SubType, Index, Item, Shift, Smear);
          SubType = ObservableJetE;
-         double E  = GetValue(Step, SubType, Index, Item, Shift, Smear);
+         double E  = GetValueNoScale(Step, SubType, Index, Item, Shift, Smear);
          return MG / E;
       }
 
       return -1;
    }
    int GetSimpleBin(ObservableStep Step, ObservableType &Type, int Index, int Item, vector<double> &Bins,
-      double Shift = 0, double Smear = 1, double Min = -99999, double Max = 99999)
+      double Shift = 0, double Smear = 1, double ExtraScale = 1, double Min = -99999, double Max = 99999)
    {
       if(Bins.size() == 0)
          return 0;
 
-      double Value = GetValue(Step, Type, Index, Item, Shift, Smear);
+      double Value = GetValue(Step, Type, Index, Item, Shift, Smear, ExtraScale);
       if(Value < Min || Value > Max)
          return -1;
       for(int i = 0; i < (int)Bins.size(); i++)
@@ -364,22 +372,24 @@ public:
    }
    int GetCompositeBin(ObservableStep Step,
       ObservableType &Type1, int Index1, int Item1, vector<double> &Bins1, double Shift1, double Smear1,
-         double Min1, double Max1,
+         double ExtraScale1, double Min1, double Max1,
       ObservableType &Type2, int Index2, int Item2, vector<double> &Bins2, double Shift2, double Smear2,
-         double Min2, double Max2)
+         double ExtraScale2, double Min2, double Max2)
    {
       // #1 is the primary binning, and #2 is the additional binning
 
-      int SimpleBin1 = GetSimpleBin(Step, Type1, Index1, Item1, Bins1, Shift1, Smear1, Min1, Max1);
-      int SimpleBin2 = GetSimpleBin(Step, Type2, Index2, Item2, Bins2, Shift2, Smear2, Min2, Max2);
+      int SimpleBin1 = GetSimpleBin(Step, Type1, Index1, Item1, Bins1, Shift1, Smear1, ExtraScale1, Min1, Max1);
+      int SimpleBin2 = GetSimpleBin(Step, Type2, Index2, Item2, Bins2, Shift2, Smear2, ExtraScale2, Min2, Max2);
 
       if(Type2 == ObservableNone)
          return SimpleBin1;
 
       return SimpleBin2 * (Bins1.size() + 1) + SimpleBin1;
    }
-   double GetMatchedAngle(int Item)
+   double GetMatchedAngle(ObservableType Type, int Item)
    {
+      // Do we need something here for leading jets?  Maybe not since things are sorted...
+
       if(Item < 0)                          return 999;
       if(Item >= MatchedJetAngle->size())   return 999;
       return (*MatchedJetAngle)[Item];
@@ -416,6 +426,11 @@ int main(int argc, char *argv[])
    double BinningGenMax           = CL.GetDouble("BinningGenMax", +99999);
    double BinningRecoMin          = CL.GetDouble("BinningRecoMin", -99999);
    double BinningRecoMax          = CL.GetDouble("BinningRecoMax", +99999);
+
+   bool DoJetAugmentation         = CL.GetBool("JetAugmentation", false);
+   double JetAugmentationMin      = CL.GetDouble("JetAugmentationMin", -1);
+   double JetAugmentationMax      = CL.GetDouble("JetAugmentationMax", -1);
+   vector<double> JetAugmentationRanges = CL.GetDoubleVector("JetAugmentationRanges", vector<double>());
 
    sort(PrimaryGenBins.begin(), PrimaryGenBins.end());
    sort(PrimaryRecoBins.begin(), PrimaryRecoBins.end());
@@ -528,50 +543,81 @@ int main(int argc, char *argv[])
       for(int iJ = 0; iJ < NJet; iJ++)
       {
          int GenBin = MMC.GetCompositeBin(Gen,
-            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, PrimaryGenMin, PrimaryGenMax,
-            BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, BinningGenMin, BinningGenMax);
+            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, 1, PrimaryGenMin, PrimaryGenMax,
+            BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, 1, BinningGenMin, BinningGenMax);
          HMCGen.Fill(GenBin);
       }
 
-      NJet = MMC.GetItemCount(Gen, PrimaryType);
+      ObservableType PrimaryMatrixType = PrimaryType;
+      ObservableType BinningMatrixType = BinningType;
+      // if(PrimaryType == ObservableLeadingDiJetE)
+      //    PrimaryMatrixType = ObservableJetE;
+      // if(BinningType == ObservableLeadingDiJetE)
+      //    BinningMatrixType = ObservableJetE;
+
+      NJet = MMC.GetItemCount(Gen, PrimaryMatrixType);
       for(int iJ = 0; iJ < NJet; iJ++)
       {
-         double Angle = MMC.GetMatchedAngle(iJ);
+         double Angle = MMC.GetMatchedAngle(PrimaryMatrixType, iJ);
          if(CheckMatchAngle == true && (Angle > 0.2 || Angle < 0))
             continue;
 
          int GenBin = MMC.GetCompositeBin(Gen,
-            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, PrimaryGenMin, PrimaryGenMax,
-            BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, BinningGenMin, BinningGenMax);
+            PrimaryMatrixType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, 1, PrimaryGenMin, PrimaryGenMax,
+            BinningMatrixType, BinningIndex, iJ, BinningGenBins, 0, 1, 1, BinningGenMin, BinningGenMax);
          int MatchedBin = MMC.GetCompositeBin(Matched,
-            PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear,
+            PrimaryMatrixType, PrimaryIndex, iJ, PrimaryRecoBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear, 1,
                PrimaryRecoMin, PrimaryRecoMax,
-            BinningType, BinningIndex, iJ, BinningRecoBins, BinningUncertaintyShift, BinningUncertaintySmear,
+            BinningMatrixType, BinningIndex, iJ, BinningRecoBins, BinningUncertaintyShift, BinningUncertaintySmear, 1,
                BinningRecoMin, BinningRecoMax);
         
          int MatchedGenBin = MMC.GetCompositeBin(Matched,
-            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear,
+            PrimaryMatrixType, PrimaryIndex, iJ, PrimaryGenBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear, 1,
                PrimaryGenMin, PrimaryGenMax,
-            BinningType, BinningIndex, iJ, BinningGenBins, BinningUncertaintyShift, BinningUncertaintySmear,
+            BinningMatrixType, BinningIndex, iJ, BinningGenBins, BinningUncertaintyShift, BinningUncertaintySmear, 1,
                BinningGenMin, BinningGenMax);
 
          HMCMatched.Fill(MatchedBin);
          HResponse.Fill(MatchedBin, GenBin);
          
          HMCMatchedGenBin.Fill(MatchedGenBin);
+
+         if(DoJetAugmentation == true)
+         {
+            double GenValue = MMC.GetValue(Gen, PrimaryMatrixType, PrimaryIndex, iJ, 0, 1, 1);
+            if(GenValue > JetAugmentationMin && GenValue < JetAugmentationMax)
+            {
+               for(int iA = 0; iA + 1 < (int)JetAugmentationRanges.size(); iA++)
+               {
+                  double Scale = (JetAugmentationRanges[iA+1] + JetAugmentationRanges[iA])
+                     / (JetAugmentationMin + JetAugmentationMax);
+
+                  int NewGenBin = MMC.GetCompositeBin(Gen,
+                     PrimaryMatrixType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, Scale, PrimaryGenMin, PrimaryGenMax,
+                     BinningMatrixType, BinningIndex, iJ, BinningGenBins, 0, 1, Scale, BinningGenMin, BinningGenMax);
+                  int NewMatchedBin = MMC.GetCompositeBin(Matched,
+                     PrimaryMatrixType, PrimaryIndex, iJ, PrimaryRecoBins, PrimaryUncertaintyShift, PrimaryUncertaintySmear,
+                        Scale, PrimaryRecoMin, PrimaryRecoMax,
+                     BinningMatrixType, BinningIndex, iJ, BinningRecoBins, BinningUncertaintyShift, BinningUncertaintySmear,
+                        Scale, BinningRecoMin, BinningRecoMax);
+         
+                  HResponse.Fill(NewMatchedBin, NewGenBin);
+                }
+            }
+         }
       }
 
       NJet = MMC.GetItemCount(Reco, PrimaryType);
       for(int iJ = 0; iJ < NJet; iJ++)
       {
          int RecoBin = MMC.GetCompositeBin(Reco,
-            PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, 0, 1, PrimaryRecoMin, PrimaryRecoMax,
-            BinningType, BinningIndex, iJ, BinningRecoBins, 0, 1, BinningRecoMin, BinningRecoMax);
+            PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, 0, 1, 1, PrimaryRecoMin, PrimaryRecoMax,
+            BinningType, BinningIndex, iJ, BinningRecoBins, 0, 1, 1, BinningRecoMin, BinningRecoMax);
          HMCReco.Fill(RecoBin);
          
          int RecoGenBin = MMC.GetCompositeBin(Reco,
-            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, PrimaryGenMin, PrimaryGenMax,
-            BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, BinningGenMin, BinningGenMax);
+            PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, 1, PrimaryGenMin, PrimaryGenMax,
+            BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, 1, BinningGenMin, BinningGenMax);
          HMCRecoGenBin.Fill(RecoGenBin);
       }
    }
@@ -586,8 +632,8 @@ int main(int argc, char *argv[])
       for(int iJ = 0; iJ < NJet; iJ++)
       {
          int RecoBin = MData.GetCompositeBin(Reco,
-            PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, 0, 1, PrimaryRecoMin, PrimaryRecoMax,
-            BinningType, BinningIndex, iJ, BinningRecoBins, 0, 1, BinningRecoMin, BinningRecoMax);
+            PrimaryType, PrimaryIndex, iJ, PrimaryRecoBins, 0, 1, 1, PrimaryRecoMin, PrimaryRecoMax,
+            BinningType, BinningIndex, iJ, BinningRecoBins, 0, 1, 1, BinningRecoMin, BinningRecoMax);
          HDataReco.Fill(RecoBin);
       }
    }

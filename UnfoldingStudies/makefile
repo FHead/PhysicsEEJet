@@ -5,10 +5,10 @@ default: Systematics FinalPlot
 RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot
 
 JetClustering:
-	(cd 23411_JetResponseClustering/ && make Prepare TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunThetaSides TestRunStock TestRunPythia8 TestRunHerwig TestRunSherpa)
+	(cd 23411_JetResponseClustering/ && make Prepare RunGroup1 RunGroup2)
 
 UnfoldPreparation:
-	(cd 23411_UnfoldingPreparation/ && make RunAll)
+	(cd 23411_UnfoldingPreparation/ && make RunNominal)
 
 NominalUnfold:
 	(cd 23412_ActualUnfold && make Prepare RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunDataUnfold)
@@ -19,11 +19,11 @@ MCIterationScan:
 	(cd 23412_ActualUnfold && make RunIterationStudies)
 	(cd 23412_UnfoldIteration/ && make Prepare TestRun)
 	(cd 23415_SVDRegularization/ && make Prepare TestRun)
-	echo
-	echo "=============================================================="
-	echo "Please change the iteration count in data iteration scan input"
-	echo "=============================================================="
-	echo
+	#
+	# ==============================================================
+	# Please change the iteration count in data iteration scan input
+	# ==============================================================
+	#
 
 DataIterationScan:
 	(cd 23412_PerfectRecoGeneration/ && make TestRunData)
@@ -32,11 +32,11 @@ DataIterationScan:
 	(cd 23412_UnfoldIteration/ && make TestRunData)
 	(cd 23415_SVDRegularization/ && make TestRunData)
 	#
-	# "=============================================================="
-	# "Please change the iteration count in systematics"
-	# "Please change the SVD regularization in systematics"
-	# "Please change the iteration count in final output code"
-	# "=============================================================="
+	# ==============================================================
+	# Please change the iteration count in systematics
+	# Please change the SVD regularization in systematics
+	# Please change the iteration count in final output code
+	# ==============================================================
 	#
 
 Systematics:

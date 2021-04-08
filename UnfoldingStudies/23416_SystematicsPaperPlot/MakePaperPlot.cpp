@@ -21,10 +21,6 @@ using namespace std;
 
 int main(int argc, char *argv[]);
 vector<double> DetectBins(TH1D *HMin, TH1D *HMax);
-void HumanPlots(PdfFileHelper &PdfFile,
-   map<string, TH1D *> &H, vector<string> Names, vector<string> Labels, vector<int> Colors,
-   vector<double> Bins1, vector<double> Bins2,
-   string BinningObservable = "", string Title = "", string XTitle = "", string YTitle = "");
 void SelfNormalize(TH1D *H, vector<double> Bins1, vector<double> Bins2);
 TH1D *BuildSystematics(TH1D *HResult, TH1D *HVariation);
 vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2);
@@ -124,7 +120,7 @@ int main(int argc, char *argv[])
       }
    }
 
-   cout << "SVD 28 " << H1["HSVDRatio"]->GetBinContent(28) << endl;
+   // cout << "SVD 28 " << H1["HSVDRatio"]->GetBinContent(28) << endl;
 
    H1["HSystematicsRatioPlus"] = (TH1D *)InputFile.Get("HTotalPlus");
    H1["HSystematicsRatioMinus"] = (TH1D *)InputFile.Get("HTotalMinus");
@@ -163,7 +159,10 @@ int main(int argc, char *argv[])
       string HName = Form("HG%dRatio", i);
       GCurves[i] = Transcribe(H1[HName], GenBins1, GenBins2);
       for(TGraphAsymmErrors G : GCurves[i])
+      {
+         G.SetTitle(HName.c_str());
          PdfFile.AddPlot(G, "ap");
+      }
    }
 
    Labels.insert(Labels.begin(), "Total");
@@ -286,8 +285,8 @@ int main(int argc, char *argv[])
          GCurves[j][Index].SetLineWidth(2);
          GCurves[j][Index].SetMarkerStyle(20);
          GCurves[j][Index].SetMarkerSize(MarkerModifier);
-         GCurves[j][Index].SetLineColor(Colors[j%9]);
-         GCurves[j][Index].SetMarkerColor(Colors[j%9]);
+         GCurves[j][Index].SetLineColor(Colors[j%8]);
+         GCurves[j][Index].SetMarkerColor(Colors[j%8]);
                    
          GCurves[j][Index].Draw("pl");
 
@@ -426,7 +425,8 @@ TH1D *BuildSystematics(TH1D *HBase, TH1D *HVariation)
    {
       double V = HBase->GetBinContent(i);
       double R = HVariation->GetBinContent(i);
-      HSystematics->SetBinContent(i, fabs(R / V - 1));
+      if(V > 0)
+         HSystematics->SetBinContent(i, fabs(R / V - 1));
    }
 
    return HSystematics;
@@ -452,8 +452,8 @@ vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<doubl
       PrimaryBins[0] = PrimaryBins[1] - Delta * 0.05;
    if(PrimaryBins[PrimaryBinCount] > 998)
       PrimaryBins[PrimaryBinCount] = PrimaryBins[PrimaryBinCount-1] + Delta * 0.05;
-   if(PrimaryBins[0] < 0 && PrimaryBins[1] > 0)
-      PrimaryBins[0] = 0;
+   // if(PrimaryBins[0] < 0 && PrimaryBins[1] > 0)
+   //    PrimaryBins[0] = 0;
 
    for(int iB = 0; iB < BinningCount; iB++)
    {
@@ -468,6 +468,9 @@ vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<doubl
 
          Y = H->GetBinContent(i + iB * PrimaryBinCount + 1);
          DY = H->GetBinError(i + iB * PrimaryBinCount + 1);
+
+         if(Y != Y)     Y = 0;
+         if(DY != DY)   DY = 0;
 
          // double Width = PrimaryBins[i+1] - PrimaryBins[i];
          double Width = 1;

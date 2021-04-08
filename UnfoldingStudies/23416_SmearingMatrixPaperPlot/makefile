@@ -11,15 +11,15 @@ Prepare:
 RunTest: Execute
 	./Execute --Input Input/DataJetENominal.root \
 		--Output Plots/DataJetENominal.pdf --FinalOutput Plots/MatrixP.$(Format) \
-		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 50 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
-		--GenPrimaryMin 0 --GenPrimaryMax 50 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
+		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 46 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
 	./Execute --Input Input/DataLeadingDiJetENominal.root \
 		--Output Plots/DataLeadingDiJetENominal.pdf --FinalOutput Plots/MatrixLeadingDiJet.$(Format) \
-		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 50 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
-		--GenPrimaryMin 0 --GenPrimaryMax 50 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
+		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 46 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
@@ -40,15 +40,15 @@ RunTest: Execute
 	./Execute --Input Input/DataJetMGNominal.root \
 		--Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/MatrixMG.$(Format) \
 		--WorldXMin 0 --WorldXMax 11.999 --WorldYMin 0 --WorldYMax 11.999 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
-		--GenPrimaryMin 0 --GenPrimaryMax 15 --RecoPrimaryMin 0 --RecoPrimaryMax 15 \
-		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
+		--GenPrimaryMin -0.1 --GenPrimaryMax 15 --RecoPrimaryMin -0.1 --RecoPrimaryMax 15 \
+		--Primary "M_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
 	./Execute --Input Input/DataJetMGENominal.root \
 		--Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/MatrixMGE.$(Format) \
-		--WorldXMin 0 --WorldXMax 0.3 --WorldYMin 0 --WorldYMax 0.3 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
-		--GenPrimaryMin 0 --GenPrimaryMax 0.3 --RecoPrimaryMin 0 --RecoPrimaryMax 0.3 \
-		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
+		--WorldXMin 0 --WorldXMax 0.37 --WorldYMin 0 --WorldYMax 0.37 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 --RecoPrimaryMin -0.01 --RecoPrimaryMax 0.5 \
+		--Primary "M_{G}/E" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
 	# cp -f Plots/Meow*.pdf ~/WindowsHome/Downloads/
