@@ -35,7 +35,7 @@ default: Preparation
 
 RunThrust: ThrustNominalRun ThrustNoCutRun
 
-RunNominal: Preparation DataNominalRun DataLowerSumERun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun \
+RunNominal: Preparation DataNominalRun DataSumERun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun \
 	DataJECRun DataJERRun \
 	DataLargeThetaGapRun MCLargeThetaGapRun DataThetaSideRun MCThetaSideRun MCExtra
 
@@ -444,8 +444,15 @@ DataNominalRun: Execute
 	# 	--BinningRecoBins $(RecoJetECoarseBins) \
 	# 	--BinningUncertaintySmear 1.025
 
-DataLowerSumERun: Execute
+DataSumERun: Execute
 	time ./Execute --MC MCLowerSumE.root --Data DataLowerSumE.root --Output Output/DataLeadingDiJetELowerSumE.root \
+		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetLEBins) \
+		--ObservableRecoBins $(RecoJetLEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1 \
+		--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCHigherSumE.root --Data DataHigherSumE.root --Output Output/DataLeadingDiJetEHigherSumE.root \
 		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenJetLEBins) \
 		--ObservableRecoBins $(RecoJetLEBins) \

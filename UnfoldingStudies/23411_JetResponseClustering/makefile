@@ -1,10 +1,13 @@
-Fraction = 1
+Fraction    = 1
+MCJEC       = ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+ResidualJEC = ../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+DataJEC     = $(MCJEC),$(ResidualJEC)
 
 default:
 
 RunGroup1: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8 TestRunHerwig TestRunSherpa
 
-RunGroup2: TestRunCutSumE TestRunLargeThetaGapSumE TestRunThetaSidesSumE TestRunPythia8SumE TestRunHerwigSumE TestRunSherpaSumE TestRunCutLowerSumE
+RunGroup2: TestRunCutSumE TestRunLargeThetaGapSumE TestRunThetaSidesSumE TestRunPythia8SumE TestRunHerwigSumE TestRunSherpaSumE TestRunCutLowerSumE TestRunCutHigherSumE
 
 Prepare:
 	rm -f Pythia8Samples SamplesData SamplesMC HerwigSamples SherpaSamples
@@ -23,125 +26,135 @@ TestRun: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataNoCut.root --MC false \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+		--JEC $(DataJEC)
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCNoCut.root --MC true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC $(MCJEC)
 	
 TestRunCut: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output Data.root --MC false --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+		--JEC $(DataJEC)
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MC.root --MC true --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC $(MCJEC)
 
 TestRunCutSumE: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+		--JEC $(DataJEC)
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC $(MCJEC)
 
 TestRunCutLowerSumE: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataLowerSumE.root --MC false --BaselineCut true --RecoSumECut 81 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+		--JEC $(DataJEC)
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCLowerSumE.root --MC true --BaselineCut true --GenSumECut 81 --RecoSumECut 81 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC $(MCJEC)
+
+TestRunCutHigherSumE: Execute
+	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output DataHigherSumE.root --MC false --BaselineCut true --RecoSumECut 85 \
+		--JEC $(DataJEC)
+	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
+		--Fraction $(Fraction) \
+		--Output MCHigherSumE.root --MC true --BaselineCut true --GenSumECut 85 --RecoSumECut 85 \
+		--JEC $(MCJEC)
 
 TestRunStock: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataStock.root --MC false --BaselineCut true --UseStored true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
+		--JEC $(DataJEC)
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCStock.root --MC true --BaselineCut true --UseStored true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC $(MCJEC)
 
 TestRunLargeThetaGapSumE: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataLargeThetaGapSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--JEC $(DataJEC) \
 		--ThetaMin 0.8 --ThetaMax 2.3415926535
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCLargeThetaGapSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83\
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--JEC $(MCJEC) \
 		--ThetaMin 0.8 --ThetaMax 2.3415926535
 	
 TestRunLargeThetaGap:
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataLargeThetaGap.root --MC false --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--JEC $(DataJEC) \
 		--ThetaMin 0.8 --ThetaMax 2.3415926535
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCLargeThetaGap.root --MC true --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--JEC $(MCJEC) \
 		--ThetaMin 0.8 --ThetaMax 2.3415926535
 
 TestRunThetaSidesSumE: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataPositiveThetaSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--JEC $(DataJEC) \
 		--ThetaMin 1.570796 --ThetaMax 2.513274
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCPositiveThetaSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--JEC $(MCJEC) \
 		--ThetaMin 1.570796 --ThetaMax 2.513274
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataNegativeThetaSumE.root --MC false --BaselineCut true --RecoSumECut 83 \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--JEC $(DataJEC) \
 		--ThetaMin 0.628319 --ThetaMax 1.570796
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCNegativeThetaSumE.root --MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83\
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--JEC $(MCJEC) \
 		--ThetaMin 0.628319 --ThetaMax 1.570796
 
 TestRunThetaSides: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataPositiveTheta.root --MC false --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--JEC $(DataJEC) \
 		--ThetaMin 1.570796 --ThetaMax 2.513274
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCPositiveTheta.root --MC true --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--JEC $(MCJEC) \
 		--ThetaMin 1.570796 --ThetaMax 2.513274
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataNegativeTheta.root --MC false --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt \
+		--JEC $(DataJEC) \
 		--ThetaMin 0.628319 --ThetaMax 1.570796
 	time ./Execute --Input `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output MCNegativeTheta.root --MC true --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--JEC $(MCJEC) \
 		--ThetaMin 0.628319 --ThetaMax 1.570796
 
 TestRunNoResidual: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \
 		--Fraction $(Fraction) \
 		--Output DataNoResidual.root --MC false --BaselineCut true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC $(MCJEC)
 
 TestRunNoJEC: Execute
 	time ./Execute --Input `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"` \

@@ -66,6 +66,20 @@ RunTest: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1
+	./Execute --Input Input/DataLeadingDiJetENominal.root \
+		--Systematic Systematics/DataLeadingDiJetE.root --Output Plots/DataLeadingDiJetENominal.pdf --FinalOutput Plots/MeowLeadingDiJetELog.$(Format) \
+		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCHerwigLeadingDiJetE.root",OriginalInput/MCSherpaLeadingDiJetE.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA" \
+		--PrimaryName HUnfoldedBayes7 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0.000000004 --WorldYMax 12 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
+		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
+		--LegendX 0.45 --LegendY 0.10 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--IgnoreGroup 0 --Row 1 --Column 1
 	./Execute --Input Input/DataJetZGNominal.root \
 		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/MeowZG.$(Format) \
 		--MCFile "Input/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root \
