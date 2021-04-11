@@ -19,6 +19,8 @@ TestRun: Execute
 		--Output Output/PerfectJetENominal.root
 	./Execute --MC Input/MCLeadingDiJetENominal.root --Yield Input/MCLeadingDiJetENominal.root \
 		--Output Output/PerfectLeadingDiJetENominal.root
+	./Execute --MC Input/MCLeadingDiJetSumENominal.root --Yield Input/MCLeadingDiJetSumENominal.root \
+		--Output Output/PerfectLeadingDiJetSumENominal.root
 	./Execute --MC Input/MCJetZGNominal.root --Yield Input/MCJetZGNominal.root \
 		--Output Output/PerfectJetZGNominal.root
 	./Execute --MC Input/MCJetRGNominal.root --Yield Input/MCJetRGNominal.root \
@@ -35,6 +37,9 @@ TestRunData: Execute
 	./Execute --MC Input/MCLeadingDiJetENominal.root --Yield Input/DataLeadingDiJetENominal.root \
 		--Gen UnfoldedInput/DataLeadingDiJetENominal.root --GenHistogram HUnfoldedBayes1 \
 		--Output Output/PerfectDataLeadingDiJetENominal.root
+	./Execute --MC Input/MCLeadingDiJetSumENominal.root --Yield Input/DataLeadingDiJetSumENominal.root \
+		--Gen UnfoldedInput/DataLeadingDiJetSumENominal.root --GenHistogram HUnfoldedBayes1 \
+		--Output Output/PerfectDataLeadingDiJetSumENominal.root
 	./Execute --MC Input/MCJetZGNominal.root --Yield Input/DataJetZGNominal.root \
 		--Gen UnfoldedInput/DataJetZGNominal.root --GenHistogram HUnfoldedBayes2 \
 		--Output Output/PerfectDataJetZGNominal.root

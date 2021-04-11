@@ -15,6 +15,7 @@ RunStatistics: Execute
 	for i in `seq 1001 1250`; do \
 		./Execute --Input InputToy/ToyDataJetEStatistics_$${i}.root --Output Unfolded/ToyDataJetEStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataLeadingDiJetEStatistics_$${i}.root --Output Unfolded/ToyDataLeadingDiJetEStatistics_$${i}.root; \
+		./Execute --Input InputToy/ToyDataLeadingDiJetSumEStatistics_$${i}.root --Output Unfolded/ToyDataLeadingDiJetSumEStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataJetZGStatistics_$${i}.root --Output Unfolded/ToyDataJetZGStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataJetRGStatistics_$${i}.root --Output Unfolded/ToyDataJetRGStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataJetMGStatistics_$${i}.root --Output Unfolded/ToyDataJetMGStatistics_$${i}.root; \
@@ -60,16 +61,19 @@ RunThrustUnfold: Execute ExecutePlot
 		--RecoPrimaryMin 0.6 --RecoPrimaryMax 1.0
 
 RunIterationStudies: Execute ExecutePlot
-	./Execute --Input InputToy/ToyJetENominal.root --Output Unfolded/ToyJetENominal.root
-	./Execute --Input InputToy/ToyLeadingDiJetENominal.root --Output Unfolded/ToyLeadingDiJetENominal.root
+	# ./Execute --Input InputToy/ToyJetENominal.root --Output Unfolded/ToyJetENominal.root
+	# ./Execute --Input InputToy/ToyLeadingDiJetENominal.root --Output Unfolded/ToyLeadingDiJetENominal.root
+	./Execute --Input InputToy/ToyLeadingDiJetSumENominal.root --Output Unfolded/ToyLeadingDiJetSumENominal.root
 	# ./Execute --Input InputToy/ToyJetZGNominal.root --Output Unfolded/ToyJetZGNominal.root
 	# ./Execute --Input InputToy/ToyJetRGNominal.root --Output Unfolded/ToyJetRGNominal.root
 	# ./Execute --Input InputToy/ToyJetMGNominal.root --Output Unfolded/ToyJetMGNominal.root
 	# ./Execute --Input InputToy/ToyJetMGENominal.root --Output Unfolded/ToyJetMGENominal.root
-	./ExecutePlot --Input Unfolded/ToyJetENominal.root --Original InputToy/ToyJetENominal.root \
-		--Output Plots/ToyJetENominal.pdf
-	./ExecutePlot --Input Unfolded/ToyLeadingDiJetENominal.root --Original InputToy/ToyLeadingDiJetENominal.root \
-		--Output Plots/ToyLeadingDiJetENominal.pdf
+	# ./ExecutePlot --Input Unfolded/ToyJetENominal.root --Original InputToy/ToyJetENominal.root \
+	# 	--Output Plots/ToyJetENominal.pdf
+	# ./ExecutePlot --Input Unfolded/ToyLeadingDiJetENominal.root --Original InputToy/ToyLeadingDiJetENominal.root \
+	# 	--Output Plots/ToyLeadingDiJetENominal.pdf
+	./ExecutePlot --Input Unfolded/ToyLeadingDiJetSumENominal.root --Original InputToy/ToyLeadingDiJetSumENominal.root \
+		--Output Plots/ToyLeadingDiJetSumENominal.pdf
 	# ./ExecutePlot --Input Unfolded/ToyJetZGNominal.root --Original InputToy/ToyJetZGNominal.root \
 	# 	--Output Plots/ToyJetZGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -84,16 +88,19 @@ RunIterationStudies: Execute ExecutePlot
 	# 	--RecoPrimaryMin -0.01 --RecoPrimaryMax 0.5
 
 RunDataIterationStudies: Execute ExecutePlot
-	./Execute --Input InputToy/ToyDataJetENominal.root --Output Unfolded/ToyDataJetENominal.root
-	./Execute --Input InputToy/ToyDataLeadingDiJetENominal.root --Output Unfolded/ToyDataLeadingDiJetENominal.root
+	# ./Execute --Input InputToy/ToyDataJetENominal.root --Output Unfolded/ToyDataJetENominal.root
+	# ./Execute --Input InputToy/ToyDataLeadingDiJetENominal.root --Output Unfolded/ToyDataLeadingDiJetENominal.root
+	./Execute --Input InputToy/ToyDataLeadingDiJetSumENominal.root --Output Unfolded/ToyDataLeadingDiJetSumENominal.root
 	# ./Execute --Input InputToy/ToyDataJetZGNominal.root --Output Unfolded/ToyDataJetZGNominal.root
 	# ./Execute --Input InputToy/ToyDataJetRGNominal.root --Output Unfolded/ToyDataJetRGNominal.root
 	# ./Execute --Input InputToy/ToyDataJetMGNominal.root --Output Unfolded/ToyDataJetMGNominal.root
 	# ./Execute --Input InputToy/ToyDataJetMGENominal.root --Output Unfolded/ToyDataJetMGENominal.root
-	./ExecutePlot --Input Unfolded/ToyDataJetENominal.root --Original InputToy/ToyDataJetENominal.root \
-		--Output Plots/ToyDataJetENominal.pdf
-	./ExecutePlot --Input Unfolded/ToyDataLeadingDiJetENominal.root --Original InputToy/ToyDataLeadingDiJetENominal.root \
-		--Output Plots/ToyDataLeadingDiJetENominal.pdf
+	# ./ExecutePlot --Input Unfolded/ToyDataJetENominal.root --Original InputToy/ToyDataJetENominal.root \
+	# 	--Output Plots/ToyDataJetENominal.pdf
+	# ./ExecutePlot --Input Unfolded/ToyDataLeadingDiJetENominal.root --Original InputToy/ToyDataLeadingDiJetENominal.root \
+	# 	--Output Plots/ToyDataLeadingDiJetENominal.pdf
+	./ExecutePlot --Input Unfolded/ToyDataLeadingDiJetSumENominal.root --Original InputToy/ToyDataLeadingDiJetSumENominal.root \
+		--Output Plots/ToyDataLeadingDiJetSumENominal.pdf
 	# ./ExecutePlot --Input Unfolded/ToyDataJetZGNominal.root --Original InputToy/ToyDataJetZGNominal.root \
 	# 	--Output Plots/ToyDataJetZGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -108,18 +115,21 @@ RunDataIterationStudies: Execute ExecutePlot
 	# 	--RecoPrimaryMin -0.01 --RecoPrimaryMax 0.5
 
 RunDataUnfoldNominal: Execute ExecutePlot
-	./Execute --Input Input/DataJetENominal.root --Output Unfolded/DataJetENominal.root
-	./Execute --Input Input/DataLeadingDiJetENominal.root --Output Unfolded/DataLeadingDiJetENominal.root
+	# ./Execute --Input Input/DataJetENominal.root --Output Unfolded/DataJetENominal.root
+	# ./Execute --Input Input/DataLeadingDiJetENominal.root --Output Unfolded/DataLeadingDiJetENominal.root
+	./Execute --Input Input/DataLeadingDiJetSumENominal.root --Output Unfolded/DataLeadingDiJetSumENominal.root
 	# ./Execute --Input Input/DataJetZGNominal.root --Output Unfolded/DataJetZGNominal.root
 	# ./Execute --Input Input/DataJetRGNominal.root --Output Unfolded/DataJetRGNominal.root
 	# ./Execute --Input Input/DataJetMGNominal.root --Output Unfolded/DataJetMGNominal.root
 	# ./Execute --Input Input/DataJetMGENominal.root --Output Unfolded/DataJetMGENominal.root
 	# ./Execute --Input Input/DataJetZG2Nominal.root --Output Unfolded/DataJetZG2Nominal.root
 	# ./Execute --Input Input/DataJetRG2Nominal.root --Output Unfolded/DataJetRG2Nominal.root
-	./ExecutePlot --Input Unfolded/DataJetENominal.root --Original Input/DataJetENominal.root \
-		--Output Plots/DataJetENominal.pdf --Iteration 14
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetENominal.root --Original Input/DataLeadingDiJetENominal.root \
-		--Output Plots/DataLeadingDiJetENominal.pdf --Iteration 14
+	# ./ExecutePlot --Input Unfolded/DataJetENominal.root --Original Input/DataJetENominal.root \
+	# 	--Output Plots/DataJetENominal.pdf --Iteration 14
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetENominal.root --Original Input/DataLeadingDiJetENominal.root \
+	# 	--Output Plots/DataLeadingDiJetENominal.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumENominal.root --Original Input/DataLeadingDiJetSumENominal.root \
+		--Output Plots/DataLeadingDiJetSumENominal.pdf --Iteration 14
 	# ./ExecutePlot --Input Unfolded/DataJetZGNominal.root --Original Input/DataJetZGNominal.root \
 	# 	--Output Plots/DataJetZGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5 --Iteration 11
@@ -140,77 +150,91 @@ RunDataUnfoldNominal: Execute ExecutePlot
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.75 --Iteration 7
 
 RunDataUnfold: Execute ExecutePlot
-	./Execute --Input Input/DataJetENominal.root --Output Unfolded/DataJetEMCPrior.root --MCPrior true
-	./Execute --Input Input/DataLeadingDiJetENominal.root --Output Unfolded/DataLeadingDiJetEMCPrior.root --MCPrior true
+	# ./Execute --Input Input/DataJetENominal.root --Output Unfolded/DataJetEMCPrior.root --MCPrior true
+	# ./Execute --Input Input/DataLeadingDiJetENominal.root --Output Unfolded/DataLeadingDiJetEMCPrior.root --MCPrior true
+	./Execute --Input Input/DataLeadingDiJetSumENominal.root --Output Unfolded/DataLeadingDiJetSumEMCPrior.root --MCPrior true
 	# ./Execute --Input Input/DataJetZGNominal.root --Output Unfolded/DataJetZGMCPrior.root --MCPrior true
 	# ./Execute --Input Input/DataJetRGNominal.root --Output Unfolded/DataJetRGMCPrior.root --MCPrior true
 	# ./Execute --Input Input/DataJetMGNominal.root --Output Unfolded/DataJetMGMCPrior.root --MCPrior true
 	# ./Execute --Input Input/DataJetMGENominal.root --Output Unfolded/DataJetMGEMCPrior.root --MCPrior true
-	./Execute --Input Input/DataLeadingDiJetELowerSumE.root --Output Unfolded/DataLeadingDiJetELowerSumE.root
-	./Execute --Input Input/DataJetELargeThetaGap.root --Output Unfolded/DataJetELargeThetaGap.root
-	./Execute --Input Input/DataLeadingDiJetELargeThetaGap.root --Output Unfolded/DataLeadingDiJetELargeThetaGap.root
+	# ./Execute --Input Input/DataLeadingDiJetELowerSumE.root --Output Unfolded/DataLeadingDiJetELowerSumE.root
+	./Execute --Input Input/DataLeadingDiJetSumELowerSumE.root --Output Unfolded/DataLeadingDiJetSumELowerSumE.root
+	# ./Execute --Input Input/DataJetELargeThetaGap.root --Output Unfolded/DataJetELargeThetaGap.root
+	# ./Execute --Input Input/DataLeadingDiJetELargeThetaGap.root --Output Unfolded/DataLeadingDiJetELargeThetaGap.root
+	./Execute --Input Input/DataLeadingDiJetSumELargeThetaGap.root --Output Unfolded/DataLeadingDiJetSumELargeThetaGap.root
 	# ./Execute --Input Input/DataJetZGLargeThetaGap.root --Output Unfolded/DataJetZGLargeThetaGap.root
 	# ./Execute --Input Input/DataJetRGLargeThetaGap.root --Output Unfolded/DataJetRGLargeThetaGap.root
 	# ./Execute --Input Input/DataJetMGLargeThetaGap.root --Output Unfolded/DataJetMGLargeThetaGap.root
 	# ./Execute --Input Input/DataJetMGELargeThetaGap.root --Output Unfolded/DataJetMGELargeThetaGap.root
-	./Execute --Input Input/DataJetEPositiveTheta.root --Output Unfolded/DataJetEPositiveTheta.root
-	./Execute --Input Input/DataLeadingDiJetEPositiveTheta.root --Output Unfolded/DataLeadingDiJetEPositiveTheta.root
+	# ./Execute --Input Input/DataJetEPositiveTheta.root --Output Unfolded/DataJetEPositiveTheta.root
+	# ./Execute --Input Input/DataLeadingDiJetEPositiveTheta.root --Output Unfolded/DataLeadingDiJetEPositiveTheta.root
+	./Execute --Input Input/DataLeadingDiJetSumEPositiveTheta.root --Output Unfolded/DataLeadingDiJetSumEPositiveTheta.root
 	# ./Execute --Input Input/DataJetZGPositiveTheta.root --Output Unfolded/DataJetZGPositiveTheta.root
 	# ./Execute --Input Input/DataJetRGPositiveTheta.root --Output Unfolded/DataJetRGPositiveTheta.root
 	# ./Execute --Input Input/DataJetMGPositiveTheta.root --Output Unfolded/DataJetMGPositiveTheta.root
 	# ./Execute --Input Input/DataJetMGEPositiveTheta.root --Output Unfolded/DataJetMGEPositiveTheta.root
-	./Execute --Input Input/DataJetENegativeTheta.root --Output Unfolded/DataJetENegativeTheta.root
-	./Execute --Input Input/DataLeadingDiJetENegativeTheta.root --Output Unfolded/DataLeadingDiJetENegativeTheta.root
+	# ./Execute --Input Input/DataJetENegativeTheta.root --Output Unfolded/DataJetENegativeTheta.root
+	# ./Execute --Input Input/DataLeadingDiJetENegativeTheta.root --Output Unfolded/DataLeadingDiJetENegativeTheta.root
+	./Execute --Input Input/DataLeadingDiJetSumENegativeTheta.root --Output Unfolded/DataLeadingDiJetSumENegativeTheta.root
 	# ./Execute --Input Input/DataJetZGNegativeTheta.root --Output Unfolded/DataJetZGNegativeTheta.root
 	# ./Execute --Input Input/DataJetRGNegativeTheta.root --Output Unfolded/DataJetRGNegativeTheta.root
 	# ./Execute --Input Input/DataJetMGNegativeTheta.root --Output Unfolded/DataJetMGNegativeTheta.root
 	# ./Execute --Input Input/DataJetMGENegativeTheta.root --Output Unfolded/DataJetMGENegativeTheta.root
-	./Execute --Input Input/DataJetENoResidual.root --Output Unfolded/DataJetENoResidual.root
-	./Execute --Input Input/DataLeadingDiJetENoResidual.root --Output Unfolded/DataLeadingDiJetENoResidual.root
+	# ./Execute --Input Input/DataJetENoResidual.root --Output Unfolded/DataJetENoResidual.root
+	# ./Execute --Input Input/DataLeadingDiJetENoResidual.root --Output Unfolded/DataLeadingDiJetENoResidual.root
+	./Execute --Input Input/DataLeadingDiJetSumENoResidual.root --Output Unfolded/DataLeadingDiJetSumENoResidual.root
 	# ./Execute --Input Input/DataJetZGNoResidual.root --Output Unfolded/DataJetZGNoResidual.root
 	# ./Execute --Input Input/DataJetRGNoResidual.root --Output Unfolded/DataJetRGNoResidual.root
 	# ./Execute --Input Input/DataJetMGNoResidual.root --Output Unfolded/DataJetMGNoResidual.root
 	# ./Execute --Input Input/DataJetMGENoResidual.root --Output Unfolded/DataJetMGENoResidual.root
-	./Execute --Input Input/DataJetEJECUp.root --Output Unfolded/DataJetEJECUp.root
-	./Execute --Input Input/DataLeadingDiJetEJECUp.root --Output Unfolded/DataLeadingDiJetEJECUp.root
+	# ./Execute --Input Input/DataJetEJECUp.root --Output Unfolded/DataJetEJECUp.root
+	# ./Execute --Input Input/DataLeadingDiJetEJECUp.root --Output Unfolded/DataLeadingDiJetEJECUp.root
+	./Execute --Input Input/DataLeadingDiJetSumEJECUp.root --Output Unfolded/DataLeadingDiJetSumEJECUp.root
 	# ./Execute --Input Input/DataJetZGJECUp.root --Output Unfolded/DataJetZGJECUp.root
 	# ./Execute --Input Input/DataJetRGJECUp.root --Output Unfolded/DataJetRGJECUp.root
 	# ./Execute --Input Input/DataJetMGJECUp.root --Output Unfolded/DataJetMGJECUp.root
 	# ./Execute --Input Input/DataJetMGEJECUp.root --Output Unfolded/DataJetMGEJECUp.root
-	./Execute --Input Input/DataJetEJECDown.root --Output Unfolded/DataJetEJECDown.root
-	./Execute --Input Input/DataLeadingDiJetEJECDown.root --Output Unfolded/DataLeadingDiJetEJECDown.root
+	# ./Execute --Input Input/DataJetEJECDown.root --Output Unfolded/DataJetEJECDown.root
+	# ./Execute --Input Input/DataLeadingDiJetEJECDown.root --Output Unfolded/DataLeadingDiJetEJECDown.root
+	./Execute --Input Input/DataLeadingDiJetSumEJECDown.root --Output Unfolded/DataLeadingDiJetSumEJECDown.root
 	# ./Execute --Input Input/DataJetZGJECDown.root --Output Unfolded/DataJetZGJECDown.root
 	# ./Execute --Input Input/DataJetRGJECDown.root --Output Unfolded/DataJetRGJECDown.root
 	# ./Execute --Input Input/DataJetMGJECDown.root --Output Unfolded/DataJetMGJECDown.root
 	# ./Execute --Input Input/DataJetMGEJECDown.root --Output Unfolded/DataJetMGEJECDown.root
-	./Execute --Input Input/DataJetEJECHalfUp.root --Output Unfolded/DataJetEJECHalfUp.root
-	./Execute --Input Input/DataLeadingDiJetEJECHalfUp.root --Output Unfolded/DataLeadingDiJetEJECHalfUp.root
+	# ./Execute --Input Input/DataJetEJECHalfUp.root --Output Unfolded/DataJetEJECHalfUp.root
+	# ./Execute --Input Input/DataLeadingDiJetEJECHalfUp.root --Output Unfolded/DataLeadingDiJetEJECHalfUp.root
+	./Execute --Input Input/DataLeadingDiJetSumEJECHalfUp.root --Output Unfolded/DataLeadingDiJetSumEJECHalfUp.root
 	# ./Execute --Input Input/DataJetZGJECHalfUp.root --Output Unfolded/DataJetZGJECHalfUp.root
 	# ./Execute --Input Input/DataJetRGJECHalfUp.root --Output Unfolded/DataJetRGJECHalfUp.root
 	# ./Execute --Input Input/DataJetMGJECHalfUp.root --Output Unfolded/DataJetMGJECHalfUp.root
 	# ./Execute --Input Input/DataJetMGEJECHalfUp.root --Output Unfolded/DataJetMGEJECHalfUp.root
-	./Execute --Input Input/DataJetEJECHalfDown.root --Output Unfolded/DataJetEJECHalfDown.root
-	./Execute --Input Input/DataLeadingDiJetEJECHalfDown.root --Output Unfolded/DataLeadingDiJetEJECHalfDown.root
+	# ./Execute --Input Input/DataJetEJECHalfDown.root --Output Unfolded/DataJetEJECHalfDown.root
+	# ./Execute --Input Input/DataLeadingDiJetEJECHalfDown.root --Output Unfolded/DataLeadingDiJetEJECHalfDown.root
+	./Execute --Input Input/DataLeadingDiJetSumEJECHalfDown.root --Output Unfolded/DataLeadingDiJetSumEJECHalfDown.root
 	# ./Execute --Input Input/DataJetZGJECHalfDown.root --Output Unfolded/DataJetZGJECHalfDown.root
 	# ./Execute --Input Input/DataJetRGJECHalfDown.root --Output Unfolded/DataJetRGJECHalfDown.root
 	# ./Execute --Input Input/DataJetMGJECHalfDown.root --Output Unfolded/DataJetMGJECHalfDown.root
 	# ./Execute --Input Input/DataJetMGEJECHalfDown.root --Output Unfolded/DataJetMGEJECHalfDown.root
-	./Execute --Input Input/DataJetEJERUp.root --Output Unfolded/DataJetEJERUp.root
-	./Execute --Input Input/DataLeadingDiJetEJERUp.root --Output Unfolded/DataLeadingDiJetEJERUp.root
+	# ./Execute --Input Input/DataJetEJERUp.root --Output Unfolded/DataJetEJERUp.root
+	# ./Execute --Input Input/DataLeadingDiJetEJERUp.root --Output Unfolded/DataLeadingDiJetEJERUp.root
+	./Execute --Input Input/DataLeadingDiJetSumEJERUp.root --Output Unfolded/DataLeadingDiJetSumEJERUp.root
 	# ./Execute --Input Input/DataJetZGJERUp.root --Output Unfolded/DataJetZGJERUp.root
 	# ./Execute --Input Input/DataJetRGJERUp.root --Output Unfolded/DataJetRGJERUp.root
 	# ./Execute --Input Input/DataJetMGJERUp.root --Output Unfolded/DataJetMGJERUp.root
 	# ./Execute --Input Input/DataJetMGEJERUp.root --Output Unfolded/DataJetMGEJERUp.root
-	./Execute --Input Input/DataJetEJERDown.root --Output Unfolded/DataJetEJERDown.root
-	./Execute --Input Input/DataLeadingDiJetEJERDown.root --Output Unfolded/DataLeadingDiJetEJERDown.root
+	# ./Execute --Input Input/DataJetEJERDown.root --Output Unfolded/DataJetEJERDown.root
+	# ./Execute --Input Input/DataLeadingDiJetEJERDown.root --Output Unfolded/DataLeadingDiJetEJERDown.root
+	./Execute --Input Input/DataLeadingDiJetSumEJERDown.root --Output Unfolded/DataLeadingDiJetSumEJERDown.root
 	# ./Execute --Input Input/DataJetZGJERDown.root --Output Unfolded/DataJetZGJERDown.root
 	# ./Execute --Input Input/DataJetRGJERDown.root --Output Unfolded/DataJetRGJERDown.root
 	# ./Execute --Input Input/DataJetMGJERDown.root --Output Unfolded/DataJetMGJERDown.root
 	# ./Execute --Input Input/DataJetMGEJERDown.root --Output Unfolded/DataJetMGEJERDown.root
-	./ExecutePlot --Input Unfolded/DataJetEMCPrior.root --Original Input/DataJetENominal.root \
-		--Output Plots/DataJetEMCPrior.pdf --Iteration 14
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEMCPrior.root --Original Input/DataLeadingDiJetENominal.root \
-		--Output Plots/DataLeadingDiJetEMCPrior.pdf --Iteration 14
+	# ./ExecutePlot --Input Unfolded/DataJetEMCPrior.root --Original Input/DataJetENominal.root \
+	# 	--Output Plots/DataJetEMCPrior.pdf --Iteration 14
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEMCPrior.root --Original Input/DataLeadingDiJetENominal.root \
+	# 	--Output Plots/DataLeadingDiJetEMCPrior.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEMCPrior.root --Original Input/DataLeadingDiJetSumENominal.root \
+		--Output Plots/DataLeadingDiJetSumEMCPrior.pdf --Iteration 14
 	# ./ExecutePlot --Input Unfolded/DataJetZGMCPrior.root --Original Input/DataJetZGNominal.root \
 	# 	--Output Plots/DataJetZGMCPrior.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5 --Iteration 11
@@ -223,10 +247,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGEMCPrior.root --Original Input/DataJetMGENominal.root \
 	# 	--Output Plots/DataJetMGEMCPrior.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3 --Iteration 7
-	./ExecutePlot --Input Unfolded/DataJetENoResidual.root --Original Input/DataJetENoResidual.root \
-		--Output Plots/DataJetENoResidual.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetENoResidual.root --Original Input/DataLeadingDiJetENoResidual.root \
-		--Output Plots/DataLeadingDiJetENoResidual.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetENoResidual.root --Original Input/DataJetENoResidual.root \
+	# 	--Output Plots/DataJetENoResidual.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetENoResidual.root --Original Input/DataLeadingDiJetENoResidual.root \
+	# 	--Output Plots/DataLeadingDiJetENoResidual.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumENoResidual.root --Original Input/DataLeadingDiJetSumENoResidual.root \
+		--Output Plots/DataLeadingDiJetSumENoResidual.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGNoResidual.root --Original Input/DataJetZGNoResidual.root \
 	# 	--Output Plots/DataJetZGNoResidual.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -239,10 +265,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGENoResidual.root --Original Input/DataJetMGENoResidual.root \
 	# 	--Output Plots/DataJetMGENoResidual.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3
-	./ExecutePlot --Input Unfolded/DataJetEJECUp.root --Original Input/DataJetEJECUp.root \
-		--Output Plots/DataJetEJECUp.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECUp.root --Original Input/DataLeadingDiJetEJECUp.root \
-		--Output Plots/DataLeadingDiJetEJECUp.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetEJECUp.root --Original Input/DataJetEJECUp.root \
+	# 	--Output Plots/DataJetEJECUp.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECUp.root --Original Input/DataLeadingDiJetEJECUp.root \
+	# 	--Output Plots/DataLeadingDiJetEJECUp.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEJECUp.root --Original Input/DataLeadingDiJetSumEJECUp.root \
+		--Output Plots/DataLeadingDiJetSumEJECUp.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGJECUp.root --Original Input/DataJetZGJECUp.root \
 	# 	--Output Plots/DataJetZGJECUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -255,10 +283,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGEJECUp.root --Original Input/DataJetMGEJECUp.root \
 	# 	--Output Plots/DataJetMGEJECUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3
-	./ExecutePlot --Input Unfolded/DataJetEJECDown.root --Original Input/DataJetEJECDown.root \
-		--Output Plots/DataJetEJECDown.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECDown.root --Original Input/DataLeadingDiJetEJECDown.root \
-		--Output Plots/DataLeadingDiJetEJECDown.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetEJECDown.root --Original Input/DataJetEJECDown.root \
+	# 	--Output Plots/DataJetEJECDown.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECDown.root --Original Input/DataLeadingDiJetEJECDown.root \
+	# 	--Output Plots/DataLeadingDiJetEJECDown.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEJECDown.root --Original Input/DataLeadingDiJetSumEJECDown.root \
+		--Output Plots/DataLeadingDiJetSumEJECDown.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGJECDown.root --Original Input/DataJetZGJECDown.root \
 	# 	--Output Plots/DataJetZGJECDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -271,10 +301,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGEJECDown.root --Original Input/DataJetMGEJECDown.root \
 	# 	--Output Plots/DataJetMGEJECDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3
-	./ExecutePlot --Input Unfolded/DataJetEJECHalfUp.root --Original Input/DataJetEJECHalfUp.root \
-		--Output Plots/DataJetEJECHalfUp.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECHalfUp.root --Original Input/DataLeadingDiJetEJECHalfUp.root \
-		--Output Plots/DataLeadingDiJetEJECHalfUp.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetEJECHalfUp.root --Original Input/DataJetEJECHalfUp.root \
+	# 	--Output Plots/DataJetEJECHalfUp.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECHalfUp.root --Original Input/DataLeadingDiJetEJECHalfUp.root \
+	# 	--Output Plots/DataLeadingDiJetEJECHalfUp.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEJECHalfUp.root --Original Input/DataLeadingDiJetSumEJECHalfUp.root \
+		--Output Plots/DataLeadingDiJetSumEJECHalfUp.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGJECHalfUp.root --Original Input/DataJetZGJECHalfUp.root \
 	# 	--Output Plots/DataJetZGJECHalfUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -287,10 +319,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGEJECHalfUp.root --Original Input/DataJetMGEJECHalfUp.root \
 	# 	--Output Plots/DataJetMGEJECHalfUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3
-	./ExecutePlot --Input Unfolded/DataJetEJECHalfDown.root --Original Input/DataJetEJECHalfDown.root \
-		--Output Plots/DataJetEJECHalfDown.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECHalfDown.root --Original Input/DataLeadingDiJetEJECHalfDown.root \
-		--Output Plots/DataLeadingDiJetEJECHalfDown.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetEJECHalfDown.root --Original Input/DataJetEJECHalfDown.root \
+	# 	--Output Plots/DataJetEJECHalfDown.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEJECHalfDown.root --Original Input/DataLeadingDiJetEJECHalfDown.root \
+	# 	--Output Plots/DataLeadingDiJetEJECHalfDown.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEJECHalfDown.root --Original Input/DataLeadingDiJetSumEJECHalfDown.root \
+		--Output Plots/DataLeadingDiJetSumEJECHalfDown.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGJECHalfDown.root --Original Input/DataJetZGJECHalfDown.root \
 	# 	--Output Plots/DataJetZGJECHalfDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -303,10 +337,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGEJECHalfDown.root --Original Input/DataJetMGEJECHalfDown.root \
 	# 	--Output Plots/DataJetMGEJECHalfDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3
-	./ExecutePlot --Input Unfolded/DataJetEJERUp.root --Original Input/DataJetEJERUp.root \
-		--Output Plots/DataJetEJERUp.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJERUp.root --Original Input/DataLeadingDiJetEJERUp.root \
-		--Output Plots/DataLeadingDiJetEJERUp.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetEJERUp.root --Original Input/DataJetEJERUp.root \
+	# 	--Output Plots/DataJetEJERUp.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEJERUp.root --Original Input/DataLeadingDiJetEJERUp.root \
+	# 	--Output Plots/DataLeadingDiJetEJERUp.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEJERUp.root --Original Input/DataLeadingDiJetSumEJERUp.root \
+		--Output Plots/DataLeadingDiJetSumEJERUp.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGJERUp.root --Original Input/DataJetZGJERUp.root \
 	# 	--Output Plots/DataJetZGJERUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -319,10 +355,12 @@ RunDataUnfold: Execute ExecutePlot
 	# ./ExecutePlot --Input Unfolded/DataJetMGEJERUp.root --Original Input/DataJetMGEJERUp.root \
 	# 	--Output Plots/DataJetMGEJERUp.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.3 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.3
-	./ExecutePlot --Input Unfolded/DataJetEJERDown.root --Original Input/DataJetEJERDown.root \
-		--Output Plots/DataJetEJERDown.pdf
-	./ExecutePlot --Input Unfolded/DataLeadingDiJetEJERDown.root --Original Input/DataLeadingDiJetEJERDown.root \
-		--Output Plots/DataLeadingDiJetEJERDown.pdf
+	# ./ExecutePlot --Input Unfolded/DataJetEJERDown.root --Original Input/DataJetEJERDown.root \
+	# 	--Output Plots/DataJetEJERDown.pdf
+	# ./ExecutePlot --Input Unfolded/DataLeadingDiJetEJERDown.root --Original Input/DataLeadingDiJetEJERDown.root \
+	# 	--Output Plots/DataLeadingDiJetEJERDown.pdf
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEJERDown.root --Original Input/DataLeadingDiJetSumEJERDown.root \
+		--Output Plots/DataLeadingDiJetSumEJERDown.pdf
 	# ./ExecutePlot --Input Unfolded/DataJetZGJERDown.root --Original Input/DataJetZGJERDown.root \
 	# 	--Output Plots/DataJetZGJERDown.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
@@ -337,17 +375,20 @@ RunDataUnfold: Execute ExecutePlot
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5
 
 RunMCUnfold: Execute ExecutePlot
-	./Execute --Input Input/MCJetENominal.root --Output Unfolded/MCJetENominal.root
-	./Execute --Input Input/MCLeadingDiJetENominal.root --Output Unfolded/MCLeadingDiJetENominal.root
+	# ./Execute --Input Input/MCJetENominal.root --Output Unfolded/MCJetENominal.root
+	# ./Execute --Input Input/MCLeadingDiJetENominal.root --Output Unfolded/MCLeadingDiJetENominal.root
+	./Execute --Input Input/MCLeadingDiJetSumENominal.root --Output Unfolded/MCLeadingDiJetSumENominal.root
 	# ./Execute --Input Input/MCJetZGNominal.root --Output Unfolded/MCJetZGNominal.root
 	# ./Execute --Input Input/MCJetRGNominal.root --Output Unfolded/MCJetRGNominal.root
 	# ./Execute --Input Input/MCJetMGNominal.root --Output Unfolded/MCJetMGNominal.root
 	# ./Execute --Input Input/MCJetMGENominal.root --Output Unfolded/MCJetMGENominal.root
 	# ./Execute --Input Input/MCJetMGELowECut.root --Output Unfolded/MCJetMGELowECut.root
-	./ExecutePlot --Input Unfolded/MCJetENominal.root --Original Input/MCJetENominal.root \
-		--Output Plots/MCJetENominal.pdf --Iteration 200
-	./ExecutePlot --Input Unfolded/MCLeadingDiJetENominal.root --Original Input/MCLeadingDiJetENominal.root \
-		--Output Plots/MCLeadingDiJetENominal.pdf --Iteration 2
+	# ./ExecutePlot --Input Unfolded/MCJetENominal.root --Original Input/MCJetENominal.root \
+	# 	--Output Plots/MCJetENominal.pdf --Iteration 2
+	# ./ExecutePlot --Input Unfolded/MCLeadingDiJetENominal.root --Original Input/MCLeadingDiJetENominal.root \
+	# 	--Output Plots/MCLeadingDiJetENominal.pdf --Iteration 2
+	./ExecutePlot --Input Unfolded/MCLeadingDiJetSumENominal.root --Original Input/MCLeadingDiJetSumENominal.root \
+		--Output Plots/MCLeadingDiJetSumENominal.pdf --Iteration 2
 	# ./ExecutePlot --Input Unfolded/MCJetZGNominal.root --Original Input/MCJetZGNominal.root \
 	# 	--Output Plots/MCJetZGNominal.pdf --GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 	# 	--RecoPrimaryMin 0 --RecoPrimaryMax 0.5 --Iteration 2

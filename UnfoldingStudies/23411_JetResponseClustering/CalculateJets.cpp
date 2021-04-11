@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
    string RecoTreeName           = CL.Get("RecoTreeName", "t");
-   string GenTreeName            = CL.Get("GenTreeName", "tgen");
+   string GenTreeName            = CL.Get("GenTreeName", "tgenBefore");
 
    JetCorrector JEC(JECFiles);
 
@@ -169,6 +169,7 @@ int main(int argc, char *argv[])
       if(IsMC == true && GenTree == nullptr)
          continue;
 
+      int RecoEventNumber;
       int NReco;
       float RecoPX[MAX];
       float RecoPY[MAX];
@@ -178,6 +179,7 @@ int main(int argc, char *argv[])
       bool RecoHighPurity[MAX];
       bool RecoPassSTheta = true;
       bool RecoPassAll = true;
+      int GenEventNumber;
       int NGen;
       float GenPX[MAX];
       float GenPY[MAX];
@@ -191,6 +193,7 @@ int main(int argc, char *argv[])
       
       if(GenTree != nullptr)
       {
+         GenTree->SetBranchAddress("EventNo",      &GenEventNumber);
          GenTree->SetBranchAddress("nParticle",    &NGen);
          GenTree->SetBranchAddress("px",           &GenPX);
          GenTree->SetBranchAddress("py",           &GenPY);
@@ -203,6 +206,7 @@ int main(int argc, char *argv[])
       }
       if(RecoTree != nullptr)
       {
+         RecoTree->SetBranchAddress("EventNo",      &RecoEventNumber);
          RecoTree->SetBranchAddress("nParticle",    &NReco);
          RecoTree->SetBranchAddress("px",           &RecoPX);
          RecoTree->SetBranchAddress("py",           &RecoPY);
@@ -243,6 +247,8 @@ int main(int argc, char *argv[])
          GenJetTree->SetBranchAddress("jtm",   &StoredGenJetM);
       }
 
+      int GenEntryShift = 0;
+
       int EntryCount = 0;
       if(RecoTree != nullptr)
          EntryCount = RecoTree->GetEntries() * Fraction;
@@ -255,8 +261,17 @@ int main(int argc, char *argv[])
          NStoredGenJet = 0;
          NStoredRecoJet = 0;
 
-         if(GenTree != nullptr)       GenTree->GetEntry(iE);
+         if(GenTree != nullptr)       GenTree->GetEntry(iE + GenEntryShift);
          if(RecoTree != nullptr)      RecoTree->GetEntry(iE);
+
+         if(GenTree != nullptr && RecoTree != nullptr)
+         {
+            while(GenEventNumber != RecoEventNumber)
+            {
+               GenEntryShift = GenEntryShift + 1;
+               GenTree->GetEntry(iE + GenEntryShift);
+            }
+         }
 
          if(RecoJetTree != nullptr)   RecoJetTree->GetEntry(iE);
          if(GenJetTree != nullptr)    GenJetTree->GetEntry(iE);
@@ -265,8 +280,8 @@ int main(int argc, char *argv[])
          {
             if(RecoPassAll == false)
                continue;
-            if(IsMC == true && GenPassSTheta == false)
-               continue;
+            // if(IsMC == true && GenPassSTheta == false)
+            //    continue;
          }
 
          // if(fabs(cos(RecoSTheta)) > 0.8)

@@ -356,6 +356,10 @@ void DoBridgingPattern3(TH1D *HB, TH1D *H)
    }
    
    for(int i = 1; i <= N; i++)
+   {
+      if(V[i-1] != V[i-1])
+         continue;
       H->SetBinContent(i, HB->GetBinContent(i) * (1 + V[i-1]));
+   }
 }
 

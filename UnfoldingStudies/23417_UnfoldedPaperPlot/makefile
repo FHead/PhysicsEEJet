@@ -80,6 +80,34 @@ RunTest: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1
+	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
+		--Systematic Systematics/DataLeadingDiJetSumE.root --Output Plots/DataLeadingDiJetSumENominal.pdf --FinalOutput Plots/MeowLeadingDiJetSumE.$(Format) \
+		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCHerwigLeadingDiJetSumE.root",OriginalInput/MCSherpaLeadingDiJetSumE.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA" \
+		--PrimaryName HUnfoldedBayes15 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--GenPrimaryMin 0 --GenPrimaryMax 92 \
+		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.12 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
+		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--IgnoreGroup 0 --Row 1 --Column 1
+	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
+		--Systematic Systematics/DataLeadingDiJetSumE.root --Output Plots/DataLeadingDiJetSumENominal.pdf --FinalOutput Plots/MeowLeadingDiJetSumELog.$(Format) \
+		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCHerwigLeadingDiJetSumE.root",OriginalInput/MCSherpaLeadingDiJetSumE.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA" \
+		--PrimaryName HUnfoldedBayes16 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--GenPrimaryMin 0 --GenPrimaryMax 92 \
+		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0.000000004 --WorldYMax 1.2 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
+		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
+		--LegendX 0.45 --LegendY 0.10 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--IgnoreGroup 0 --Row 1 --Column 1
 	./Execute --Input Input/DataJetZGNominal.root \
 		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/MeowZG.$(Format) \
 		--MCFile "Input/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root \

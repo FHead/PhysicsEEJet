@@ -24,11 +24,23 @@ RunTest: Execute
 	./Execute --Input Systematics/DataLeadingDiJetE.root \
 		--Output Plots/DataLeadingDiJetENominalCount.pdf --FinalOutput Plots/SystematicsLeadingDiJet.$(Format) \
 		--GenPrimaryMax 46 \
-		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --LogY false \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.55 --LogY false \
 		--XLabel "Jet E (GeV)" --YLabel "Uncertainty" --Binning "None" \
 		--LegendX 0.4 --LegendY 0.5 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"Leading DiJet" \
+		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
+		--IgnoreGroup 0 --Row 1 --Column 1 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HSumE \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7 \
+		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection"
+	./Execute --Input Systematics/DataLeadingDiJetSumE.root \
+		--Output Plots/DataLeadingDiJetSumENominalCount.pdf --FinalOutput Plots/SystematicsLeadingDiJetSum.$(Format) \
+		--GenPrimaryMax 92 \
+		--WorldXMin 20 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.75 --LogY false \
+		--XLabel "Leading dijet Sum E (GeV)" --YLabel "Uncertainty" --Binning "None" \
+		--LegendX 0.4 --LegendY 0.5 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HSumE \
 		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7 \

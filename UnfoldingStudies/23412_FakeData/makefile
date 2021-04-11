@@ -22,6 +22,10 @@ TestRun: Execute
 		--Shape PerfectInput/PerfectLeadingDiJetENominal.root \
 		--Yield Input/DataLeadingDiJetENominal.root \
 		--Output Output/ToyLeadingDiJetENominal.root
+	./Execute --MC Input/MCLeadingDiJetSumENominal.root \
+		--Shape PerfectInput/PerfectLeadingDiJetSumENominal.root \
+		--Yield Input/DataLeadingDiJetSumENominal.root \
+		--Output Output/ToyLeadingDiJetSumENominal.root
 	./Execute --MC Input/MCJetZGNominal.root \
 		--Shape PerfectInput/PerfectJetZGNominal.root \
 		--Yield Input/DataJetZGNominal.root \
@@ -52,6 +56,11 @@ TestRunStatistics: Execute
 			--Yield Input/DataLeadingDiJetENominal.root \
 			--Seed $$i \
 			--Output Output/ToyDataLeadingDiJetEStatistics_$${i}.root; \
+		./Execute --MC Input/MCLeadingDiJetSumENominal.root \
+			--Shape PerfectInput/PerfectDataLeadingDiJetSumENominal.root \
+			--Yield Input/DataLeadingDiJetSumENominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataLeadingDiJetSumEStatistics_$${i}.root; \
 		./Execute --MC Input/MCJetZGNominal.root \
 			--Shape PerfectInput/PerfectDataJetZGNominal.root \
 			--Yield Input/DataJetZGNominal.root \
@@ -83,6 +92,10 @@ TestRunData: Execute
 		--Shape PerfectInput/PerfectDataLeadingDiJetENominal.root \
 		--Yield Input/DataLeadingDiJetENominal.root \
 		--Output Output/ToyDataLeadingDiJetENominal.root
+	./Execute --MC Input/MCLeadingDiJetSumENominal.root \
+		--Shape PerfectInput/PerfectDataLeadingDiJetSumENominal.root \
+		--Yield Input/DataLeadingDiJetSumENominal.root \
+		--Output Output/ToyDataLeadingDiJetSumENominal.root
 	./Execute --MC Input/MCJetZGNominal.root \
 		--Shape PerfectInput/PerfectDataJetZGNominal.root \
 		--Yield Input/DataJetZGNominal.root \

@@ -1,15 +1,10 @@
 
-# GenJetEBins = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45
 GenJetEBins = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45
 RecoJetEBins = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,52.5,55,57.5,60,65,70,80,90
-# GenJetLEBins = 10,12,14,16,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45
 GenJetLEBins = 10,12,14,16,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45
 RecoJetLEBins = 10,12,14,16,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,52.5,55,57.5,60,65,70,80,90
-# RecoJetEBins = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,50,55,60,65,70,80,90
-# GenJetE1Bins = 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44
-# RecoJetE1Bins = 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,50,60,70,90
-# GenJetE2Bins = 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44
-# RecoJetE2Bins = 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,50,60,70,90
+GenJetSEBins = 20,24,28,32,36,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90
+RecoJetSEBins = 20,24,28,32,36,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,105,110,115,120,130,140,160,180
 GenJetE1Bins = 3,6,9,12,15,18,21,24,27,30,33,36,39,42,44
 RecoJetE1Bins = 3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,50,60,70,90
 GenJetE2Bins = 3,6,9,12,15,18,21,24,27,30,33,36,39,42,44
@@ -98,17 +93,24 @@ ThrustNoCutRun: Execute
 		--BinningRecoBins 0,1
 
 DataThetaSideRun: Execute
-	time ./Execute --MC MCPositiveTheta.root --Data DataPositiveTheta.root --Output Output/DataJetEPositiveTheta.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCPositiveThetaSumE.root --Data DataPositiveThetaSumE.root --Output Output/DataLeadingDiJetEPositiveTheta.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCPositiveTheta.root --Data DataPositiveTheta.root --Output Output/DataJetEPositiveTheta.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCPositiveThetaSumE.root --Data DataPositiveThetaSumE.root --Output Output/DataLeadingDiJetEPositiveTheta.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCPositiveThetaSumE.root --Data DataPositiveThetaSumE.root --Output Output/DataLeadingDiJetSumEPositiveTheta.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -141,17 +143,24 @@ DataThetaSideRun: Execute
 	# 	--BinningGenBins $(GenJetECoarseBins) \
 	# 	--BinningRecoBins $(RecoJetECoarseBins) \
 	# 	--BinningUncertaintySmear 1.025
-	time ./Execute --MC MCNegativeTheta.root --Data DataNegativeTheta.root --Output Output/DataJetENegativeTheta.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCNegativeThetaSumE.root --Data DataNegativeThetaSumE.root --Output Output/DataLeadingDiJetENegativeTheta.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCNegativeTheta.root --Data DataNegativeTheta.root --Output Output/DataJetENegativeTheta.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCNegativeThetaSumE.root --Data DataNegativeThetaSumE.root --Output Output/DataLeadingDiJetENegativeTheta.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCNegativeThetaSumE.root --Data DataNegativeThetaSumE.root --Output Output/DataLeadingDiJetSumENegativeTheta.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -169,34 +178,41 @@ DataThetaSideRun: Execute
 	# 	--BinningGenBins $(GenJetECoarseBins) \
 	# 	--BinningRecoBins $(RecoJetECoarseBins) \
 	# 	--BinningUncertaintySmear 1.025
-	time ./Execute --MC MCNegativeTheta.root --Data DataNegativeTheta.root --Output Output/DataJetMGNegativeTheta.root \
-		--Observable JetMG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
-		--ObservableGenBins $(GenJetMGBins) \
-		--ObservableRecoBins $(RecoJetMGBins) \
-		--BinningGenBins $(GenJetECoarseBins) \
-		--BinningRecoBins $(RecoJetECoarseBins) \
-		--BinningUncertaintySmear 1.025
-	time ./Execute --MC MCNegativeTheta.root --Data DataNegativeTheta.root --Output Output/DataJetMGENegativeTheta.root \
-		--Observable JetMGE --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
-		--BinningGenMin $(MGEMin) --BinningRecoMin $(MGEMin) \
-		--ObservableGenBins $(GenJetMGEBins) \
-		--ObservableRecoBins $(RecoJetMGEBins) \
-		--BinningGenBins $(GenJetECoarseBins) \
-		--BinningRecoBins $(RecoJetECoarseBins) \
-		--BinningUncertaintySmear 1.025
+	# time ./Execute --MC MCNegativeTheta.root --Data DataNegativeTheta.root --Output Output/DataJetMGNegativeTheta.root \
+	# 	--Observable JetMG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetMGBins) \
+	# 	--ObservableRecoBins $(RecoJetMGBins) \
+	# 	--BinningGenBins $(GenJetECoarseBins) \
+	# 	--BinningRecoBins $(RecoJetECoarseBins) \
+	# 	--BinningUncertaintySmear 1.025
+	# time ./Execute --MC MCNegativeTheta.root --Data DataNegativeTheta.root --Output Output/DataJetMGENegativeTheta.root \
+	# 	--Observable JetMGE --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+	# 	--BinningGenMin $(MGEMin) --BinningRecoMin $(MGEMin) \
+	# 	--ObservableGenBins $(GenJetMGEBins) \
+	# 	--ObservableRecoBins $(RecoJetMGEBins) \
+	# 	--BinningGenBins $(GenJetECoarseBins) \
+	# 	--BinningRecoBins $(RecoJetECoarseBins) \
+	# 	--BinningUncertaintySmear 1.025
 
 DataLargeThetaGapRun: Execute
-	time ./Execute --MC MCLargeThetaGap.root --Data DataLargeThetaGap.root --Output Output/DataJetELargeThetaGap.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCLargeThetaGapSumE.root --Data DataLargeThetaGapSumE.root --Output Output/DataLeadingDiJetELargeThetaGap.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCLargeThetaGap.root --Data DataLargeThetaGap.root --Output Output/DataJetELargeThetaGap.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCLargeThetaGapSumE.root --Data DataLargeThetaGapSumE.root --Output Output/DataLeadingDiJetELargeThetaGap.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCLargeThetaGapSumE.root --Data DataLargeThetaGapSumE.root --Output Output/DataLeadingDiJetSumELargeThetaGap.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -231,17 +247,24 @@ DataLargeThetaGapRun: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 MCThetaSideRun: Execute
-	time ./Execute --MC MCPositiveTheta.root --Data MCPositiveTheta.root --Output Output/MCJetEPositiveTheta.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCPositiveThetaSumE.root --Data MCPositiveThetaSumE.root --Output Output/MCLeadingDiJetEPositiveTheta.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCPositiveTheta.root --Data MCPositiveTheta.root --Output Output/MCJetEPositiveTheta.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCPositiveThetaSumE.root --Data MCPositiveThetaSumE.root --Output Output/MCLeadingDiJetEPositiveTheta.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCPositiveThetaSumE.root --Data MCPositiveThetaSumE.root --Output Output/MCLeadingDiJetSumEPositiveTheta.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -274,17 +297,24 @@ MCThetaSideRun: Execute
 	# 	--BinningGenBins $(GenJetECoarseBins) \
 	# 	--BinningRecoBins $(RecoJetECoarseBins) \
 	# 	--BinningUncertaintySmear 1.025
-	time ./Execute --MC MCNegativeTheta.root --Data MCNegativeTheta.root --Output Output/MCJetENegativeTheta.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCNegativeThetaSumE.root --Data MCNegativeThetaSumE.root --Output Output/MCLeadingDiJetENegativeTheta.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCNegativeTheta.root --Data MCNegativeTheta.root --Output Output/MCJetENegativeTheta.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCNegativeThetaSumE.root --Data MCNegativeThetaSumE.root --Output Output/MCLeadingDiJetENegativeTheta.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCNegativeThetaSumE.root --Data MCNegativeThetaSumE.root --Output Output/MCLeadingDiJetSumENegativeTheta.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -319,17 +349,24 @@ MCThetaSideRun: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 MCLargeThetaGapRun: Execute
-	time ./Execute --MC MCLargeThetaGap.root --Data MCLargeThetaGap.root --Output Output/MCJetELargeThetaGap.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCLargeThetaGapSumE.root --Data MCLargeThetaGapSumE.root --Output Output/MCLeadingDiJetELargeThetaGap.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCLargeThetaGap.root --Data MCLargeThetaGap.root --Output Output/MCJetELargeThetaGap.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCLargeThetaGapSumE.root --Data MCLargeThetaGapSumE.root --Output Output/MCLeadingDiJetELargeThetaGap.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCLargeThetaGapSumE.root --Data MCLargeThetaGapSumE.root --Output Output/MCLeadingDiJetSumELargeThetaGap.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -364,13 +401,13 @@ MCLargeThetaGapRun: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 DataNominalRun: Execute
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetENominal.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetENominal.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
 	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataLeadingJetENominal.root \
 	# 	--Observable LeadingJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
 	# 	--ObservableGenBins $(GenJetEBins) \
@@ -378,10 +415,17 @@ DataNominalRun: Execute
 	# 	--BinningGenBins 0,1 \
 	# 	--BinningRecoBins 0,1 \
 	# 	--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetENominal.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetENominal.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumENominal.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
@@ -445,50 +489,80 @@ DataNominalRun: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 DataSumERun: Execute
-	time ./Execute --MC MCLowerSumE.root --Data DataLowerSumE.root --Output Output/DataLeadingDiJetELowerSumE.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCLowerSumE.root --Data DataLowerSumE.root --Output Output/DataLeadingDiJetELowerSumE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCHigherSumE.root --Data DataHigherSumE.root --Output Output/DataLeadingDiJetEHigherSumE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCLowerSumE.root --Data DataLowerSumE.root --Output Output/DataLeadingDiJetSumELowerSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCHigherSumE.root --Data DataHigherSumE.root --Output Output/DataLeadingDiJetEHigherSumE.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	time ./Execute --MC MCHigherSumE.root --Data DataHigherSumE.root --Output Output/DataLeadingDiJetSumEHigherSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
 
 DataJECRun: Execute
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECUp.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECUp.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift 1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECDown.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift -1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECUp.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift 1 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECDown.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift -1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumEJECUp.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintyShift 1 \
 		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECDown.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintyShift -1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECUp.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintyShift 1 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECDown.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumEJECDown.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintyShift -1 \
@@ -561,34 +635,50 @@ DataJECRun: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 DataJECRunHalf: Execute
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECHalfUp.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECHalfUp.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift 0.5 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECHalfDown.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift -0.5 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECHalfUp.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift 0.5 \
+	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECHalfDown.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintyShift -0.5 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumEJECHalfUp.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintyShift 0.5 \
 		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJECHalfDown.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintyShift -0.5 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECHalfUp.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintyShift 0.5 \
-		--ObservableUncertaintySmear 1.025
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJECHalfDown.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumEJECHalfDown.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintyShift -0.5 \
@@ -661,17 +751,24 @@ DataJECRunHalf: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 DataJERRun: Execute
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJERUp.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.05
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJERUp.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJERUp.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.05
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJERUp.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.05
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumEJERUp.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.05
@@ -704,17 +801,24 @@ DataJERRun: Execute
 	# 	--BinningGenBins $(GenJetECoarseBins) \
 	# 	--BinningRecoBins $(RecoJetECoarseBins) \
 	# 	--BinningUncertaintySmear 1.05
-	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJERDown.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.00
-	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJERDown.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetEJERDown.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.00
+	# time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetEJERDown.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.00
+	time ./Execute --MC MCSumE.root --Data DataSumE.root --Output Output/DataLeadingDiJetSumEJERDown.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.00
@@ -749,20 +853,27 @@ DataJERRun: Execute
 	# 	--BinningUncertaintySmear 1.00
 
 DataNoResidualRun: Execute
-	time ./Execute --MC MC.root --Data DataNoResidual.root --Output Output/DataJetENoResidual.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1 \
-		--ObservableUncertaintySmear 1.025
-	# time ./Execute --MC MC.root --Data DataNoResidual.root --Output Output/DataLeadingDiJetENoResidual.root \
-	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# time ./Execute --MC MC.root --Data DataNoResidual.root --Output Output/DataJetENoResidual.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
 	# 	--ObservableGenBins $(GenJetEBins) \
 	# 	--ObservableRecoBins $(RecoJetEBins) \
 	# 	--BinningGenBins 0,1 \
 	# 	--BinningRecoBins 0,1 \
 	# 	--ObservableUncertaintySmear 1.025
+	# time ./Execute --MC MC.root --Data DataNoResidual.root --Output Output/DataLeadingDiJetENoResidual.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1 \
+	# 	--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MC.root --Data DataNoResidual.root --Output Output/DataLeadingDiJetSumENoResidual.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1 \
+		--ObservableUncertaintySmear 1.025
 	# time ./Execute --MC MC.root --Data DataNoResidual.root --Output Output/DataJetZGNoResidual.root \
 	# 	--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
 	# 	--ObservableGenBins $(GenJetZGBins) \
@@ -794,24 +905,30 @@ DataNoResidualRun: Execute
 	# 	--BinningUncertaintySmear 1.025
 
 MCNominalRun: Execute
-	time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetENominal.root \
-		--JetAugmentation false --JetAugmentationMin 44 --JetAugmentationMax 45 \
-		--JetAugmentationRanges 46,46.5,47,47.5,48,48.5,49,49.5,50 \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1
+	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetENominal.root \
+	# 	--JetAugmentation false --JetAugmentationMin 44 --JetAugmentationMax 45 \
+	# 	--JetAugmentationRanges 46,46.5,47,47.5,48,48.5,49,49.5,50 \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
 	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCLeadingJetENominal.root \
 	# 	--Observable LeadingJetE --ObservableIndex -1 --Binning SubleadingJetE --BinningIndex -1 \
 	# 	--ObservableGenBins $(GenJetE1Bins) \
 	# 	--ObservableRecoBins $(RecoJetE1Bins) \
 	# 	--BinningGenBins $(GenJetE2Bins) \
 	# 	--BinningRecoBins $(RecoJetE2Bins)
-	time ./Execute --MC MCSumE.root --Data MCSumE.root --Output Output/MCLeadingDiJetENominal.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCSumE.root --Data MCSumE.root --Output Output/MCLeadingDiJetENominal.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCSumE.root --Data MCSumE.root --Output Output/MCLeadingDiJetSumENominal.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetZGNominal.root \
@@ -848,18 +965,24 @@ MCNominalRun: Execute
 	# 	--BinningRecoBins $(RecoJetECoarseBins)
 
 MCNoJECRun: Execute
-	time ./Execute --MC MCNoJEC.root --Data MCNoJEC.root --Output Output/MCJetENoJEC.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1
-	# time ./Execute --MC MCNoJEC.root --Data MCNoJEC.root --Output Output/MCLeadingDiJetENoJEC.root \
-	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# time ./Execute --MC MCNoJEC.root --Data MCNoJEC.root --Output Output/MCJetENoJEC.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
 	# 	--ObservableGenBins $(GenJetEBins) \
 	# 	--ObservableRecoBins $(RecoJetEBins) \
 	# 	--BinningGenBins 0,1 \
 	# 	--BinningRecoBins 0,1
+	# time ./Execute --MC MCNoJEC.root --Data MCNoJEC.root --Output Output/MCLeadingDiJetENoJEC.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCNoJEC.root --Data MCNoJEC.root --Output Output/MCLeadingDiJetSumENoJEC.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
 	# time ./Execute --MC MCNoJEC.root --Data MCNoJEC.root --Output Output/MCJetZGNoJEC.root \
 	# 	--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
 	# 	--ObservableGenBins $(GenJetZGBins) \
@@ -887,16 +1010,22 @@ MCNoJECRun: Execute
 	# 	--BinningRecoBins $(RecoJetECoarseBins)
 
 MCExtra: Execute
-	time ./Execute --MC MCPythia8.root --Data MCPythia8.root --Output Output/MCPythia8JetE.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1
-	time ./Execute --MC MCPythia8SumE.root --Data MCPythia8SumE.root --Output Output/MCPythia8LeadingDiJetE.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCPythia8.root --Data MCPythia8.root --Output Output/MCPythia8JetE.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	# time ./Execute --MC MCPythia8SumE.root --Data MCPythia8SumE.root --Output Output/MCPythia8LeadingDiJetE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCPythia8SumE.root --Data MCPythia8SumE.root --Output Output/MCPythia8LeadingDiJetSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	# time ./Execute --MC MCPythia8.root --Data MCPythia8.root --Output Output/MCPythia8JetZG.root \
@@ -924,16 +1053,22 @@ MCExtra: Execute
 	# 	--ObservableRecoBins $(RecoJetMGEBins) \
 	# 	--BinningGenBins $(GenJetECoarseBins) \
 	# 	--BinningRecoBins $(RecoJetECoarseBins)
-	time ./Execute --MC MCHerwig.root --Data MCHerwig.root --Output Output/MCHerwigJetE.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1
-	time ./Execute --MC MCHerwigSumE.root --Data MCHerwigSumE.root --Output Output/MCHerwigLeadingDiJetE.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCHerwig.root --Data MCHerwig.root --Output Output/MCHerwigJetE.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	# time ./Execute --MC MCHerwigSumE.root --Data MCHerwigSumE.root --Output Output/MCHerwigLeadingDiJetE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCHerwigSumE.root --Data MCHerwigSumE.root --Output Output/MCHerwigLeadingDiJetSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	# time ./Execute --MC MCHerwig.root --Data MCHerwig.root --Output Output/MCHerwigJetZG.root \
@@ -961,16 +1096,22 @@ MCExtra: Execute
 	# 	--ObservableRecoBins $(RecoJetMGEBins) \
 	# 	--BinningGenBins $(GenJetECoarseBins) \
 	# 	--BinningRecoBins $(RecoJetECoarseBins)
-	time ./Execute --MC MCSherpa.root --Data MCSherpa.root --Output Output/MCSherpaJetE.root \
-		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetEBins) \
-		--ObservableRecoBins $(RecoJetEBins) \
-		--BinningGenBins 0,1 \
-		--BinningRecoBins 0,1
-	time ./Execute --MC MCSherpaSumE.root --Data MCSherpaSumE.root --Output Output/MCSherpaLeadingDiJetE.root \
-		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
-		--ObservableGenBins $(GenJetLEBins) \
-		--ObservableRecoBins $(RecoJetLEBins) \
+	# time ./Execute --MC MCSherpa.root --Data MCSherpa.root --Output Output/MCSherpaJetE.root \
+	# 	--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetEBins) \
+	# 	--ObservableRecoBins $(RecoJetEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	# time ./Execute --MC MCSherpaSumE.root --Data MCSherpaSumE.root --Output Output/MCSherpaLeadingDiJetE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCSherpaSumE.root --Data MCSherpaSumE.root --Output Output/MCSherpaLeadingDiJetSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
 		--BinningGenBins 0,1 \
 		--BinningRecoBins 0,1
 	# time ./Execute --MC MCSherpa.root --Data MCSherpa.root --Output Output/MCSherpaJetZG.root \

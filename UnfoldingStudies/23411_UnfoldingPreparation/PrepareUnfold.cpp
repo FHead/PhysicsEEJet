@@ -11,7 +11,7 @@ using namespace std;
 
 enum ObservableType {ObservableNone, ObservableLeadingJetE, ObservableSubleadingJetE,
    ObservableJetE, ObservableJetP, ObservableZG, ObservableRG, ObservableMG, ObservableMGE, ObservableThrust,
-   ObservableLeadingDiJetE};
+   ObservableLeadingDiJetE, ObservableLeadingDiJetSumE};
 enum ObservableStep {Gen, Reco, Matched};
 
 class Messenger;
@@ -162,6 +162,13 @@ public:
       if(Type == ObservableLeadingDiJetE && Step == Matched)
          return (MatchedJetE->size() >= 2 ? 2 : MatchedJetE->size());
       
+      if(Type == ObservableLeadingDiJetSumE && Step == Gen)
+         return (GenJetE->size() >= 2 ? 1 : 0);
+      if(Type == ObservableLeadingDiJetSumE && Step == Reco)
+         return (RecoJetE->size() >= 2 ? 1 : 0);
+      if(Type == ObservableLeadingDiJetSumE && Step == Matched)
+         return (MatchedJetE->size() >= 2 ? 1 : 0);
+      
       if(Type == ObservableSubleadingJetE && Step == Gen)
          return 1;
       if(Type == ObservableSubleadingJetE && Step == Reco)
@@ -263,6 +270,28 @@ public:
          Value = Value * (1 + Shift * (*MatchedJetJEU)[Item] / (*MatchedJetJEC)[Item]);
          Value = (Value - (*GenJetE)[Item]) * Smear + (*GenJetE)[Item];
          return Value;
+      }
+
+      if(Type == ObservableLeadingDiJetSumE && Step == Gen)
+         return ((GenJetE->size() >= 2) ? (*GenJetE)[0] + (*GenJetE)[1] : -1);
+      if(Type == ObservableLeadingDiJetSumE && Step == Reco)
+      {
+         if(RecoJetE->size() < 2)
+            return -1;
+         double V0 = (*RecoJetE)[0] * (1 + Shift * (*RecoJetJEU)[0] / (*RecoJetJEC)[0]);
+         double V1 = (*RecoJetE)[1] * (1 + Shift * (*RecoJetJEU)[1] / (*RecoJetJEC)[1]);
+         return V0 + V1;
+      }
+      if(Type == ObservableLeadingDiJetSumE && Step == Matched)
+      {
+         if(MatchedJetE->size() < 2)
+            return -1;
+
+         double V0 = (*MatchedJetE)[0] * (1 + Shift * (*MatchedJetJEU)[0] / (*MatchedJetJEC)[0]);
+         double V1 = (*MatchedJetE)[1] * (1 + Shift * (*MatchedJetJEU)[1] / (*MatchedJetJEC)[1]);
+         V0 = (V0 - (*GenJetE)[0]) * Smear + (*GenJetE)[0];
+         V1 = (V1 - (*GenJetE)[1]) * Smear + (*GenJetE)[1];
+         return V0 + V1;
       }
 
       // Gen and reco jets are sorted.  Matched is same order as gen
@@ -389,6 +418,15 @@ public:
    double GetMatchedAngle(ObservableType Type, int Item)
    {
       // Do we need something here for leading jets?  Maybe not since things are sorted...
+      // But we need something about the leading dijet sum since the index is not matched
+
+      if(Type == ObservableLeadingDiJetSumE)
+      {
+         if(MatchedJetAngle->size() < 2)   return 999;
+         if((*MatchedJetAngle)[0] < 0)     return 999;
+         if((*MatchedJetAngle)[1] < 0)     return 999;
+         return max((*MatchedJetAngle)[0], (*MatchedJetAngle)[1]);
+      }
 
       if(Item < 0)                          return 999;
       if(Item >= MatchedJetAngle->size())   return 999;
@@ -438,37 +476,39 @@ int main(int argc, char *argv[])
    sort(BinningRecoBins.begin(), BinningRecoBins.end());
 
    ObservableType PrimaryType = ObservableNone;
-   if(Primary == "JetE")           PrimaryType = ObservableJetE;
-   if(Primary == "LeadingJetE")    PrimaryType = ObservableLeadingJetE;
-   if(Primary == "SubleadingJetE") PrimaryType = ObservableSubleadingJetE;
-   if(Primary == "LeadingDiJetE")  PrimaryType = ObservableLeadingDiJetE;
-   if(Primary == "JetP")           PrimaryType = ObservableJetP;
-   if(Primary == "JetZG")          PrimaryType = ObservableZG;
-   if(Primary == "ZG")             PrimaryType = ObservableZG;
-   if(Primary == "JetRG")          PrimaryType = ObservableRG;
-   if(Primary == "RG")             PrimaryType = ObservableRG;
-   if(Primary == "JetMG")          PrimaryType = ObservableMG;
-   if(Primary == "MG")             PrimaryType = ObservableMG;
-   if(Primary == "JetMGJetE")      PrimaryType = ObservableMGE;
-   if(Primary == "JetMGE")         PrimaryType = ObservableMGE;
-   if(Primary == "MGE")            PrimaryType = ObservableMGE;
-   if(Primary == "Thrust")         PrimaryType = ObservableThrust;
+   if(Primary == "JetE")              PrimaryType = ObservableJetE;
+   if(Primary == "LeadingJetE")       PrimaryType = ObservableLeadingJetE;
+   if(Primary == "SubleadingJetE")    PrimaryType = ObservableSubleadingJetE;
+   if(Primary == "LeadingDiJetE")     PrimaryType = ObservableLeadingDiJetE;
+   if(Primary == "LeadingDiJetSumE")  PrimaryType = ObservableLeadingDiJetSumE;
+   if(Primary == "JetP")              PrimaryType = ObservableJetP;
+   if(Primary == "JetZG")             PrimaryType = ObservableZG;
+   if(Primary == "ZG")                PrimaryType = ObservableZG;
+   if(Primary == "JetRG")             PrimaryType = ObservableRG;
+   if(Primary == "RG")                PrimaryType = ObservableRG;
+   if(Primary == "JetMG")             PrimaryType = ObservableMG;
+   if(Primary == "MG")                PrimaryType = ObservableMG;
+   if(Primary == "JetMGJetE")         PrimaryType = ObservableMGE;
+   if(Primary == "JetMGE")            PrimaryType = ObservableMGE;
+   if(Primary == "MGE")               PrimaryType = ObservableMGE;
+   if(Primary == "Thrust")            PrimaryType = ObservableThrust;
    ObservableType BinningType = ObservableNone;
-   if(Binning == "JetE")           BinningType = ObservableJetE;
-   if(Binning == "LeadingJetE")    BinningType = ObservableLeadingJetE;
-   if(Binning == "SubleadingJetE") BinningType = ObservableSubleadingJetE;
-   if(Binning == "LeadingDiJetE")  BinningType = ObservableLeadingDiJetE;
-   if(Binning == "JetP")           BinningType = ObservableJetP;
-   if(Binning == "JetZG")          BinningType = ObservableZG;
-   if(Binning == "ZG")             BinningType = ObservableZG;
-   if(Binning == "JetRG")          BinningType = ObservableRG;
-   if(Binning == "RG")             BinningType = ObservableRG;
-   if(Binning == "JetMG")          BinningType = ObservableMG;
-   if(Binning == "MG")             BinningType = ObservableMG;
-   if(Binning == "JetMGJetE")      BinningType = ObservableMGE;
-   if(Binning == "JetMGE")         BinningType = ObservableMGE;
-   if(Binning == "MGE")            BinningType = ObservableMGE;
-   if(Binning == "Thrust")         BinningType = ObservableThrust;
+   if(Binning == "JetE")              BinningType = ObservableJetE;
+   if(Binning == "LeadingJetE")       BinningType = ObservableLeadingJetE;
+   if(Binning == "SubleadingJetE")    BinningType = ObservableSubleadingJetE;
+   if(Binning == "LeadingDiJetE")     BinningType = ObservableLeadingDiJetE;
+   if(Binning == "LeadingDiJetSumE")  BinningType = ObservableLeadingDiJetSumE;
+   if(Binning == "JetP")              BinningType = ObservableJetP;
+   if(Binning == "JetZG")             BinningType = ObservableZG;
+   if(Binning == "ZG")                BinningType = ObservableZG;
+   if(Binning == "JetRG")             BinningType = ObservableRG;
+   if(Binning == "RG")                BinningType = ObservableRG;
+   if(Binning == "JetMG")             BinningType = ObservableMG;
+   if(Binning == "MG")                BinningType = ObservableMG;
+   if(Binning == "JetMGJetE")         BinningType = ObservableMGE;
+   if(Binning == "JetMGE")            BinningType = ObservableMGE;
+   if(Binning == "MGE")               BinningType = ObservableMGE;
+   if(Binning == "Thrust")            BinningType = ObservableThrust;
 
    if(BinningType == ObservableNone)
    {

@@ -179,8 +179,8 @@ int main(int argc, char *argv[])
          GenPrimaryMinOverwrite, GenPrimaryMaxOverwrite,
          WorldXMin, WorldXMax, DoSelfNormalize, PrimaryScale);
    
-   // for(TGraphAsymmErrors G : GResult)
-   //    cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
+   for(TGraphAsymmErrors G : GResult)
+      cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
 
    vector<TGraphAsymmErrors> GRResult, GRSystematics;
    vector<vector<TGraphAsymmErrors>> GRMC(MCCount);

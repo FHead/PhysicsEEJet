@@ -23,6 +23,13 @@ RunTest: Execute
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
+	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
+		--Output Plots/DataLeadingDiJetSumENominal.pdf --FinalOutput Plots/MatrixLeadingDiJetSum.$(Format) \
+		--WorldXMin 25 --WorldXMax 140 --WorldYMin 25 --WorldYMax 92 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 92 --RecoPrimaryMin 0 --RecoPrimaryMax 200 \
+		--Primary "Leading Dijet Sum E (GeV)" --Binning "None" --RowNormalize true \
+		--XAxis 505 --YAxis 505 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
 	./Execute --Input Input/DataJetZGNominal.root \
 		--Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/MatrixZG.$(Format) \
 		--WorldXMin 0 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 0.4999 --WorldZMin 0.01 --WorldZMax 1 --LogZ true \
