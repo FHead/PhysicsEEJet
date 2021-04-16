@@ -282,16 +282,16 @@ int main(int argc, char *argv[])
 
       for(int j = 0; j < (int)GCurves.size(); j++)
       {
-         GCurves[j][Index].SetLineWidth(2);
-         GCurves[j][Index].SetMarkerStyle(20);
-         GCurves[j][Index].SetMarkerSize(MarkerModifier);
-         GCurves[j][Index].SetLineColor(Colors[j%8]);
-         GCurves[j][Index].SetMarkerColor(Colors[j%8]);
+         GCurves[j][i].SetLineWidth(2);
+         GCurves[j][i].SetMarkerStyle(20);
+         GCurves[j][i].SetMarkerSize(MarkerModifier);
+         GCurves[j][i].SetLineColor(Colors[j%8]);
+         GCurves[j][i].SetMarkerColor(Colors[j%8]);
                    
-         GCurves[j][Index].Draw("pl");
+         GCurves[j][i].Draw("pl");
 
          if(Index == 0)
-            Legend.AddEntry(&GCurves[j][Index], Labels[j].c_str(), "lp");
+            Legend.AddEntry(&GCurves[j][i], Labels[j].c_str(), "lp");
       }
       
       HWorld[Index]->Draw("axis same");

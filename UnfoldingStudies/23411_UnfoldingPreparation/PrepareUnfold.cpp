@@ -11,7 +11,7 @@ using namespace std;
 
 enum ObservableType {ObservableNone, ObservableLeadingJetE, ObservableSubleadingJetE,
    ObservableJetE, ObservableJetP, ObservableZG, ObservableRG, ObservableMG, ObservableMGE, ObservableThrust,
-   ObservableLeadingDiJetE, ObservableLeadingDiJetSumE};
+   ObservableLeadingDiJetE, ObservableLeadingDiJetSumE, ObservableJetM, ObservableJetME};
 enum ObservableStep {Gen, Reco, Matched};
 
 class Messenger;
@@ -218,6 +218,20 @@ public:
       if(Type == ObservableMGE && Step == Matched)
          return MatchedJetMG->size();
 
+      if(Type == ObservableJetM && Step == Gen)
+         return GenJetE->size();
+      if(Type == ObservableJetM && Step == Reco)
+         return RecoJetE->size();
+      if(Type == ObservableJetM && Step == Matched)
+         return MatchedJetE->size();
+
+      if(Type == ObservableJetME && Step == Gen)
+         return GenJetE->size();
+      if(Type == ObservableJetME && Step == Reco)
+         return RecoJetE->size();
+      if(Type == ObservableJetME && Step == Matched)
+         return MatchedJetE->size();
+
       return 0;
    }
    double GetValue(ObservableStep Step, ObservableType &Type, int Index, int Item,
@@ -368,9 +382,23 @@ public:
          if(Step == Gen && Item < GenJetMG->size() && Index >= 0 && Index < (*GenJetMG)[Item].size())
             return (*GenJetMG)[Item][Index];
          if(Step == Reco && Item < RecoJetMG->size() && Index >= 0 && Index < (*RecoJetMG)[Item].size())
-            return (*RecoJetMG)[Item][Index];
+         {
+            double Value = (*RecoJetMG)[Item][Index];
+            if(Value < 0)
+               return -1;
+            Value = Value * (1 + Shift * (*RecoJetJEU)[Item] / (*RecoJetJEC)[Item]);
+            return Value;
+         }
          if(Step == Matched && Item < MatchedJetMG->size() && Index >= 0 && Index < (*MatchedJetMG)[Item].size())
-            return (*MatchedJetMG)[Item][Index];
+         {
+            double Value = (*MatchedJetMG)[Item][Index];
+            if(Value < 0)
+               return -1;
+            double E0 = (*MatchedJetE)[Item];
+            double E = E0 * (1 + Shift * (*MatchedJetJEU)[Item] / (*MatchedJetJEC)[Item]);
+            E = (E - (*GenJetE)[Item]) * Smear + (*GenJetE)[Item];
+            return Value * E / E0;
+         }
       }
 
       if(Type == ObservableMGE)
@@ -380,6 +408,48 @@ public:
          SubType = ObservableJetE;
          double E  = GetValueNoScale(Step, SubType, Index, Item, Shift, Smear);
          return MG / E;
+      }
+
+      if(Type == ObservableJetM)
+      {
+         if(Step == Gen && Item < GenJetE->size())
+         {
+            double E = (*GenJetE)[Item];
+            double P = (*GenJetP)[Item];
+            double M2 = E * E - P * P;
+            if(M2 < 0)   M2 = 0;
+            double M = sqrt(M2);
+            return M;
+         }
+         if(Step == Reco && Item < RecoJetE->size())
+         {
+            double E = (*RecoJetE)[Item] * (1 + Shift * (*RecoJetJEU)[Item] / (*RecoJetJEC)[Item]);
+            double P = (*RecoJetP)[Item] * (1 + Shift * (*RecoJetJEU)[Item] / (*RecoJetJEC)[Item]);
+            double M2 = E * E - P * P;
+            if(M2 < 0)   M2 = 0;
+            double M = sqrt(M2);
+            return M;
+         }
+         if(Step == Matched && Item < MatchedJetE->size())
+         {
+            double E = (*MatchedJetE)[Item] * (1 + Shift * (*MatchedJetJEU)[Item] / (*MatchedJetJEC)[Item]);
+            double P = (*MatchedJetP)[Item] * (1 + Shift * (*MatchedJetJEU)[Item] / (*MatchedJetJEC)[Item]);
+            E = (E - (*GenJetE)[Item]) * Smear + (*GenJetE)[Item];
+            P = (P - (*GenJetP)[Item]) * Smear + (*GenJetP)[Item];
+            double M2 = E * E - P * P;
+            if(M2 < 0)   M2 = 0;
+            double M = sqrt(M2);
+            return M;
+         }
+      }
+
+      if(Type == ObservableJetME)
+      {
+         ObservableType SubType = ObservableJetM;
+         double M = GetValueNoScale(Step, SubType, Index, Item, Shift, Smear);
+         SubType = ObservableJetE;
+         double E = GetValueNoScale(Step, SubType, Index, Item, Shift, Smear);
+         return M / E;
       }
 
       return -1;
@@ -491,7 +561,13 @@ int main(int argc, char *argv[])
    if(Primary == "JetMGJetE")         PrimaryType = ObservableMGE;
    if(Primary == "JetMGE")            PrimaryType = ObservableMGE;
    if(Primary == "MGE")               PrimaryType = ObservableMGE;
+   if(Primary == "JetM")              PrimaryType = ObservableJetM;
+   if(Primary == "M")                 PrimaryType = ObservableJetM;
+   if(Primary == "JetMJetE")          PrimaryType = ObservableJetME;
+   if(Primary == "JetME")             PrimaryType = ObservableJetME;
+   if(Primary == "ME")                PrimaryType = ObservableJetME;
    if(Primary == "Thrust")            PrimaryType = ObservableThrust;
+
    ObservableType BinningType = ObservableNone;
    if(Binning == "JetE")              BinningType = ObservableJetE;
    if(Binning == "LeadingJetE")       BinningType = ObservableLeadingJetE;
@@ -508,6 +584,11 @@ int main(int argc, char *argv[])
    if(Binning == "JetMGJetE")         BinningType = ObservableMGE;
    if(Binning == "JetMGE")            BinningType = ObservableMGE;
    if(Binning == "MGE")               BinningType = ObservableMGE;
+   if(Binning == "JetM")              BinningType = ObservableJetM;
+   if(Binning == "M")                 BinningType = ObservableJetM;
+   if(Binning == "JetMJetE")          BinningType = ObservableJetME;
+   if(Binning == "JetME")             BinningType = ObservableJetME;
+   if(Binning == "ME")                BinningType = ObservableJetME;
    if(Binning == "Thrust")            BinningType = ObservableThrust;
 
    if(BinningType == ObservableNone)

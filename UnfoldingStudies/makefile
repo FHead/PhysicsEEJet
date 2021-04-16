@@ -11,7 +11,7 @@ UnfoldPreparation:
 	(cd 23411_UnfoldingPreparation/ && make RunNominal)
 
 NominalUnfold:
-	(cd 23412_ActualUnfold && make Prepare RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunDataUnfold)
+	(cd 23412_ActualUnfold && make Prepare RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunMCFakeUnfold)
 
 MCIterationScan:
 	(cd 23412_PerfectRecoGeneration/ && make Prepare TestRun)

@@ -13,6 +13,8 @@ TestRun: Execute
 	./Execute --Input Input/ToyJetRGNominal.root --Output RegularizationScanJetRG.pdf --Ignore 24 --Reference HMCTruth
 	./Execute --Input Input/ToyJetMGNominal.root --Output RegularizationScanJetMG.pdf --Ignore 24 --Reference HMCTruth
 	./Execute --Input Input/ToyJetMGENominal.root --Output RegularizationScanJetMGE.pdf --Ignore 24 --Reference HMCTruth
+	./Execute --Input Input/ToyJetMNominal.root --Output RegularizationScanJetM.pdf --Ignore 24 --Reference HMCTruth
+	./Execute --Input Input/ToyJetMENominal.root --Output RegularizationScanJetME.pdf --Ignore 24 --Reference HMCTruth
 
 TestRunData: Execute
 	./Execute --Input Input/ToyDataJetENominal.root  --Output DataRegularizationScanJetE.pdf  --Ignore 10 --Reference HMCTruth
@@ -22,6 +24,8 @@ TestRunData: Execute
 	./Execute --Input Input/ToyDataJetRGNominal.root --Output DataRegularizationScanJetRG.pdf --Ignore 24 --Reference HMCTruth
 	./Execute --Input Input/ToyDataJetMGNominal.root --Output DataRegularizationScanJetMG.pdf --Ignore 24 --Reference HMCTruth
 	./Execute --Input Input/ToyDataJetMGENominal.root --Output DataRegularizationScanJetMGE.pdf --Ignore 24 --Reference HMCTruth
+	./Execute --Input Input/ToyDataJetMNominal.root --Output DataRegularizationScanJetM.pdf --Ignore 24 --Reference HMCTruth
+	./Execute --Input Input/ToyDataJetMENominal.root --Output DataRegularizationScanJetME.pdf --Ignore 24 --Reference HMCTruth
 
 Execute: PlotIteration.cpp
 	CompileRootMacro PlotIteration.cpp Execute

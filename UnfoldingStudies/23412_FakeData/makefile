@@ -42,6 +42,14 @@ TestRun: Execute
 		--Shape PerfectInput/PerfectJetMGENominal.root \
 		--Yield Input/DataJetMGENominal.root \
 		--Output Output/ToyJetMGENominal.root
+	./Execute --MC Input/MCJetMNominal.root \
+		--Shape PerfectInput/PerfectJetMNominal.root \
+		--Yield Input/DataJetMNominal.root \
+		--Output Output/ToyJetMNominal.root
+	./Execute --MC Input/MCJetMENominal.root \
+		--Shape PerfectInput/PerfectJetMENominal.root \
+		--Yield Input/DataJetMENominal.root \
+		--Output Output/ToyJetMENominal.root
 
 TestRunStatistics: Execute
 	for i in `seq 1001 1250`; do \
@@ -81,6 +89,16 @@ TestRunStatistics: Execute
 			--Yield Input/DataJetMGENominal.root \
 			--Seed $$i \
 			--Output Output/ToyDataJetMGEStatistics_$${i}.root; \
+		./Execute --MC Input/MCJetMNominal.root \
+			--Shape PerfectInput/PerfectDataJetMNominal.root \
+			--Yield Input/DataJetMNominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataJetMStatistics_$${i}.root; \
+		./Execute --MC Input/MCJetMENominal.root \
+			--Shape PerfectInput/PerfectDataJetMENominal.root \
+			--Yield Input/DataJetMENominal.root \
+			--Seed $$i \
+			--Output Output/ToyDataJetMEStatistics_$${i}.root; \
 	done
 
 TestRunData: Execute
@@ -112,6 +130,14 @@ TestRunData: Execute
 		--Shape PerfectInput/PerfectDataJetMGENominal.root \
 		--Yield Input/DataJetMGENominal.root \
 		--Output Output/ToyDataJetMGENominal.root
+	./Execute --MC Input/MCJetMNominal.root \
+		--Shape PerfectInput/PerfectDataJetMNominal.root \
+		--Yield Input/DataJetMNominal.root \
+		--Output Output/ToyDataJetMNominal.root
+	./Execute --MC Input/MCJetMENominal.root \
+		--Shape PerfectInput/PerfectDataJetMENominal.root \
+		--Yield Input/DataJetMENominal.root \
+		--Output Output/ToyDataJetMENominal.root
 
 Execute: GenerateFakeData.cpp
 	CompileRootMacro GenerateFakeData.cpp Execute

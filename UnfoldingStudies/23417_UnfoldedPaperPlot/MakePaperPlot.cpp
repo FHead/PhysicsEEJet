@@ -27,7 +27,7 @@ void HumanPlots(PdfFileHelper &PdfFile,
    string BinningObservable = "", string Title = "", string XTitle = "", string YTitle = "");
 void SelfNormalize(TH1D *H, vector<double> Bins1, vector<double> Bins2);
 TH1D *BuildSystematics(TH1D *HResult, TH1D *HVariation);
-vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2, TH1D *H2 = nullptr);
+vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2, TH1D *H2 = nullptr, bool Normalize = true);
 void SetPad(TPad *P);
 void SetAxis(TGaxis &A);
 void SetWorld(TH2D *H);
@@ -192,13 +192,17 @@ int main(int argc, char *argv[])
          GRMC[j].push_back(CalculateRatio(GMC[j][i], GResult[i]));
    }
 
+   PdfFile.AddTextPage("Result");
    for(TGraphAsymmErrors G : GResult)
       PdfFile.AddPlot(G, "ap");
+   
+   PdfFile.AddTextPage("Systematics");
    for(TGraphAsymmErrors G : GSystematics)
       PdfFile.AddPlot(G, "ap");
-   for(vector<TGraphAsymmErrors> &V : GMC)
-      for(TGraphAsymmErrors G : V)
-         PdfFile.AddPlot(G, "ap");
+   
+   PdfFile.AddTextPage("Systematics ratio");
+   for(TGraphAsymmErrors G : GRSystematics)
+      PdfFile.AddPlot(G, "ap");
 
    TCanvas Canvas("Canvas", "", CanvasWidth, CanvasHeight);
 
@@ -516,12 +520,14 @@ TH1D *BuildSystematics(TH1D *HResult, TH1D *HVariation)
       double V = HResult->GetBinContent(i);
       double R = HVariation->GetBinContent(i);
       HSystematics->SetBinContent(i, V * (R + 1));
+
+      cout << i << " " << V << " " << R << endl;
    }
 
    return HSystematics;
 }
 
-vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2, TH1D *H2)
+vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<double> Bins2, TH1D *H2, bool Normalize)
 {
    int BinningCount = Bins2.size() - 1;
    if(BinningCount <= 0)
@@ -562,11 +568,15 @@ vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<doubl
             double YUp = H->GetBinContent(i + iB * PrimaryBinCount + 1);
             double YDown = H2->GetBinContent(i + iB * PrimaryBinCount + 1);
 
+            cout << iB << " " << i << " " << YUp << " " << YDown << endl;
+
             Y = (YUp + YDown) / 2;
             DY = fabs(YUp - YDown) / 2;
          }
 
          double Width = PrimaryBins[i+1] - PrimaryBins[i];
+         if(Normalize == false)
+            Width = 1;
 
          Result[iB].SetPoint(i, X, Y / Width);
          Result[iB].SetPointError(i, DX, DX, DY / Width, DY / Width);

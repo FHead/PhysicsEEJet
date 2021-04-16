@@ -1,21 +1,22 @@
-Fraction    = 1
+Fraction        = 1
 
-DataSample    = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
-MCSample      = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
-Pythia8Sample = Pythia8Samples/PurePythia91.root
-HerwigSample  = HerwigSamples/run_00/Belle_0_0.root
-SherpaSample  = SherpaSamples/run_00/Belle_0_0.root
+DataSample      = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
+MCSample        = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
+Pythia8Sample   = Pythia8Samples/PurePythia91.root
+HerwigSample    = HerwigSamples/run_00/Belle_0_0.root,HerwigSamples/run_01/Belle_0_0.root
+Herwig715Sample = Herwig715Samples/run_00/Belle_0_0.root
+SherpaSample    = SherpaSamples/run_00/Belle_0_0.root
 
 MCJEC       = ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
 ResidualJEC = ../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
 DataJEC     = $(MCJEC),$(ResidualJEC)
 
+default: DebugRun
+# TestRunGenVsGenBefore TestRunGenBeforeOnly
 
-default: TestRunGenVsGenBefore TestRunGenBeforeOnly
+RunGroup1: TestRunCut TestRun TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8 TestRunHerwig TestRunSherpa TestRunHerwig715
 
-RunGroup1: TestRun TestRunCut TestRunNoResidual TestRunNoJEC TestRunLargeThetaGap TestRunStock TestRunThetaSides TestRunPythia8 TestRunHerwig TestRunSherpa 
-
-RunGroup2: TestRunCutSumE TestRunLargeThetaGapSumE TestRunThetaSidesSumE TestRunPythia8SumE TestRunHerwigSumE TestRunSherpaSumE TestRunCutLowerSumE TestRunCutHigherSumE
+RunGroup2: TestRunCutSumE TestRunLargeThetaGapSumE TestRunThetaSidesSumE TestRunPythia8SumE TestRunHerwigSumE TestRunSherpaSumE TestRunCutLowerSumE TestRunCutHigherSumE TestRunHerwig715SumE
 
 Prepare:
 	rm -f Pythia8Samples SamplesData SamplesMC HerwigSamples SherpaSamples
@@ -23,6 +24,7 @@ Prepare:
 	ln -sf ../../Samples/ALEPH/ SamplesData
 	ln -sf ../../Samples/ALEPHMC/ SamplesMC
 	ln -sf ../../Samples/HERWIG7 HerwigSamples
+	ln -sf ../../Samples/HERWIG715 Herwig715Samples
 	ln -sf ../../Samples/SHERPA/ SherpaSamples
 
 Execute: CalculateJets.cpp
@@ -146,6 +148,14 @@ TestRunHerwig: Execute
 	time ./Execute --Input $(HerwigSample) --Fraction $(Fraction) --Output MCHerwig.root \
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
 
+TestRunHerwig715SumE: Execute
+	time ./Execute --Input $(Herwig715Sample) --Fraction $(Fraction) --Output MCHerwig715SumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco
+
+TestRunHerwig715: Execute
+	time ./Execute --Input $(Herwig715Sample) --Fraction $(Fraction) --Output MCHerwig715.root \
+		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
+
 TestRunSherpaSumE: Execute
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpaSumE.root \
 		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco
@@ -154,4 +164,6 @@ TestRunSherpa: Execute
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpa.root \
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
 
-
+DebugRun: Execute
+	time ./Execute --Input $(MCSample)   --Fraction 0.01 --Output MCNoCutDebug.root \
+		--MC true  --JEC $(MCJEC)
