@@ -5,8 +5,8 @@ Prepare:
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 	ln -sf ../23411_UnfoldingPreparation/Output BinMapping
 
-RunData: RunDataJetE RunDataDiJetE RunDataJetZG RunDataJetRG RunDataJetMG RunDataJetMGE RunDataJetM RunDataJetME \
-	RunDataPlot
+RunData: RunDataJetE RunDataDiJetE RunDataDiJetSumE RunDataJetZG RunDataJetRG \
+	RunDataJetMG RunDataJetMGE RunDataJetM RunDataJetME RunDataPlot
 
 RunDataJetE: Execute
 	./Execute \
@@ -24,28 +24,28 @@ RunDataJetE: Execute
 
 RunDataDiJetE: Execute
 	./Execute \
-		--BaseInput Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root,Input/DataLeadingDiJetEPositiveTheta.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root \
-		--Input Input/DataLeadingDiJetEJECUp.root,Input/DataLeadingDiJetEJECDown.root,Input/DataLeadingDiJetEJECHalfUp.root,Input/DataLeadingDiJetEJECHalfDown.root,Input/DataLeadingDiJetEJERUp.root,Input/DataLeadingDiJetEJERDown.root,Input/DataLeadingDiJetEMCPrior.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root,Input/DataLeadingDiJetELargeThetaGap.root,Input/MCLeadingDiJetEFake.root,Input/DataLeadingDiJetENegativeTheta.root,Input/DataLeadingDiJetELowerSumE.root,Input/DataLeadingDiJetEHigherSumE.root \
-		--BaseHistogram HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HMCTruth,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7 \
-		--Histogram HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes6,HUnfoldedBayes8,HUnfoldedSVD4.0,HUnfoldedBayes1,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7 \
-		--Label JECUp,JECDown,JECHalfUp,JECHalfDown,JERUp,JERDown,MCPrior,IterationDown,IterationUp,SVD,MCClosure,ThetaGap,Fake,Side,LowSumE,HighSumE \
-		--Group 1,1,0,0,1,1,0,1,1,1,1,0,1,0,1,1 \
-		--Bridging 3,3,3,3,3,3,3,0,0,0,0,2,0,0,0,0 \
-		--ExtraScaling 1,1,1,1,1,1,1,1,1,1,1,1.16120166997,1,1,1,1 \
+		--BaseInput Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root,Input/DataLeadingDiJetEPositiveTheta.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root \
+		--Input Input/DataLeadingDiJetEJECUp.root,Input/DataLeadingDiJetEJECDown.root,Input/DataLeadingDiJetEJECHalfUp.root,Input/DataLeadingDiJetEJECHalfDown.root,Input/DataLeadingDiJetEJERUp.root,Input/DataLeadingDiJetEJERDown.root,Input/DataLeadingDiJetEMCPrior.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/DataLeadingDiJetENominal.root,Input/MCLeadingDiJetENominal.root,Input/DataLeadingDiJetELargeThetaGap.root,Input/MCLeadingDiJetEFake.root,Input/DataLeadingDiJetENegativeTheta.root,Input/DataLeadingDiJetELowerSumE.root,Input/DataLeadingDiJetEHigherSumE.root,Input/MCLeadingDiJetESmearedSumE.root \
+		--BaseHistogram HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HMCTruth,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7 \
+		--Histogram HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes6,HUnfoldedBayes8,HUnfoldedSVD4.0,HUnfoldedBayes1,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7 \
+		--Label JECUp,JECDown,JECHalfUp,JECHalfDown,JERUp,JERDown,MCPrior,IterationDown,IterationUp,SVD,MCClosure,ThetaGap,Fake,Side,LowSumE,HighSumE,SmearSumE \
+		--Group 1,1,0,0,1,1,0,1,1,1,1,0,1,0,1,1,1 \
+		--Bridging 3,3,3,3,3,3,3,0,0,0,0,2,0,0,0,0,2 \
+		--ExtraScaling 1,1,1,1,1,1,1,1,1,1,1,1.16120166997,1,1,1,1,1 \
 		--BinMapping BinMapping/DataLeadingDiJetENominal.root \
 		--DoSelfNormalize true \
 		--Output DataLeadingDiJetE.root
 
-RunDataJetSumE: Execute
+RunDataDiJetSumE: Execute
 	./Execute \
-		--BaseInput Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumEPositiveTheta.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root \
-		--Input Input/DataLeadingDiJetSumEJECUp.root,Input/DataLeadingDiJetSumEJECDown.root,Input/DataLeadingDiJetSumEJECHalfUp.root,Input/DataLeadingDiJetSumEJECHalfDown.root,Input/DataLeadingDiJetSumEJERUp.root,Input/DataLeadingDiJetSumEJERDown.root,Input/DataLeadingDiJetSumEMCPrior.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumELargeThetaGap.root,Input/MCLeadingDiJetSumEFake.root,Input/DataLeadingDiJetSumENegativeTheta.root,Input/DataLeadingDiJetSumELowerSumE.root,Input/DataLeadingDiJetSumEHigherSumE.root \
-		--BaseHistogram HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HMCTruth,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15 \
-		--Histogram HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes14,HUnfoldedBayes16,HUnfoldedSVD6.0,HUnfoldedBayes1,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15 \
-		--Label JECUp,JECDown,JECHalfUp,JECHalfDown,JERUp,JERDown,MCPrior,IterationDown,IterationUp,SVD,MCClosure,ThetaGap,Fake,Side,LowSumE,HighSumE \
-		--Group 1,1,0,0,1,1,0,1,1,1,1,0,1,0,1,1 \
-		--Bridging 3,3,3,3,3,3,3,0,0,0,0,2,0,0,0,0 \
-		--ExtraScaling 1,1,1,1,1,1,1,1,1,1,1,1.16120166997,1,1,1,1 \
+		--BaseInput Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumEPositiveTheta.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root \
+		--Input Input/DataLeadingDiJetSumEJECUp.root,Input/DataLeadingDiJetSumEJECDown.root,Input/DataLeadingDiJetSumEJECHalfUp.root,Input/DataLeadingDiJetSumEJECHalfDown.root,Input/DataLeadingDiJetSumEJERUp.root,Input/DataLeadingDiJetSumEJERDown.root,Input/DataLeadingDiJetSumEMCPrior.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumENominal.root,Input/MCLeadingDiJetSumENominal.root,Input/DataLeadingDiJetSumELargeThetaGap.root,Input/MCLeadingDiJetSumEFake.root,Input/DataLeadingDiJetSumENegativeTheta.root,Input/DataLeadingDiJetSumELowerSumE.root,Input/DataLeadingDiJetSumEHigherSumE.root,Input/MCLeadingDiJetSumESmearedSumE.root \
+		--BaseHistogram HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HMCTruth,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15 \
+		--Histogram HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes14,HUnfoldedBayes16,HUnfoldedSVD6.0,HUnfoldedBayes1,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15 \
+		--Label JECUp,JECDown,JECHalfUp,JECHalfDown,JERUp,JERDown,MCPrior,IterationDown,IterationUp,SVD,MCClosure,ThetaGap,Fake,Side,LowSumE,HighSumE,SmearSumE \
+		--Group 1,1,0,0,1,1,0,1,1,1,1,0,1,0,1,1,1 \
+		--Bridging 3,3,3,3,3,3,3,0,0,0,0,2,0,0,0,0,2 \
+		--ExtraScaling 1,1,1,1,1,1,1,1,1,1,1,1.16120166997,1,1,1,1,1 \
 		--BinMapping BinMapping/DataLeadingDiJetSumENominal.root \
 		--DoSelfNormalize true \
 		--Output DataLeadingDiJetSumE.root
@@ -211,11 +211,11 @@ RunDataPlot: ExecutePlot
 		--Variations HJECUp,HJECDown,HJECHalfUp,HJECHalfDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HThetaGap,HFake,HSide \
 		--Labels "JEC Up","JEC Down","JEC Up 0.5x","JEC Down 0.5x","JER Up","JER Down","MC Prior","Iteration Down","Iteration Up","SVD","Closure","ThetaGap","Fake","Side"
 	./ExecutePlot --Input DataLeadingDiJetE.root --Output PlotDataLeadingDiJetE.pdf \
-		--Variations HJECUp,HJECDown,HJECHalfUp,HJECHalfDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HThetaGap,HFake,HSide,HLowSumE,HHighSumE \
-		--Labels "JEC Up","JEC Down","JEC Up 0.5x","JEC Down 0.5x","JER Up","JER Down","MC Prior","Iteration Down","Iteration Up","SVD","Closure","ThetaGap","Fake","Side","Sum E-","Sum E+"
+		--Variations HJECUp,HJECDown,HJECHalfUp,HJECHalfDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HThetaGap,HFake,HSide,HLowSumE,HHighSumE,HSmearSumE \
+		--Labels "JEC Up","JEC Down","JEC Up 0.5x","JEC Down 0.5x","JER Up","JER Down","MC Prior","Iteration Down","Iteration Up","SVD","Closure","ThetaGap","Fake","Side","Sum E-","Sum E+","Smear Sum E"
 	./ExecutePlot --Input DataLeadingDiJetSumE.root --Output PlotDataLeadingDiJetSumE.pdf \
-		--Variations HJECUp,HJECDown,HJECHalfUp,HJECHalfDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HThetaGap,HFake,HSide,HLowSumE,HHighSumE \
-		--Labels "JEC Up","JEC Down","JEC Up 0.5x","JEC Down 0.5x","JER Up","JER Down","MC Prior","Iteration Down","Iteration Up","SVD","Closure","ThetaGap","Fake","Side","Sum E-","Sum E+"
+		--Variations HJECUp,HJECDown,HJECHalfUp,HJECHalfDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HThetaGap,HFake,HSide,HLowSumE,HHighSumE,HSmearSumE \
+		--Labels "JEC Up","JEC Down","JEC Up 0.5x","JEC Down 0.5x","JER Up","JER Down","MC Prior","Iteration Down","Iteration Up","SVD","Closure","ThetaGap","Fake","Side","Sum E-","Sum E+","Smear Sum E"
 	./ExecutePlot --Input DataJetZG.root --Output PlotDataJetZG.pdf \
 		--Variations HJECUp,HJECDown,HJECHalfUp,HJECHalfDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HThetaGap,HFake,HSide \
 		--Labels "JEC Up","JEC Down","JEC Up 0.5x","JEC Down 0.5x","JER Up","JER Down","MC Prior","Iteration Down","Iteration Up","SVD","Closure","ThetaGap","Fake","Side"

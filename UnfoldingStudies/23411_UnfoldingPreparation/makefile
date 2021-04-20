@@ -34,8 +34,10 @@ default: Preparation
 
 RunThrust: ThrustNominalRun ThrustNoCutRun
 
-RunNominal: Preparation DataNominalRun DataSumERun MCNominalRun MCNoJECRun DataJECRunHalf DataNoResidualRun \
+RunNominal: Preparation DataNominalRun DataSumERun MCNominalRun \
+	MCNoJECRun DataJECRunHalf DataNoResidualRun \
 	DataJECRun DataJERRun \
+	MCSumERun \
 	DataLargeThetaGapRun MCLargeThetaGapRun DataThetaSideRun MCThetaSideRun MCExtra
 
 MCExtra: MCPythia8 MCHerwig MCSherpa MCHerwig715
@@ -622,6 +624,22 @@ DataSumERun: Execute
 		--BinningRecoBins 0,1 \
 		--ObservableUncertaintySmear 1.025
 	# time ./Execute --MC MCHigherSumE.root --Data DataHigherSumE.root --Output Output/DataLeadingDiJetSumEHigherSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1 \
+		--ObservableUncertaintySmear 1.025
+
+MCSumERun: Execute
+	time ./Execute --MC MCSumE.root --Data MCSmearedSumE.root --Output Output/MCLeadingDiJetESmearedSumE.root \
+		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetLEBins) \
+		--ObservableRecoBins $(RecoJetLEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1 \
+		--ObservableUncertaintySmear 1.025
+	time ./Execute --MC MCSumE.root --Data MCSmearedSumE.root --Output Output/MCLeadingDiJetSumESmearedSumE.root \
 		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
 		--ObservableGenBins $(GenJetSEBins) \
 		--ObservableRecoBins $(RecoJetSEBins) \

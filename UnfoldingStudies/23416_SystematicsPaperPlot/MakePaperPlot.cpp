@@ -285,8 +285,8 @@ int main(int argc, char *argv[])
          GCurves[j][i].SetLineWidth(2);
          GCurves[j][i].SetMarkerStyle(20);
          GCurves[j][i].SetMarkerSize(MarkerModifier);
-         GCurves[j][i].SetLineColor(Colors[j%8]);
-         GCurves[j][i].SetMarkerColor(Colors[j%8]);
+         GCurves[j][i].SetLineColor(Colors[j%9]);
+         GCurves[j][i].SetMarkerColor(Colors[j%9]);
                    
          GCurves[j][i].Draw("pl");
 

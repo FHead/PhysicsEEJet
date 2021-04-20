@@ -32,8 +32,8 @@ RunDiJetE: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
-		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE \
-		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection"
 
 RunDiJetSumE: Execute
@@ -46,8 +46,8 @@ RunDiJetSumE: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
-		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE \
-		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection"
 
 RunJetZG: Execute

@@ -466,6 +466,14 @@ RunMCFakeUnfold: Execute ExecutePlot
 	./ExecutePlot --Input Unfolded/MCJetMEFake.root --Original Input/MCJetMENominal.root \
 		--Output Plots/MCJetMEFake.pdf $(MEBin)
 
+RunMCSmearSumEUnfold: Execute ExecutePlot
+	./Execute --Input Input/MCLeadingDiJetESmearedSumE.root --Output Unfolded/MCLeadingDiJetESmearedSumE.root --InputName HMCMatched
+	./Execute --Input Input/MCLeadingDiJetSumESmearedSumE.root --Output Unfolded/MCLeadingDiJetSumESmearedSumE.root --InputName HMCMatched
+	./ExecutePlot --Input Unfolded/MCLeadingDiJetESmearedSumE.root --Original Input/MCLeadingDiJetESmearedSumE.root \
+		--Output Plots/MCLeadingDiJetESmearedSumE.pdf --Iteration 2
+	./ExecutePlot --Input Unfolded/MCLeadingDiJetSumESmearedSumE.root --Original Input/MCLeadingDiJetSumESmearedSumE.root \
+		--Output Plots/MCLeadingDiJetSumESmearedSumE.pdf --Iteration 2
+
 RunMCNoJECUnfold: Execute ExecutePlot
 	# ./Execute --Input Input/MCJetENoJEC.root --Output Unfolded/MCJetENoJEC.root
 	# ./ExecutePlot --Input Unfolded/MCJetENoJEC.root --Original Input/MCJetENoJEC.root \

@@ -38,11 +38,14 @@ int main(int argc, char *argv[])
    double ThetaMax               = CL.GetDouble("ThetaMax", 0.8 * M_PI);
    double GenSumECut             = CL.GetDouble("GenSumECut", -99999);
    double RecoSumECut            = CL.GetDouble("RecoSumECut", -99999);
+   bool DoSumESmear              = CL.GetBool("DoSumESmear", false);
+   double SumESmear              = CL.GetDouble("SumESmear", 0.02);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
    string RecoTreeName           = CL.Get("RecoTreeName", "t");
    string GenTreeName            = CL.Get("GenTreeName", "tgenBefore");
+   bool CheckLeadingGenDiJet     = CL.GetBool("CheckLeadingGenDiJet", false);
 
    JetCorrector JEC(JECFiles);
 
@@ -324,8 +327,16 @@ int main(int argc, char *argv[])
                continue;
             RecoSumE = RecoSumE + P[0];
          }
-         if(RecoSumE < RecoSumECut)
-            continue;
+         if(DoSumESmear == false)
+         {
+            if(RecoSumE < RecoSumECut)
+               continue;
+         }
+         else
+         {
+            if(RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
+               continue;
+         }
 
          PassedEventCount = PassedEventCount + 1;
 
@@ -381,16 +392,12 @@ int main(int argc, char *argv[])
             for(int i = 0 ; i < (int)GenFastJets.size(); i++)
             {
                FourVector P(GenFastJets[i].e(), GenFastJets[i].px(), GenFastJets[i].py(), GenFastJets[i].pz());
-               if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
-                  continue;
                GenJets.emplace_back(pair<FourVector, PseudoJet>(P, GenFastJets[i]));
             }
 
             for(int i = 0 ; i < (int)RecoFastJets.size(); i++)
             {
                FourVector P(RecoFastJets[i].e(), RecoFastJets[i].px(), RecoFastJets[i].py(), RecoFastJets[i].pz());
-               if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
-                  continue;
                RecoJets.emplace_back(pair<FourVector, PseudoJet>(P, RecoFastJets[i]));
             }
          }
@@ -410,6 +417,43 @@ int main(int argc, char *argv[])
          // Sort jets according to energy
          sort(GenJets.begin(), GenJets.end(), DecreasingEnergy);
          sort(RecoJets.begin(), RecoJets.end(), DecreasingEnergy);
+
+         if(GenJets.size() > 0 && GenJets[0].first[0] < 10)
+         {
+            for(int iJ = 0; iJ < GenJets.size(); iJ++)
+               cout << iJ << " " << GenJets[iJ].first[0] << " " << GenJets[iJ].first.GetTheta() << endl;
+         }
+
+         // Check leading jet if applicable
+         if(CheckLeadingGenDiJet == true)
+         {
+            if(GenJets.size() >= 1 && GenJets[0].first.GetTheta() < ThetaMin)
+               continue;
+            if(GenJets.size() >= 1 && GenJets[0].first.GetTheta() > ThetaMax)
+               continue;
+            if(GenJets.size() >= 2 && GenJets[1].first.GetTheta() < ThetaMin)
+               continue;
+            if(GenJets.size() >= 2 && GenJets[1].first.GetTheta() > ThetaMax)
+               continue;
+         }
+
+         // Remove jets out of the acceptance
+         for(int i = 0; i < (int)GenJets.size(); i++)
+         {
+            if(GenJets[i].first.GetTheta() < ThetaMin || GenJets[i].first.GetTheta() > ThetaMax)
+            {
+               GenJets.erase(GenJets.begin() + i);
+               i = i - 1;
+            }
+         }
+         for(int i = 0; i < (int)RecoJets.size(); i++)
+         {
+            if(RecoJets[i].first.GetTheta() < ThetaMin || RecoJets[i].first.GetTheta() > ThetaMax)
+            {
+               RecoJets.erase(RecoJets.begin() + i);
+               i = i - 1;
+            }
+         }
 
          // Calculate groomed quantities for gen jets
          GenJetZG.resize(GenJets.size());
