@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
    string InputFileName  = CL.Get("Input", "MCNoCut.root");
    string Tier           = CL.Get("Tier", "Gen");
    string OutputFileName = CL.Get("Output", "MeowCut.root");
+   string Acceptance     = CL.Get("Acceptance", "020");
 
    PdfFileHelper PdfFile(OutputFileName);
    PdfFile.AddTextPage("Leading DiJet Cut Investigation");
@@ -25,36 +26,44 @@ int main(int argc, char *argv[])
    TFile InputFile(InputFileName.c_str());
    TTree *Tree = (TTree *)InputFile.Get("UnfoldingTree");
 
-   PdfFile.AddPlot(Tree, Tier + "JetTheta", "", "", Tier + " Jet Theta;#theta;", 100, 0, M_PI);
-   PdfFile.AddPlot(Tree, Tier + "JetTheta[0]", "", "", "Leading " + Tier + " Jet Theta;#theta;", 100, 0, M_PI);
-   PdfFile.AddPlot(Tree, Tier + "JetTheta[1]", "", "", "Subleading " + Tier + " Jet Theta;#theta;", 100, 0, M_PI);
-   PdfFile.AddPlot(Tree, Tier + "ESum", "", "", "Total " + Tier + " energy within 0.2-0.8#pi;E (GeV);", 100, 0, 91.5);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[0]>0.2*3.14159&&" + Tier + "JetTheta[0]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of leading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[0]>0.2*3.14159&&" + Tier + "JetTheta[0]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of leading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[0]>0.2*3.14159&&" + Tier + "JetTheta[0]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of leading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[1]>0.2*3.14159&&" + Tier + "JetTheta[1]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of subleading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[1]>0.2*3.14159&&" + Tier + "JetTheta[1]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of subleading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[1]>0.2*3.14159&&" + Tier + "JetTheta[1]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of subleading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[0]>0.2*3.14159&&" + Tier + "JetTheta[0]<0.8*3.14159&&" + Tier + "JetTheta[1]>0.2*3.14159&&" + Tier + "JetTheta[1]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of leading dijet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[0]>0.2*3.14159&&" + Tier + "JetTheta[0]<0.8*3.14159&&" + Tier + "JetTheta[1]>0.2*3.14159&&" + Tier + "JetTheta[1]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of leading dijet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
-   PdfFile.AddPlotProfile(Tree, Tier + "JetTheta[0]>0.2*3.14159&&" + Tier + "JetTheta[0]<0.8*3.14159&&" + Tier + "JetTheta[1]>0.2*3.14159&&" + Tier + "JetTheta[1]<0.8*3.14159:" + Tier + "ESum", "", "prof",
-      "Fraction of leading dijet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   Tree->SetAlias("TargetSumE", (Tier + "SumE" + Acceptance).c_str());
+   Tree->SetAlias("TargetJetTheta", (Tier + "JetTheta").c_str());
+   Tree->SetAlias("Jet1Cut", "(TargetJetTheta[0] > 0.2 * 3.14159 && TargetJetTheta[0] < 0.8 * 3.14159)");
+   Tree->SetAlias("Jet2Cut", "(TargetJetTheta[1] > 0.2 * 3.14159 && TargetJetTheta[1] < 0.8 * 3.14159)");
+   Tree->SetAlias("Jet12Cut", "(Jet1Cut && Jet2Cut)");
 
-   TH1D HESum("HESum", ";E_{sum} Cut;Cut efficiency", 500, 0, 91.2);
-   Tree->Draw((Tier + "ESum>>HESum").c_str());
-   for(int i = HESum.GetNbinsX() - 1; i >= 1; i--)
-      HESum.SetBinContent(i, HESum.GetBinContent(i) + HESum.GetBinContent(i + 1));
-   HESum.Scale(1 / HESum.GetBinContent(1));
-   HESum.SetStats(0);
-   PdfFile.AddPlot(HESum, "", false, false, true);
+   PdfFile.AddPlot(Tree, "TargetJetTheta", "", "", Tier + " Jet Theta;#theta;", 100, 0, M_PI);
+   PdfFile.AddPlot(Tree, "TargetJetTheta[0]", "", "", "Leading " + Tier + " Jet Theta;#theta;", 100, 0, M_PI);
+   PdfFile.AddPlot(Tree, "TargetJetTheta[1]", "", "", "Subleading " + Tier + " Jet Theta;#theta;", 100, 0, M_PI);
+   PdfFile.AddPlot(Tree, "TargetSumE", "", "", "Total " + Tier + " energy within 0.2-0.8#pi;E (GeV);", 100, 0, 91.5);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 50, 88, 91.2);
+
+   TH1D HSumE("HSumE", ";E_{sum} Cut;Cut efficiency", 500, 0, 91.2);
+   Tree->Draw((Tier + "SumE>>HSumE").c_str());
+   for(int i = HSumE.GetNbinsX() - 1; i >= 1; i--)
+      HSumE.SetBinContent(i, HSumE.GetBinContent(i) + HSumE.GetBinContent(i + 1));
+   HSumE.Scale(1 / HSumE.GetBinContent(1));
+   HSumE.SetStats(0);
+   PdfFile.AddPlot(HSumE, "", false, false, true);
 
    InputFile.Close();
    

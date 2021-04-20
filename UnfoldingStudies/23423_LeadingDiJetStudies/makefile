@@ -28,9 +28,18 @@ TestRunPythia:
 	time ./Execute --Input Pythia8Samples/PurePythia91.root \
 		--Fraction $(Fraction) \
 		--Output MCPythiaNoCut.root --MC true \
-		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
+		--JEC ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt \
+		--GenTreeName tgen
 
 TestRunPlot: ExecutePlot
-	./ExecutePlot --Input MCNoCut.root --Tier Gen --Output ALEPHGen.pdf
-	./ExecutePlot --Input MCNoCut.root --Tier Reco --Output ALEPHReco.pdf
-	./ExecutePlot --Input MCPythiaNoCut.root --Tier Gen --Output PythiaGen.pdf
+	./ExecutePlot --Input MCNoCut.root --Tier Gen --Output ALEPHGen008.pdf --Acceptance 008
+	./ExecutePlot --Input MCNoCut.root --Tier Gen --Output ALEPHGen010.pdf --Acceptance 010
+	./ExecutePlot --Input MCNoCut.root --Tier Gen --Output ALEPHGen012.pdf --Acceptance 012
+	./ExecutePlot --Input MCNoCut.root --Tier Gen --Output ALEPHGen015.pdf --Acceptance 015
+	./ExecutePlot --Input MCNoCut.root --Tier Gen --Output ALEPHGen020.pdf --Acceptance 020
+	# ./ExecutePlot --Input MCNoCut.root --Tier Reco --Output ALEPHReco.pdf
+	./ExecutePlot --Input MCPythiaNoCut.root --Tier Gen --Output PythiaGen008.pdf --Acceptance 008
+	./ExecutePlot --Input MCPythiaNoCut.root --Tier Gen --Output PythiaGen010.pdf --Acceptance 010
+	./ExecutePlot --Input MCPythiaNoCut.root --Tier Gen --Output PythiaGen012.pdf --Acceptance 012
+	./ExecutePlot --Input MCPythiaNoCut.root --Tier Gen --Output PythiaGen015.pdf --Acceptance 015
+	./ExecutePlot --Input MCPythiaNoCut.root --Tier Gen --Output PythiaGen020.pdf --Acceptance 020

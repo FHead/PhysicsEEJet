@@ -23,7 +23,7 @@ using namespace fastjet;
 
 int main(int argc, char *argv[]);
 int FindBin(int N, double Bins[], double X);
-bool DecreasingEnergy(FourVector &V1, FourVector &V2);
+bool DecreasingEnergy(pair<FourVector, PseudoJet> &V1, pair<FourVector, PseudoJet> &V2);
 
 int main(int argc, char *argv[])
 {
@@ -36,11 +36,16 @@ int main(int argc, char *argv[])
    bool UseStored                = CL.GetBool("UseStored", false);
    double ThetaMin               = CL.GetDouble("ThetaMin", 0.2 * M_PI);
    double ThetaMax               = CL.GetDouble("ThetaMax", 0.8 * M_PI);
+   double GenSumECut             = CL.GetDouble("GenSumECut", -99999);
+   double RecoSumECut            = CL.GetDouble("RecoSumECut", -99999);
+   bool DoSumESmear              = CL.GetBool("DoSumESmear", false);
+   double SumESmear              = CL.GetDouble("SumESmear", 0.02);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
    string RecoTreeName           = CL.Get("RecoTreeName", "t");
    string GenTreeName            = CL.Get("GenTreeName", "tgenBefore");
+   bool CheckLeadingGenDiJet     = CL.GetBool("CheckLeadingGenDiJet", false);
 
    JetCorrector JEC(JECFiles);
 
@@ -52,11 +57,6 @@ int main(int argc, char *argv[])
    vector<float> SDZCut{0.1, 0.5};
    vector<float> SDBeta{0.0, 1.5};
    float RecoSumE;
-   float RecoSumE008;
-   float RecoSumE010;
-   float RecoSumE012;
-   float RecoSumE015;
-   float RecoSumE020;
    int NRecoJets;
    vector<float> RecoJetPX;
    vector<float> RecoJetPY;
@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
    vector<float> RecoJetP;
    vector<float> RecoJetTheta;
    vector<float> RecoJetPhi;
+   vector<float> RecoJetM;
    vector<float> RecoJetE;
    vector<float> RecoJetJEC;
    vector<float> RecoJetJEU;
@@ -74,11 +75,6 @@ int main(int argc, char *argv[])
    vector<vector<float>> RecoJetNG;
    float RecoThrust;
    float GenSumE;
-   float GenSumE008;
-   float GenSumE010;
-   float GenSumE012;
-   float GenSumE015;
-   float GenSumE020;
    int NGenJets;
    vector<float> GenJetPX;
    vector<float> GenJetPY;
@@ -86,6 +82,7 @@ int main(int argc, char *argv[])
    vector<float> GenJetP;
    vector<float> GenJetTheta;
    vector<float> GenJetPhi;
+   vector<float> GenJetM;
    vector<float> GenJetE;
    vector<vector<float>> GenJetZG;
    vector<vector<float>> GenJetRG;
@@ -99,6 +96,7 @@ int main(int argc, char *argv[])
    vector<float> MatchedJetP;
    vector<float> MatchedJetTheta;
    vector<float> MatchedJetPhi;
+   vector<float> MatchedJetM;
    vector<float> MatchedJetE;
    vector<vector<float>> MatchedJetZG;
    vector<vector<float>> MatchedJetRG;
@@ -112,12 +110,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("NSD",             &NSD, "NSD/I");
    OutputTree.Branch("SDZCut",          &SDZCut);
    OutputTree.Branch("SDBeta",          &SDBeta);
-   OutputTree.Branch("RecoSumE",        &RecoSumE);
-   OutputTree.Branch("RecoSumE008",     &RecoSumE008);
-   OutputTree.Branch("RecoSumE010",     &RecoSumE010);
-   OutputTree.Branch("RecoSumE012",     &RecoSumE012);
-   OutputTree.Branch("RecoSumE015",     &RecoSumE015);
-   OutputTree.Branch("RecoSumE020",     &RecoSumE020);
+   OutputTree.Branch("RecoSumE",        &RecoSumE, "RecoSumE/F");
    OutputTree.Branch("NRecoJets",       &NRecoJets, "NRecoJets/I");
    OutputTree.Branch("RecoJetPX",       &RecoJetPX);
    OutputTree.Branch("RecoJetPY",       &RecoJetPY);
@@ -125,6 +118,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("RecoJetP",        &RecoJetP);
    OutputTree.Branch("RecoJetTheta",    &RecoJetTheta);
    OutputTree.Branch("RecoJetPhi",      &RecoJetPhi);
+   OutputTree.Branch("RecoJetM",        &RecoJetM);
    OutputTree.Branch("RecoJetE",        &RecoJetE);
    OutputTree.Branch("RecoJetJEC",      &RecoJetJEC);
    OutputTree.Branch("RecoJetJEU",      &RecoJetJEU);
@@ -134,12 +128,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("RecoJetMG",       &RecoJetMG);
    OutputTree.Branch("RecoJetNG",       &RecoJetNG);
    OutputTree.Branch("RecoThrust",      &RecoThrust);
-   OutputTree.Branch("GenSumE",         &GenSumE);
-   OutputTree.Branch("GenSumE008",      &GenSumE008);
-   OutputTree.Branch("GenSumE010",      &GenSumE010);
-   OutputTree.Branch("GenSumE012",      &GenSumE012);
-   OutputTree.Branch("GenSumE015",      &GenSumE015);
-   OutputTree.Branch("GenSumE020",      &GenSumE020);
+   OutputTree.Branch("GenSumE",         &GenSumE, "GenSumE/F");
    OutputTree.Branch("NGenJets",        &NGenJets, "NGenJets/I");
    OutputTree.Branch("GenJetPX",        &GenJetPX);
    OutputTree.Branch("GenJetPY",        &GenJetPY);
@@ -147,6 +136,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("GenJetP",         &GenJetP);
    OutputTree.Branch("GenJetTheta",     &GenJetTheta);
    OutputTree.Branch("GenJetPhi",       &GenJetPhi);
+   OutputTree.Branch("GenJetM",         &GenJetM);
    OutputTree.Branch("GenJetE",         &GenJetE);
    OutputTree.Branch("GenJetZG",        &GenJetZG);
    OutputTree.Branch("GenJetRG",        &GenJetRG);
@@ -160,6 +150,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("MatchedJetP",     &MatchedJetP);
    OutputTree.Branch("MatchedJetTheta", &MatchedJetTheta);
    OutputTree.Branch("MatchedJetPhi",   &MatchedJetPhi);
+   OutputTree.Branch("MatchedJetM",     &MatchedJetM);
    OutputTree.Branch("MatchedJetE",     &MatchedJetE);
    OutputTree.Branch("MatchedJetZG",    &MatchedJetZG);
    OutputTree.Branch("MatchedJetRG",    &MatchedJetRG);
@@ -170,6 +161,54 @@ int main(int argc, char *argv[])
    OutputTree.Branch("MatchedJetJEC",   &MatchedJetJEC);
    OutputTree.Branch("MatchedJetJEU",   &MatchedJetJEU);
    OutputTree.Branch("MatchedThrust",   &RecoThrust);
+
+   int RecoEventNumber;
+   int NReco;
+   float RecoPX[MAX];
+   float RecoPY[MAX];
+   float RecoPZ[MAX];
+   float RecoP[MAX];
+   float RecoE[MAX];
+   float RecoTheta[MAX];
+   float RecoMass[MAX];
+   bool RecoHighPurity[MAX];
+   bool RecoPassSTheta = true;
+   bool RecoPassAll = true;
+   int GenEventNumber;
+   int NGen;
+   float GenPX[MAX];
+   float GenPY[MAX];
+   float GenPZ[MAX];
+   float GenP[MAX];
+   float GenE[MAX];
+   float GenTheta[MAX];
+   float GenMass[MAX];
+   int GenStatus[MAX];
+   bool GenPassSTheta = true;
+
+   OutputTree.Branch("RecoEventNumber", &RecoEventNumber, "RecoEventNumber/I");
+   OutputTree.Branch("NReco",           &NReco,           "NReco/I");
+   OutputTree.Branch("RecoPX",          &RecoPX,          "RecoPX[NReco]/F");
+   OutputTree.Branch("RecoPY",          &RecoPY,          "RecoPY[NReco]/F");
+   OutputTree.Branch("RecoPZ",          &RecoPZ,          "RecoPZ[NReco]/F");
+   OutputTree.Branch("RecoP",           &RecoP,           "RecoP[NReco]/F");
+   OutputTree.Branch("RecoE",           &RecoE,           "RecoE[NReco]/F");
+   OutputTree.Branch("RecoTheta",       &RecoTheta,       "RecoTheta[NReco]/F");
+   OutputTree.Branch("RecoMass",        &RecoMass,        "RecoMass[NReco]/F");
+   OutputTree.Branch("RecoHighPurity",  &RecoHighPurity,  "RecoHighPurity[NReco]/O");
+   OutputTree.Branch("RecoPassSTheta",  &RecoPassSTheta,  "RecoPassSTheta/O");
+   OutputTree.Branch("RecoPassAll",     &RecoPassAll,     "RecoPassAll/O");
+   OutputTree.Branch("GenEventNumber",  &GenEventNumber,  "GenEventNumber/I");
+   OutputTree.Branch("NGen",            &NGen,            "NGen/I");
+   OutputTree.Branch("GenPX",           &GenPX,           "GenPX[NGen]/F");
+   OutputTree.Branch("GenPY",           &GenPY,           "GenPY[NGen]/F");
+   OutputTree.Branch("GenPZ",           &GenPZ,           "GenPZ[NGen]/F");
+   OutputTree.Branch("GenP",            &GenP,            "GenP[NGen]/F");
+   OutputTree.Branch("GenE",            &GenE,            "GenE[NGen]/F");
+   OutputTree.Branch("GenTheta",        &GenTheta,        "GenTheta[NGen]/F");
+   OutputTree.Branch("GenMass",         &GenMass,         "GenMass[NGen]/F");
+   OutputTree.Branch("GenStatus",       &GenStatus,       "GenStatus[NGen]/I");
+   OutputTree.Branch("GenPassSTheta",   &GenPassSTheta,   "GenPassSTheta/O");
 
    int PassedEventCount = 0;
 
@@ -187,28 +226,12 @@ int main(int argc, char *argv[])
       if(IsMC == true && GenTree == nullptr)
          continue;
 
-      int NReco;
-      float RecoPX[MAX];
-      float RecoPY[MAX];
-      float RecoPZ[MAX];
-      float RecoP[MAX];
-      float RecoMass[MAX];
-      bool RecoHighPurity[MAX];
-      bool RecoPassSTheta = true;
-      bool RecoPassAll = true;
-      int NGen;
-      float GenPX[MAX];
-      float GenPY[MAX];
-      float GenPZ[MAX];
-      float GenMass[MAX];
-      int GenStatus[MAX];
-      bool GenPassSTheta = true;
-
       for(int i = 0; i < MAX; i++)
          GenStatus[i] = 1;
       
       if(GenTree != nullptr)
       {
+         GenTree->SetBranchAddress("EventNo",      &GenEventNumber);
          GenTree->SetBranchAddress("nParticle",    &NGen);
          GenTree->SetBranchAddress("px",           &GenPX);
          GenTree->SetBranchAddress("py",           &GenPY);
@@ -221,6 +244,7 @@ int main(int argc, char *argv[])
       }
       if(RecoTree != nullptr)
       {
+         RecoTree->SetBranchAddress("EventNo",      &RecoEventNumber);
          RecoTree->SetBranchAddress("nParticle",    &NReco);
          RecoTree->SetBranchAddress("px",           &RecoPX);
          RecoTree->SetBranchAddress("py",           &RecoPY);
@@ -261,6 +285,8 @@ int main(int argc, char *argv[])
          GenJetTree->SetBranchAddress("jtm",   &StoredGenJetM);
       }
 
+      int GenEntryShift = 0;
+
       int EntryCount = 0;
       if(RecoTree != nullptr)
          EntryCount = RecoTree->GetEntries() * Fraction;
@@ -273,8 +299,17 @@ int main(int argc, char *argv[])
          NStoredGenJet = 0;
          NStoredRecoJet = 0;
 
-         if(GenTree != nullptr)       GenTree->GetEntry(iE);
+         if(GenTree != nullptr)       GenTree->GetEntry(iE + GenEntryShift);
          if(RecoTree != nullptr)      RecoTree->GetEntry(iE);
+
+         if(GenTree != nullptr && RecoTree != nullptr)
+         {
+            while(GenEventNumber != RecoEventNumber)
+            {
+               GenEntryShift = GenEntryShift + 1;
+               GenTree->GetEntry(iE + GenEntryShift);
+            }
+         }
 
          if(RecoJetTree != nullptr)   RecoJetTree->GetEntry(iE);
          if(GenJetTree != nullptr)    GenJetTree->GetEntry(iE);
@@ -283,8 +318,8 @@ int main(int argc, char *argv[])
          {
             if(RecoPassAll == false)
                continue;
-            if(IsMC == true && GenPassSTheta == false)
-               continue;
+            // if(IsMC == true && GenPassSTheta == false)
+            //    continue;
          }
 
          // if(fabs(cos(RecoSTheta)) > 0.8)
@@ -299,59 +334,47 @@ int main(int argc, char *argv[])
             continue;
 
          GenSumE = 0;
-         GenSumE008 = 0;
-         GenSumE010 = 0;
-         GenSumE012 = 0;
-         GenSumE015 = 0;
-         GenSumE020 = 0;
          for(int i = 0; i < NGen; i++)
          {
-            if(GenStatus[i] != 1)   // we want only final state particles
-               continue;
             FourVector P(0, GenPX[i], GenPY[i], GenPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + GenMass[i] * GenMass[i]);
-
-            if(P.GetTheta() > 0.08 * M_PI && P.GetTheta() < 0.92 * M_PI)
-               GenSumE008 = GenSumE008 + P[0];
-            if(P.GetTheta() > 0.10 * M_PI && P.GetTheta() < 0.90 * M_PI)
-               GenSumE010 = GenSumE010 + P[0];
-            if(P.GetTheta() > 0.12 * M_PI && P.GetTheta() < 0.88 * M_PI)
-               GenSumE012 = GenSumE012 + P[0];
-            if(P.GetTheta() > 0.15 * M_PI && P.GetTheta() < 0.85 * M_PI)
-               GenSumE015 = GenSumE015 + P[0];
-            if(P.GetTheta() > 0.20 * M_PI && P.GetTheta() < 0.80 * M_PI)
-               GenSumE020 = GenSumE020 + P[0];
+            
+            GenP[i] = P.GetP();
+            GenE[i] = P[0];
+            GenTheta[i] = P.GetTheta();
             
             if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                continue;
+            if(GenStatus[i] != 1)   // we want only final state particles
+               continue;
             GenSumE = GenSumE + P[0];
          }
+         if(GenSumE < GenSumECut)
+            continue;
 
          RecoSumE = 0;
-         RecoSumE008 = 0;
-         RecoSumE010 = 0;
-         RecoSumE012 = 0;
-         RecoSumE015 = 0;
-         RecoSumE020 = 0;
          for(int i = 0; i < NReco; i++)
          {
             FourVector P(0, RecoPX[i], RecoPY[i], RecoPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + RecoMass[i] * RecoMass[i]);
             
-            if(P.GetTheta() > 0.08 * M_PI && P.GetTheta() < 0.92 * M_PI)
-               RecoSumE008 = RecoSumE008 + P[0];
-            if(P.GetTheta() > 0.10 * M_PI && P.GetTheta() < 0.90 * M_PI)
-               RecoSumE010 = RecoSumE010 + P[0];
-            if(P.GetTheta() > 0.12 * M_PI && P.GetTheta() < 0.88 * M_PI)
-               RecoSumE012 = RecoSumE012 + P[0];
-            if(P.GetTheta() > 0.15 * M_PI && P.GetTheta() < 0.85 * M_PI)
-               RecoSumE015 = RecoSumE015 + P[0];
-            if(P.GetTheta() > 0.20 * M_PI && P.GetTheta() < 0.80 * M_PI)
-               RecoSumE020 = RecoSumE020 + P[0];
+            RecoE[i] = P[0];
+            RecoTheta[i] = P.GetTheta();
             
             if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                continue;
             RecoSumE = RecoSumE + P[0];
+         }
+
+         if(DoSumESmear == false)
+         {
+            if(RecoSumE < RecoSumECut)
+               continue;
+         }
+         else
+         {
+            if(RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
+               continue;
          }
 
          PassedEventCount = PassedEventCount + 1;
@@ -378,47 +401,100 @@ int main(int argc, char *argv[])
             RecoFJParticles.emplace_back(P[1], P[2], P[3], P[0]);
          }
 
-         vector<FourVector> GenJets;
-         vector<FourVector> RecoJets;
+         vector<pair<FourVector, PseudoJet>> GenJets;
+         vector<pair<FourVector, PseudoJet>> RecoJets;
+
+         JetDefinition Definition(ee_genkt_algorithm, JetR, -1);
+         ClusterSequence GenSequence(GenFJParticles, Definition);
+         vector<PseudoJet> GenFastJets = GenSequence.inclusive_jets(0.5);
+         ClusterSequence RecoSequence(RecoFJParticles, Definition);
+         vector<PseudoJet> RecoFastJets = RecoSequence.inclusive_jets(0.5);
 
          if(UseStored == true)
          {
             GenJets.resize(NStoredGenJet);
             for(int i = 0; i < NStoredGenJet; i++)
-               GenJets[i].SetPtEtaPhiMass(StoredGenJetPT[i], StoredGenJetEta[i], StoredGenJetPhi[i], StoredGenJetM[i]);
+            {
+               GenJets[i].first.SetPtEtaPhiMass(StoredGenJetPT[i], StoredGenJetEta[i], StoredGenJetPhi[i], StoredGenJetM[i]);
+               GenJets[i].second.reset_momentum(GenJets[i].first[1], GenJets[i].first[2], GenJets[i].first[3], GenJets[i].first[0]);
+            }
 
             RecoJets.resize(NStoredRecoJet);
             for(int i = 0; i < NStoredRecoJet; i++)
-               RecoJets[i].SetPtEtaPhiMass(StoredRecoJetPT[i], StoredRecoJetEta[i], StoredRecoJetPhi[i], StoredRecoJetM[i]);
+            {
+               RecoJets[i].first.SetPtEtaPhiMass(StoredRecoJetPT[i], StoredRecoJetEta[i], StoredRecoJetPhi[i], StoredRecoJetM[i]);
+               RecoJets[i].second.reset_momentum(RecoJets[i].first[1], RecoJets[i].first[2], RecoJets[i].first[3], RecoJets[i].first[0]);
+            }
          }
          else
          {
-            JetDefinition Definition(ee_genkt_algorithm, JetR, -1);
-            ClusterSequence GenSequence(GenFJParticles, Definition);
-            vector<PseudoJet> GenFastJets = GenSequence.inclusive_jets(0.5);
-            ClusterSequence RecoSequence(RecoFJParticles, Definition);
-            vector<PseudoJet> RecoFastJets = RecoSequence.inclusive_jets(0.5);
-
             for(int i = 0 ; i < (int)GenFastJets.size(); i++)
             {
                FourVector P(GenFastJets[i].e(), GenFastJets[i].px(), GenFastJets[i].py(), GenFastJets[i].pz());
-               // if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
-               //    continue;
-               GenJets.emplace_back(P);
+               GenJets.emplace_back(pair<FourVector, PseudoJet>(P, GenFastJets[i]));
             }
 
             for(int i = 0 ; i < (int)RecoFastJets.size(); i++)
             {
                FourVector P(RecoFastJets[i].e(), RecoFastJets[i].px(), RecoFastJets[i].py(), RecoFastJets[i].pz());
-               // if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
-               //    continue;
-               RecoJets.emplace_back(P);
+               RecoJets.emplace_back(pair<FourVector, PseudoJet>(P, RecoFastJets[i]));
             }
          }
             
+         // Apply JEC to reco jets
+         for(int iR = 0; iR < (int)RecoJets.size(); iR++)
+         {
+            JEC.SetJetP(RecoJets[iR].first.GetP());
+            JEC.SetJetTheta(RecoJets[iR].first.GetTheta());
+            JEC.SetJetPhi(RecoJets[iR].first.GetPhi());
+            double Correction = JEC.GetCorrection();
+            if(Correction < 0)
+               Correction = 1;
+            RecoJets[iR].first = RecoJets[iR].first * Correction;
+         }
+
+         // Sort jets according to energy
          sort(GenJets.begin(), GenJets.end(), DecreasingEnergy);
          sort(RecoJets.begin(), RecoJets.end(), DecreasingEnergy);
 
+         if(GenJets.size() > 0 && GenJets[0].first[0] < 10)
+         {
+            for(int iJ = 0; iJ < GenJets.size(); iJ++)
+               cout << iJ << " " << GenJets[iJ].first[0] << " " << GenJets[iJ].first.GetTheta() << endl;
+         }
+
+         // Check leading jet if applicable
+         if(CheckLeadingGenDiJet == true)
+         {
+            if(GenJets.size() >= 1 && GenJets[0].first.GetTheta() < ThetaMin)
+               continue;
+            if(GenJets.size() >= 1 && GenJets[0].first.GetTheta() > ThetaMax)
+               continue;
+            if(GenJets.size() >= 2 && GenJets[1].first.GetTheta() < ThetaMin)
+               continue;
+            if(GenJets.size() >= 2 && GenJets[1].first.GetTheta() > ThetaMax)
+               continue;
+         }
+
+         // Remove jets out of the acceptance
+         for(int i = 0; i < (int)GenJets.size(); i++)
+         {
+            if(GenJets[i].first.GetTheta() < ThetaMin || GenJets[i].first.GetTheta() > ThetaMax)
+            {
+               GenJets.erase(GenJets.begin() + i);
+               i = i - 1;
+            }
+         }
+         for(int i = 0; i < (int)RecoJets.size(); i++)
+         {
+            if(RecoJets[i].first.GetTheta() < ThetaMin || RecoJets[i].first.GetTheta() > ThetaMax)
+            {
+               RecoJets.erase(RecoJets.begin() + i);
+               i = i - 1;
+            }
+         }
+
+         // Calculate groomed quantities for gen jets
          GenJetZG.resize(GenJets.size());
          GenJetRG.resize(GenJets.size());
          GenJetPG.resize(GenJets.size());
@@ -427,9 +503,21 @@ int main(int argc, char *argv[])
          for(int i = 0; i < (int)GenJets.size(); i++)
          {
             vector<Node *> Nodes;
-            for(FourVector V : GenParticles)
-               if(GetAngle(GenJets[i], V) < JetR)
+            if(UseStored == true || GenJets[i].second.has_constituents() == false)
+            {
+               for(FourVector V : GenParticles)
+                  if(GetAngle(GenJets[i].first, V) < JetR)
+                     Nodes.push_back(new Node(V));
+            }
+            else   // we cluster jets ourselves.  We get the constituents!
+            {
+               vector<PseudoJet> Constituents = GenJets[i].second.constituents();
+               for(PseudoJet &P : Constituents)
+               {
+                  FourVector V(P.e(), P.px(), P.py(), P.pz());
                   Nodes.push_back(new Node(V));
+               }
+            }
             BuildCATree(Nodes);
          
             GenJetZG[i].resize(NSD);
@@ -473,9 +561,21 @@ int main(int argc, char *argv[])
          for(int i = 0; i < (int)RecoJets.size(); i++)
          {
             vector<Node *> Nodes;
-            for(FourVector V : RecoParticles)
-               if(GetAngle(RecoJets[i], V) < JetR)
+            if(UseStored == true || RecoJets[i].second.has_constituents() == false)
+            {
+               for(FourVector V : RecoParticles)
+                  if(GetAngle(RecoJets[i].first, V) < JetR)
+                     Nodes.push_back(new Node(V));
+            }
+            else   // we cluster jets ourselves.  We get the constituents!
+            {
+               vector<PseudoJet> Constituents = RecoJets[i].second.constituents();
+               for(PseudoJet &P : Constituents)
+               {
+                  FourVector V(P.e(), P.px(), P.py(), P.pz());
                   Nodes.push_back(new Node(V));
+               }
+            }
             BuildCATree(Nodes);
             
             RecoJetZG[i].resize(NSD);
@@ -516,6 +616,7 @@ int main(int argc, char *argv[])
          RecoJetPX.resize(NRecoJets);
          RecoJetPY.resize(NRecoJets);
          RecoJetPZ.resize(NRecoJets);
+         RecoJetM.resize(NRecoJets);
          RecoJetE.resize(NRecoJets);
          RecoJetP.resize(NRecoJets);
          RecoJetTheta.resize(NRecoJets);
@@ -524,51 +625,54 @@ int main(int argc, char *argv[])
          RecoJetJEU.resize(NRecoJets);
          for(int iR = 0; iR < NRecoJets; iR++)
          {
-            JEC.SetJetP(RecoJets[iR].GetP());
-            JEC.SetJetTheta(RecoJets[iR].GetTheta());
-            JEC.SetJetPhi(RecoJets[iR].GetPhi());
-            double Correction = JEC.GetCorrection();
-            if(Correction < 0)
-               Correction = 1;
-
-            RecoJets[iR] = RecoJets[iR] * Correction;
-
+            // double Correction = RecoJets[iR].first[0] / RecoJets[iR].second.e();
+            double Correction = 1;
             double Uncertainty = 0.005;
             
-            RecoJetPX[iR]    = RecoJets[iR][1];
-            RecoJetPY[iR]    = RecoJets[iR][2];
-            RecoJetPZ[iR]    = RecoJets[iR][3];
-            RecoJetE[iR]     = RecoJets[iR][0];
-            RecoJetP[iR]     = RecoJets[iR].GetP();
-            RecoJetTheta[iR] = RecoJets[iR].GetTheta();
-            RecoJetPhi[iR]   = RecoJets[iR].GetPhi();
+            RecoJetPX[iR]    = RecoJets[iR].first[1];
+            RecoJetPY[iR]    = RecoJets[iR].first[2];
+            RecoJetPZ[iR]    = RecoJets[iR].first[3];
+            RecoJetM[iR]     = RecoJets[iR].first.GetMass();
+            RecoJetE[iR]     = RecoJets[iR].first[0];
+            RecoJetP[iR]     = RecoJets[iR].first.GetP();
+            RecoJetTheta[iR] = RecoJets[iR].first.GetTheta();
+            RecoJetPhi[iR]   = RecoJets[iR].first.GetPhi();
             RecoJetJEC[iR]   = Correction;
             RecoJetJEU[iR]   = Uncertainty;
+            
+            for(int iSD = 0; iSD < NSD; iSD++)
+            {
+               RecoJetPG[iR][iSD] = RecoJetPG[iR][iSD] * Correction;
+               RecoJetMG[iR][iSD] = RecoJetMG[iR][iSD] * Correction;
+            }
          }
          
          NGenJets = GenJets.size();
          GenJetPX.resize(NGenJets);
          GenJetPY.resize(NGenJets);
          GenJetPZ.resize(NGenJets);
+         GenJetM.resize(NGenJets);
          GenJetE.resize(NGenJets);
          GenJetP.resize(NGenJets);
          GenJetTheta.resize(NGenJets);
          GenJetPhi.resize(NGenJets);
          for(int iR = 0; iR < NGenJets; iR++)
          {
-            GenJetPX[iR]    = GenJets[iR][1];
-            GenJetPY[iR]    = GenJets[iR][2];
-            GenJetPZ[iR]    = GenJets[iR][3];
-            GenJetE[iR]     = GenJets[iR][0];
-            GenJetP[iR]     = GenJets[iR].GetP();
-            GenJetTheta[iR] = GenJets[iR].GetTheta();
-            GenJetPhi[iR]   = GenJets[iR].GetPhi();
+            GenJetPX[iR]    = GenJets[iR].first[1];
+            GenJetPY[iR]    = GenJets[iR].first[2];
+            GenJetPZ[iR]    = GenJets[iR].first[3];
+            GenJetM[iR]     = GenJets[iR].first.GetMass();
+            GenJetE[iR]     = GenJets[iR].first[0];
+            GenJetP[iR]     = GenJets[iR].first.GetP();
+            GenJetTheta[iR] = GenJets[iR].first.GetTheta();
+            GenJetPhi[iR]   = GenJets[iR].first.GetPhi();
          }
 
          // Match reco to gen jets
          MatchedJetPX.resize(NGenJets);
          MatchedJetPY.resize(NGenJets);
          MatchedJetPZ.resize(NGenJets);
+         MatchedJetM.resize(NGenJets);
          MatchedJetE.resize(NGenJets);
          MatchedJetP.resize(NGenJets);
          MatchedJetTheta.resize(NGenJets);
@@ -581,15 +685,15 @@ int main(int argc, char *argv[])
          MatchedJetPG.resize(NGenJets);
          MatchedJetMG.resize(NGenJets);
          MatchedJetNG.resize(NGenJets);
-         for(int iG = 0; iG < (int)GenJets.size(); iG++)
+         for(int iG = 0; iG < NGenJets; iG++)
          {
             MatchedJetAngle[iG] = -1;
 
             int BestIndex = -1;
             double BestAngle = -1;
-            for(int iR = 0; iR < (int)RecoJets.size(); iR++)
+            for(int iR = 0; iR < NRecoJets; iR++)
             {
-               double Angle = GetAngle(GenJets[iG], RecoJets[iR]);
+               double Angle = GetAngle(GenJets[iG].first, RecoJets[iR].first);
                if(BestAngle < 0 || Angle < BestAngle)
                {
                   BestIndex = iR;
@@ -607,13 +711,14 @@ int main(int argc, char *argv[])
                continue;
 
             // Fill output tree with matched jets
-            MatchedJetPX[iG]    = RecoJets[BestIndex][1];
-            MatchedJetPY[iG]    = RecoJets[BestIndex][2];
-            MatchedJetPZ[iG]    = RecoJets[BestIndex][3];
-            MatchedJetE[iG]     = RecoJets[BestIndex][0];
-            MatchedJetP[iG]     = RecoJets[BestIndex].GetP();
-            MatchedJetTheta[iG] = RecoJets[BestIndex].GetTheta();
-            MatchedJetPhi[iG]   = RecoJets[BestIndex].GetPhi();
+            MatchedJetPX[iG]    = RecoJets[BestIndex].first[1];
+            MatchedJetPY[iG]    = RecoJets[BestIndex].first[2];
+            MatchedJetPZ[iG]    = RecoJets[BestIndex].first[3];
+            MatchedJetM[iG]     = RecoJets[BestIndex].first.GetMass();
+            MatchedJetE[iG]     = RecoJets[BestIndex].first[0];
+            MatchedJetP[iG]     = RecoJets[BestIndex].first.GetP();
+            MatchedJetTheta[iG] = RecoJets[BestIndex].first.GetTheta();
+            MatchedJetPhi[iG]   = RecoJets[BestIndex].first.GetPhi();
             MatchedJetAngle[iG] = BestAngle;
             MatchedJetJEC[iG]   = RecoJetJEC[BestIndex];
             MatchedJetJEU[iG]   = RecoJetJEU[BestIndex];
@@ -655,9 +760,9 @@ int FindBin(int N, double Bins[], double X)
    return N - 1;
 }
 
-bool DecreasingEnergy(FourVector &V1, FourVector &V2)
+bool DecreasingEnergy(pair<FourVector, PseudoJet> &V1, pair<FourVector, PseudoJet> &V2)
 {
-   return V1[0] > V2[0];
+   return V1.first[0] > V2.first[0];
 }
 
 
