@@ -1,4 +1,4 @@
-Fraction = 1
+Fraction = 0.01
 
 default: TestRunPlot
 

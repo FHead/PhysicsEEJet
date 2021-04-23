@@ -51,12 +51,19 @@ int main(int argc, char *argv[])
    int NSD = 2;
    vector<float> SDZCut{0.1, 0.5};
    vector<float> SDBeta{0.0, 1.5};
+   int NSumE = 5;
+   vector<float> SumECut{0.08, 0.10, 0.12, 0.15, 0.20};
    float RecoSumE;
    float RecoSumE008;
    float RecoSumE010;
    float RecoSumE012;
    float RecoSumE015;
    float RecoSumE020;
+   float RecoHybridE008;
+   float RecoHybridE010;
+   float RecoHybridE012;
+   float RecoHybridE015;
+   float RecoHybridE020;
    int NRecoJets;
    vector<float> RecoJetPX;
    vector<float> RecoJetPY;
@@ -79,6 +86,11 @@ int main(int argc, char *argv[])
    float GenSumE012;
    float GenSumE015;
    float GenSumE020;
+   float GenHybridE008;
+   float GenHybridE010;
+   float GenHybridE012;
+   float GenHybridE015;
+   float GenHybridE020;
    int NGenJets;
    vector<float> GenJetPX;
    vector<float> GenJetPY;
@@ -112,6 +124,8 @@ int main(int argc, char *argv[])
    OutputTree.Branch("NSD",             &NSD, "NSD/I");
    OutputTree.Branch("SDZCut",          &SDZCut);
    OutputTree.Branch("SDBeta",          &SDBeta);
+   OutputTree.Branch("NSumE",           &NSumE, "NSumE/I");
+   OutputTree.Branch("SumECut",         &SumECut);
    OutputTree.Branch("RecoSumE",        &RecoSumE);
    OutputTree.Branch("RecoSumE008",     &RecoSumE008);
    OutputTree.Branch("RecoSumE010",     &RecoSumE010);
@@ -140,6 +154,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("GenSumE012",      &GenSumE012);
    OutputTree.Branch("GenSumE015",      &GenSumE015);
    OutputTree.Branch("GenSumE020",      &GenSumE020);
+   OutputTree.Branch("GenHybridE020",   &GenHybridE020);
    OutputTree.Branch("NGenJets",        &NGenJets, "NGenJets/I");
    OutputTree.Branch("GenJetPX",        &GenJetPX);
    OutputTree.Branch("GenJetPY",        &GenJetPY);
@@ -418,6 +433,50 @@ int main(int argc, char *argv[])
             
          sort(GenJets.begin(), GenJets.end(), DecreasingEnergy);
          sort(RecoJets.begin(), RecoJets.end(), DecreasingEnergy);
+
+         double HybridJetMin = 5;
+         GenHybridE008 = 0;
+         GenHybridE010 = 0;
+         GenHybridE012 = 0;
+         GenHybridE015 = 0;
+         GenHybridE020 = 0;
+         for(FourVector &P : GenParticles)
+         {
+            bool Include008 = false;
+            bool Include010 = false;
+            bool Include012 = false;
+            bool Include015 = false;
+            bool Include020 = false;
+
+            if(P.GetTheta() > 0.08 * M_PI && P.GetTheta() < 0.92 * M_PI)   Include008 = true;
+            if(P.GetTheta() > 0.10 * M_PI && P.GetTheta() < 0.90 * M_PI)   Include010 = true;
+            if(P.GetTheta() > 0.12 * M_PI && P.GetTheta() < 0.88 * M_PI)   Include012 = true;
+            if(P.GetTheta() > 0.15 * M_PI && P.GetTheta() < 0.85 * M_PI)   Include015 = true;
+            if(P.GetTheta() > 0.20 * M_PI && P.GetTheta() < 0.80 * M_PI)   Include020 = true;
+
+            for(FourVector &J : GenJets)
+            {
+               if(J[0] < HybridJetMin)
+                  continue;
+
+               if(Include008 == false && J.GetTheta() > 0.08 * M_PI && J.GetTheta() < 0.92 * M_PI && GetAngle(P, J) < JetR)
+                  Include008 = true;
+               if(Include010 == false && J.GetTheta() > 0.10 * M_PI && J.GetTheta() < 0.90 * M_PI && GetAngle(P, J) < JetR)
+                  Include010 = true;
+               if(Include012 == false && J.GetTheta() > 0.12 * M_PI && J.GetTheta() < 0.88 * M_PI && GetAngle(P, J) < JetR)
+                  Include012 = true;
+               if(Include015 == false && J.GetTheta() > 0.15 * M_PI && J.GetTheta() < 0.85 * M_PI && GetAngle(P, J) < JetR)
+                  Include015 = true;
+               if(Include020 == false && J.GetTheta() > 0.20 * M_PI && J.GetTheta() < 0.80 * M_PI && GetAngle(P, J) < JetR)
+                  Include020 = true;
+            }
+
+            if(Include008 == true)   GenHybridE008 = GenHybridE008 + P[0];
+            if(Include010 == true)   GenHybridE010 = GenHybridE010 + P[0];
+            if(Include012 == true)   GenHybridE012 = GenHybridE012 + P[0];
+            if(Include015 == true)   GenHybridE015 = GenHybridE015 + P[0];
+            if(Include020 == true)   GenHybridE020 = GenHybridE020 + P[0];
+         }
 
          GenJetZG.resize(GenJets.size());
          GenJetRG.resize(GenJets.size());

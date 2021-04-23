@@ -56,6 +56,8 @@ int main(int argc, char *argv[])
    int NSD = 2;
    vector<float> SDZCut{0.1, 0.5};
    vector<float> SDBeta{0.0, 1.5};
+   int NSumE = 5;
+   vector<float> SumECut{0.08, 0.10, 0.12, 0.15, 0.20};
    float RecoSumE;
    int NRecoJets;
    vector<float> RecoJetPX;
@@ -110,6 +112,8 @@ int main(int argc, char *argv[])
    OutputTree.Branch("NSD",             &NSD, "NSD/I");
    OutputTree.Branch("SDZCut",          &SDZCut);
    OutputTree.Branch("SDBeta",          &SDBeta);
+   OutputTree.Branch("NSumE",           &NSumE, "NSumE/I");
+   OutputTree.Branch("SumECut",         &SumECut);
    OutputTree.Branch("RecoSumE",        &RecoSumE, "RecoSumE/F");
    OutputTree.Branch("NRecoJets",       &NRecoJets, "NRecoJets/I");
    OutputTree.Branch("RecoJetPX",       &RecoJetPX);

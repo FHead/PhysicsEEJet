@@ -36,10 +36,9 @@ int main(int argc, char *argv[])
    bool UseStored                = CL.GetBool("UseStored", false);
    double ThetaMin               = CL.GetDouble("ThetaMin", 0.2 * M_PI);
    double ThetaMax               = CL.GetDouble("ThetaMax", 0.8 * M_PI);
-   bool DoHybridSumE             = CL.GetBool("DoHybridSumE", false);
-   double HybridJetMin           = CL.GetDouble("HybridJetMin", 5);
    double GenSumECut             = CL.GetDouble("GenSumECut", -99999);
    double RecoSumECut            = CL.GetDouble("RecoSumECut", -99999);
+   double HybridJetMin           = CL.GetDouble("HybridJetMin", 5);
    bool DoSumESmear              = CL.GetBool("DoSumESmear", false);
    double SumESmear              = CL.GetDouble("SumESmear", 0.02);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
@@ -58,8 +57,9 @@ int main(int argc, char *argv[])
    int NSD = 2;
    vector<float> SDZCut{0.1, 0.5};
    vector<float> SDBeta{0.0, 1.5};
-   float RecoSumE;
-   float RecoHybridE;
+   int NSumE = 5;
+   vector<float> SumECut{0.08 * M_PI, 0.10 * M_PI, 0.12 * M_PI, 0.15 * M_PI, 0.20 * M_PI};
+   vector<float> RecoSumE;
    int NRecoJets;
    vector<float> RecoJetPX;
    vector<float> RecoJetPY;
@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
    vector<vector<float>> RecoJetMG;
    vector<vector<float>> RecoJetNG;
    float RecoThrust;
-   float GenSumE;
-   float GenHybridE;
+   vector<float> GenSumE;
+   vector<float> GenHybridE;
    int NGenJets;
    vector<float> GenJetPX;
    vector<float> GenJetPY;
@@ -114,9 +114,11 @@ int main(int argc, char *argv[])
    OutputTree.Branch("NSD",             &NSD, "NSD/I");
    OutputTree.Branch("SDZCut",          &SDZCut);
    OutputTree.Branch("SDBeta",          &SDBeta);
-   OutputTree.Branch("RecoSumE",        &RecoSumE,    "RecoSumE/F");
-   OutputTree.Branch("RecoHybridE",     &RecoHybridE, "RecoHybridE/F");
-   OutputTree.Branch("NRecoJets",       &NRecoJets,   "NRecoJets/I");
+   OutputTree.Branch("NSumE",           &NSumE, "NSumE/I");
+   OutputTree.Branch("SumECut",         &SumECut);
+   OutputTree.Branch("HybridJetMin",    &HybridJetMin, "HybridJetMin/D");
+   OutputTree.Branch("RecoSumE",        &RecoSumE);
+   OutputTree.Branch("NRecoJets",       &NRecoJets, "NRecoJets/I");
    OutputTree.Branch("RecoJetPX",       &RecoJetPX);
    OutputTree.Branch("RecoJetPY",       &RecoJetPY);
    OutputTree.Branch("RecoJetPZ",       &RecoJetPZ);
@@ -133,9 +135,9 @@ int main(int argc, char *argv[])
    OutputTree.Branch("RecoJetMG",       &RecoJetMG);
    OutputTree.Branch("RecoJetNG",       &RecoJetNG);
    OutputTree.Branch("RecoThrust",      &RecoThrust);
-   OutputTree.Branch("GenSumE",         &GenSumE,    "GenSumE/F");
-   OutputTree.Branch("GenHybridE",      &GenHybridE, "GenHybridE/F");
-   OutputTree.Branch("NGenJets",        &NGenJets,   "NGenJets/I");
+   OutputTree.Branch("GenSumE",         &GenSumE);
+   OutputTree.Branch("GenHybridE",      &GenHybridE);
+   OutputTree.Branch("NGenJets",        &NGenJets, "NGenJets/I");
    OutputTree.Branch("GenJetPX",        &GenJetPX);
    OutputTree.Branch("GenJetPY",        &GenJetPY);
    OutputTree.Branch("GenJetPZ",        &GenJetPZ);
@@ -168,8 +170,55 @@ int main(int argc, char *argv[])
    OutputTree.Branch("MatchedJetJEU",   &MatchedJetJEU);
    OutputTree.Branch("MatchedThrust",   &RecoThrust);
 
+   int RecoEventNumber;
+   int NReco;
+   float RecoPX[MAX];
+   float RecoPY[MAX];
+   float RecoPZ[MAX];
+   float RecoP[MAX];
+   float RecoE[MAX];
+   float RecoTheta[MAX];
+   float RecoMass[MAX];
+   bool RecoHighPurity[MAX];
+   bool RecoPassSTheta = true;
+   bool RecoPassAll = true;
+   int GenEventNumber;
+   int NGen;
+   float GenPX[MAX];
+   float GenPY[MAX];
+   float GenPZ[MAX];
+   float GenP[MAX];
+   float GenE[MAX];
+   float GenTheta[MAX];
+   float GenMass[MAX];
+   int GenStatus[MAX];
+   bool GenPassSTheta = true;
+
+   OutputTree.Branch("RecoEventNumber", &RecoEventNumber, "RecoEventNumber/I");
+   OutputTree.Branch("NReco",           &NReco,           "NReco/I");
+   OutputTree.Branch("RecoPX",          &RecoPX,          "RecoPX[NReco]/F");
+   OutputTree.Branch("RecoPY",          &RecoPY,          "RecoPY[NReco]/F");
+   OutputTree.Branch("RecoPZ",          &RecoPZ,          "RecoPZ[NReco]/F");
+   OutputTree.Branch("RecoP",           &RecoP,           "RecoP[NReco]/F");
+   OutputTree.Branch("RecoE",           &RecoE,           "RecoE[NReco]/F");
+   OutputTree.Branch("RecoTheta",       &RecoTheta,       "RecoTheta[NReco]/F");
+   OutputTree.Branch("RecoMass",        &RecoMass,        "RecoMass[NReco]/F");
+   OutputTree.Branch("RecoHighPurity",  &RecoHighPurity,  "RecoHighPurity[NReco]/O");
+   OutputTree.Branch("RecoPassSTheta",  &RecoPassSTheta,  "RecoPassSTheta/O");
+   OutputTree.Branch("RecoPassAll",     &RecoPassAll,     "RecoPassAll/O");
+   OutputTree.Branch("GenEventNumber",  &GenEventNumber,  "GenEventNumber/I");
+   OutputTree.Branch("NGen",            &NGen,            "NGen/I");
+   OutputTree.Branch("GenPX",           &GenPX,           "GenPX[NGen]/F");
+   OutputTree.Branch("GenPY",           &GenPY,           "GenPY[NGen]/F");
+   OutputTree.Branch("GenPZ",           &GenPZ,           "GenPZ[NGen]/F");
+   OutputTree.Branch("GenP",            &GenP,            "GenP[NGen]/F");
+   OutputTree.Branch("GenE",            &GenE,            "GenE[NGen]/F");
+   OutputTree.Branch("GenTheta",        &GenTheta,        "GenTheta[NGen]/F");
+   OutputTree.Branch("GenMass",         &GenMass,         "GenMass[NGen]/F");
+   OutputTree.Branch("GenStatus",       &GenStatus,       "GenStatus[NGen]/I");
+   OutputTree.Branch("GenPassSTheta",   &GenPassSTheta,   "GenPassSTheta/O");
+
    int PassedEventCount = 0;
-   int AllEventCount = 0;
 
    for(string FileName : InputFileName)
    {
@@ -184,25 +233,6 @@ int main(int argc, char *argv[])
          continue;
       if(IsMC == true && GenTree == nullptr)
          continue;
-
-      int RecoEventNumber;
-      int NReco;
-      float RecoPX[MAX];
-      float RecoPY[MAX];
-      float RecoPZ[MAX];
-      float RecoP[MAX];
-      float RecoMass[MAX];
-      bool RecoHighPurity[MAX];
-      bool RecoPassSTheta = true;
-      bool RecoPassAll = true;
-      int GenEventNumber;
-      int NGen;
-      float GenPX[MAX];
-      float GenPY[MAX];
-      float GenPZ[MAX];
-      float GenMass[MAX];
-      int GenStatus[MAX];
-      bool GenPassSTheta = true;
 
       for(int i = 0; i < MAX; i++)
          GenStatus[i] = 1;
@@ -272,10 +302,6 @@ int main(int argc, char *argv[])
          EntryCount = GenTree->GetEntries() * Fraction;
       for(int iE = 0; iE < EntryCount; iE++)
       {
-         // This is the number of events before doing anything!
-         AllEventCount = AllEventCount + 1;
-
-         // Reset things before getting data from the trees
          NGen = 0;
          NReco = 0;
          NStoredGenJet = 0;
@@ -296,7 +322,6 @@ int main(int argc, char *argv[])
          if(RecoJetTree != nullptr)   RecoJetTree->GetEntry(iE);
          if(GenJetTree != nullptr)    GenJetTree->GetEntry(iE);
 
-         // Baseline cuts
          if(BaselineCut == true)
          {
             if(RecoPassAll == false)
@@ -305,49 +330,70 @@ int main(int argc, char *argv[])
             //    continue;
          }
 
-         // Mercedes Benz rejection
+         // if(fabs(cos(RecoSTheta)) > 0.8)
+         //    continue;
+         // if(IsMC == true && fabs(cos(GenSTheta)) > 0.8)
+         //    continue;
+
          double PSum = 0;
          for(int i = 0; i < NReco; i++)
             PSum = PSum + RecoP[i];
-         if(PSum > 200)
+         if(PSum > 200)   // Mercedes Benz rejection
             continue;
 
-         // Calculate SumE and cut if needed
-         GenSumE = 0;
+         GenSumE.resize(NSumE);
+         for(float &N : GenSumE)
+            N = 0;
+
          for(int i = 0; i < NGen; i++)
          {
-            if(GenStatus[i] != 1)   // we want only final state particles
-               continue;
             FourVector P(0, GenPX[i], GenPY[i], GenPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + GenMass[i] * GenMass[i]);
-            if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
+            
+            GenP[i] = P.GetP();
+            GenE[i] = P[0];
+            GenTheta[i] = P.GetTheta();
+            
+            if(GenStatus[i] != 1)   // we want only final state particles
                continue;
-            GenSumE = GenSumE + P[0];
+            
+            for(int j = 0; j < NSumE; j++)
+               if(P.GetTheta() > SumECut[j] && P.GetTheta() < M_PI - SumECut[j])
+                  GenSumE[j] = GenSumE[j] + P[0];
          }
-         if(DoHybridSumE == false && GenSumE < GenSumECut)
+         if(GenSumE[0] < GenSumECut)
             continue;
 
-         RecoSumE = 0;
+         RecoSumE.resize(NSumE);
+         for(float &N : RecoSumE)
+            N = 0;
+         
          for(int i = 0; i < NReco; i++)
          {
             FourVector P(0, RecoPX[i], RecoPY[i], RecoPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + RecoMass[i] * RecoMass[i]);
-            if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
-               continue;
-            RecoSumE = RecoSumE + P[0];
+            
+            RecoE[i] = P[0];
+            RecoTheta[i] = P.GetTheta();
+   
+            for(int j = 0; j < NSumE; j++)
+               if(P.GetTheta() > SumECut[j] && P.GetTheta() < M_PI - SumECut[j])
+                  RecoSumE[j] = RecoSumE[j] + P[0];
          }
+
          if(DoSumESmear == false)
          {
-            if(DoHybridSumE == false && RecoSumE < RecoSumECut)
+            if(RecoSumE[0] < RecoSumECut)
                continue;
          }
          else
          {
-            if(DoHybridSumE == false && RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
+            if(RecoSumE[0] * DrawGaussian(1, SumESmear) < RecoSumECut)
                continue;
          }
 
-         // Collect particles for jet clustering and other usages
+         PassedEventCount = PassedEventCount + 1;
+
          vector<FourVector> GenParticles;
          vector<PseudoJet> GenFJParticles;
          for(int i = 0; i < NGen; i++)
@@ -370,7 +416,6 @@ int main(int argc, char *argv[])
             RecoFJParticles.emplace_back(P[1], P[2], P[3], P[0]);
          }
 
-         // Cluster, or copy the jets from the trees
          vector<pair<FourVector, PseudoJet>> GenJets;
          vector<pair<FourVector, PseudoJet>> RecoJets;
 
@@ -386,16 +431,14 @@ int main(int argc, char *argv[])
             for(int i = 0; i < NStoredGenJet; i++)
             {
                GenJets[i].first.SetPtEtaPhiMass(StoredGenJetPT[i], StoredGenJetEta[i], StoredGenJetPhi[i], StoredGenJetM[i]);
-               FourVector &J = GenJets[i].first;
-               GenJets[i].second.reset_momentum(J[1], J[2], J[3], J[0]);
+               GenJets[i].second.reset_momentum(GenJets[i].first[1], GenJets[i].first[2], GenJets[i].first[3], GenJets[i].first[0]);
             }
 
             RecoJets.resize(NStoredRecoJet);
             for(int i = 0; i < NStoredRecoJet; i++)
             {
                RecoJets[i].first.SetPtEtaPhiMass(StoredRecoJetPT[i], StoredRecoJetEta[i], StoredRecoJetPhi[i], StoredRecoJetM[i]);
-               FourVector &J = RecoJets[i].first;
-               RecoJets[i].second.reset_momentum(J[1], J[2], J[3], J[0]);
+               RecoJets[i].second.reset_momentum(RecoJets[i].first[1], RecoJets[i].first[2], RecoJets[i].first[3], RecoJets[i].first[0]);
             }
          }
          else
@@ -466,68 +509,39 @@ int main(int argc, char *argv[])
             }
          }
 
-         // Now calculate hybrid E
-         GenHybridE = 0;
+         // Now calculate the hybrid sums
+         GenHybridE.resize(NSumE);
+         for(int i = 0; i < NSumE; i++)
+            GenHybridE[i] = 0;
          for(FourVector &P : GenParticles)
          {
-            bool Include = false;
-
-            if(P.GetTheta() > ThetaMin && P.GetTheta() < ThetaMax)
-               Include = true;
-            else
+            for(int i = 0; i < NSumE; i++)
             {
-               for(pair<FourVector, PseudoJet> &Pair : GenJets)
-               {
-                  FourVector &J = Pair.first;
-                  if(J[0] < HybridJetMin)   continue;
-                  if(GetAngle(P, J) > JetR) continue;
+               bool Include = false;
+               
+               if(P.GetTheta() > SumECut[i] && P.GetTheta() < M_PI - SumECut[i])
                   Include = true;
-                  break;
-               }
-            }
-
-            if(Include == true)
-               GenHybridE = GenHybridE + P[0];
-         }
-         if(DoHybridSumE == true && GenHybridE < GenSumECut)
-            continue;
-
-         RecoHybridE = 0;
-         for(FourVector &P : RecoParticles)
-         {
-            bool Include = false;
-
-            if(P.GetTheta() > ThetaMin && P.GetTheta() < ThetaMax)
-               Include = true;
-            else
-            {
-               for(pair<FourVector, PseudoJet> &Pair : RecoJets)
+               else
                {
-                  FourVector &J = Pair.first;
-                  if(J[0] < HybridJetMin)     continue;
-                  if(GetAngle(P, J) > JetR)   continue;
-                  Include = true;
-                  break;
-               }
-            }
+                  for(pair<FourVector, PseudoJet> &Pair : GenJets)
+                  {
+                     FourVector &J = Pair.first;
+                     if(J[0] < HybridJetMin)
+                        continue;
 
-            if(Include == true)
-               RecoHybridE = RecoHybridE + P[0];
+                     if(J.GetTheta() > SumECut[i] && J.GetTheta() < M_PI - SumECut[i] && GetAngle(P, J) < JetR)
+                        Include = true;
+                     if(Include == true)
+                        break;
+                  }
+               }
+
+               if(Include == true)
+                  GenHybridE[i] = GenHybridE[i] + P[0];
+            }
          }
-         if(DoSumESmear == false)
-         {
-            if(DoHybridSumE == false && RecoHybridE < RecoSumECut)
-               continue;
-         }
-         else
-         {
-            if(DoHybridSumE == false && RecoHybridE * DrawGaussian(1, SumESmear) < RecoSumECut)
-               continue;
-         }
-         
-         // Now that all the preparation work is done, increment the event count by one
-         PassedEventCount = PassedEventCount + 1;
- 
+
+
          // Calculate groomed quantities for gen jets
          GenJetZG.resize(GenJets.size());
          GenJetRG.resize(GenJets.size());
@@ -587,7 +601,6 @@ int main(int argc, char *argv[])
             }
          }
 
-         // Groomed quantities for reco jets
          RecoJetZG.resize(RecoJets.size());
          RecoJetRG.resize(RecoJets.size());
          RecoJetPG.resize(RecoJets.size());
@@ -646,7 +659,7 @@ int main(int argc, char *argv[])
             }
          }
 
-         // Gen & reco jets: output
+         // Gen & reco jets
          NRecoJets = RecoJets.size();
          RecoJetPX.resize(NRecoJets);
          RecoJetPY.resize(NRecoJets);

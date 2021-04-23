@@ -56,27 +56,27 @@ RunGenBeforeOnly: Execute
 
 RunCutSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataSumE.root \
-		--MC false --BaselineCut true --RecoSumECut 83 --JEC $(DataJEC)
+		--MC false --BaselineCut true --RecoSumECut 83 --JEC $(DataJEC) --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCSumE.root \
-		--MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 --JEC $(MCJEC)
+		--MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 --JEC $(MCJEC) --DoHybridSumE true
 
 RunCutLowerSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataLowerSumE.root \
-		--MC false --BaselineCut true --RecoSumECut 81 --JEC $(DataJEC)
+		--MC false --BaselineCut true --RecoSumECut 81 --JEC $(DataJEC) --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCLowerSumE.root \
-		--MC true --BaselineCut true --GenSumECut 81 --RecoSumECut 81 --JEC $(MCJEC)
+		--MC true --BaselineCut true --GenSumECut 81 --RecoSumECut 81 --JEC $(MCJEC) --DoHybridSumE true
 
 RunCutHigherSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataHigherSumE.root \
-		--MC false --BaselineCut true --RecoSumECut 85 --JEC $(DataJEC)
+		--MC false --BaselineCut true --RecoSumECut 85 --JEC $(DataJEC) --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCHigherSumE.root \
-		--MC true --BaselineCut true --GenSumECut 85 --RecoSumECut 85 --JEC $(MCJEC)
+		--MC true --BaselineCut true --GenSumECut 85 --RecoSumECut 85 --JEC $(MCJEC) --DoHybridSumE true
 
 RunCutSmearedSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataSmearedSumE.root \
-		--MC false --BaselineCut true --RecoSumECut 85 --JEC $(DataJEC) --DoSumESmear true
+		--MC false --BaselineCut true --RecoSumECut 85 --JEC $(DataJEC) --DoSumESmear true --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCSmearedSumE.root \
-		--MC true --BaselineCut true --GenSumECut 85 --RecoSumECut 85 --JEC $(MCJEC) --DoSumESmear true
+		--MC true --BaselineCut true --GenSumECut 85 --RecoSumECut 85 --JEC $(MCJEC) --DoSumESmear true --DoHybridSumE true
 
 RunStock: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataStock.root \
@@ -87,10 +87,10 @@ RunStock: Execute
 RunLargeThetaGapSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataLargeThetaGapSumE.root \
 		--MC false --BaselineCut true --RecoSumECut 83 --JEC $(DataJEC) \
-		--ThetaMin 0.8 --ThetaMax 2.3415926535
+		--ThetaMin 0.8 --ThetaMax 2.3415926535 --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCLargeThetaGapSumE.root \
 		--MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 --JEC $(MCJEC) \
-		--ThetaMin 0.8 --ThetaMax 2.3415926535
+		--ThetaMin 0.8 --ThetaMax 2.3415926535 --DoHybridSumE true
 	
 RunLargeThetaGap:
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataLargeThetaGap.root \
@@ -103,16 +103,16 @@ RunLargeThetaGap:
 RunThetaSidesSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataPositiveThetaSumE.root \
 		--MC false --BaselineCut true --RecoSumECut 83 --JEC $(DataJEC) \
-		--ThetaMin 1.570796 --ThetaMax 2.513274
+		--ThetaMin 1.570796 --ThetaMax 2.513274 --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCPositiveThetaSumE.root \
 		--MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 --JEC $(MCJEC) \
-		--ThetaMin 1.570796 --ThetaMax 2.513274
+		--ThetaMin 1.570796 --ThetaMax 2.513274 --DoHybridSumE true
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataNegativeThetaSumE.root \
 		--MC false --BaselineCut true --RecoSumECut 83 --JEC $(DataJEC) \
-		--ThetaMin 0.628319 --ThetaMax 1.570796
+		--ThetaMin 0.628319 --ThetaMax 1.570796 --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCNegativeThetaSumE.root \
 		--MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 --JEC $(MCJEC) \
-		--ThetaMin 0.628319 --ThetaMax 1.570796
+		--ThetaMin 0.628319 --ThetaMax 1.570796 --DoHybridSumE true
 
 RunThetaSides: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataPositiveTheta.root \
@@ -140,13 +140,13 @@ RunNoJEC: Execute
 
 RunPythia6SumE: Execute
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCLeading.root \
-		--MC true --BaselineCut false --CheckLeadingGenDiJet true
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --DoHybridSumE true
 
 RunPythia8SumE: Execute
 	time ./Execute --Input $(Pythia8Sample) --Fraction $(Fraction) --Output MCPythia8SumE.root \
-		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --DoHybridSumE true
 	time ./Execute --Input $(Pythia8Sample) --Fraction $(Fraction) --Output MCPythia8Leading.root \
-		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
 
 RunPythia8: Execute
 	time ./Execute --Input $(Pythia8Sample) --Fraction $(Fraction) --Output MCPythia8.root \
@@ -154,9 +154,9 @@ RunPythia8: Execute
 
 RunHerwigSumE: Execute
 	time ./Execute --Input $(HerwigSample) --Fraction $(Fraction) --Output MCHerwigSumE.root \
-		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco --DoHybridSumE true
 	time ./Execute --Input $(HerwigSample) --Fraction $(Fraction) --Output MCHerwigLeading.root \
-		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
 
 RunHerwig: Execute
 	time ./Execute --Input $(HerwigSample) --Fraction $(Fraction) --Output MCHerwig.root \
@@ -164,9 +164,9 @@ RunHerwig: Execute
 
 RunHerwig715SumE: Execute
 	time ./Execute --Input $(Herwig715Sample) --Fraction $(Fraction) --Output MCHerwig715SumE.root \
-		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco --DoHybridSumE true
 	time ./Execute --Input $(Herwig715Sample) --Fraction $(Fraction) --Output MCHerwig715Leading.root \
-		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
 
 RunHerwig715: Execute
 	time ./Execute --Input $(Herwig715Sample) --Fraction $(Fraction) --Output MCHerwig715.root \
@@ -174,9 +174,9 @@ RunHerwig715: Execute
 
 RunSherpaSumE: Execute
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpaSumE.root \
-		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco --DoHybridSumE true
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpaLeading.root \
-		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
 
 RunSherpa: Execute
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpa.root \
