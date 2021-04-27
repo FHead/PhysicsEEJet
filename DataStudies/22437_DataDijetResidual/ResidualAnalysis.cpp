@@ -22,7 +22,7 @@ struct Event;
 struct BinResult;
 int main(int argc, char *argv[]);
 vector<BinResult> GetR(PdfFileHelper &PdfFile, string FileName);
-pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E);
+pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E, double ThetaMin, double ThetaMax);
 void DrawSummary(PdfFileHelper &PdfFile, vector<BinResult> &RData, vector<BinResult> &RMC);
 
 struct Event
@@ -64,7 +64,7 @@ struct BinResult
 
 int main(int argc, char *argv[])
 {
-   SetThesisStyle();
+   SetThumbStyle();
 
    CommandLine CL(argc, argv);
 
@@ -182,7 +182,7 @@ vector<BinResult> GetR(PdfFileHelper &PdfFile, string FileName)
    {
       PdfFile.AddTextPage(FileName + Form(", theta bin %.2f#pi ~ %.2f#pi", ThetaMin[iT] / M_PI, ThetaMax[iT] / M_PI));
 
-      pair<double, double> R = GetExtrapolatedR(PdfFile, ThetaEvents[iT]);
+      pair<double, double> R = GetExtrapolatedR(PdfFile, ThetaEvents[iT], ThetaMin[iT] / M_PI, ThetaMax[iT] / M_PI);
 
       BinResult Bin;
       Bin.R = R.first;
@@ -198,7 +198,7 @@ vector<BinResult> GetR(PdfFileHelper &PdfFile, string FileName)
    return Result;
 }
 
-pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E)
+pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E, double ThetaMin, double ThetaMax)
 {
    int N = E.size();
    sort(E.begin(), E.end());
@@ -235,6 +235,11 @@ pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E)
    TGraphErrors G;
    G.GetXaxis()->SetTitle("<#alpha>");
    G.GetYaxis()->SetTitle("<R>");
+   G.GetYaxis()->SetNdivisions(305);
+   G.GetXaxis()->SetNdivisions(305);
+
+   G.SetMarkerSize(2);
+   G.SetLineWidth(2);
 
    for(int iB = 0; iB < BinCount; iB++)
    {
@@ -267,8 +272,23 @@ pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E)
    
    if(BinCount > 1)
       G.Fit(&F);
+   
+   G.GetXaxis()->SetRangeUser(0, 0.15);
 
-   PdfFile.AddPlot(G, "ap");
+   TCanvas Canvas;
+   G.Draw("ap");
+
+   TLatex Latex;
+   Latex.SetTextFont(42);
+   Latex.SetTextSize(0.06);
+   Latex.SetTextAlign(12);
+   Latex.SetNDC();
+   if(F.GetParameter(1) >= 0)
+      Latex.DrawLatex(0.20, 0.80, Form("%.2f#pi-%.2f#pi", ThetaMin, ThetaMax));
+   else
+      Latex.DrawLatex(0.20, 0.30, Form("%.2f#pi-%.2f#pi", ThetaMin, ThetaMax));
+
+   PdfFile.AddCanvas(Canvas);
 
    double Result, Error;
    if(BinCount == 1)
@@ -289,11 +309,11 @@ pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E)
 void DrawSummary(PdfFileHelper &PdfFile, vector<BinResult> &RData, vector<BinResult> &RMC)
 {
    TGraphErrors GData, GMC, GRatio;
-   GData.GetXaxis()->SetTitle("Theta");
+   GData.GetXaxis()->SetTitle("#theta (#pi)");
    GData.GetYaxis()->SetTitle("R");
-   GMC.GetXaxis()->SetTitle("Theta");
+   GMC.GetXaxis()->SetTitle("#theta (#pi)");
    GMC.GetYaxis()->SetTitle("R");
-   GRatio.GetXaxis()->SetTitle("Theta");
+   GRatio.GetXaxis()->SetTitle("#theta (#pi)");
    GRatio.GetYaxis()->SetTitle("Correction");
 
    GMC.SetLineColor(kRed);
@@ -301,24 +321,31 @@ void DrawSummary(PdfFileHelper &PdfFile, vector<BinResult> &RData, vector<BinRes
 
    for(int iT = 0; iT < (int)RData.size(); iT++)
    {
-      GData.SetPoint(iT, (RData[iT].Min + RData[iT].Max) / 2, RData[iT].R);
-      GData.SetPointError(iT, (RData[iT].Max - RData[iT].Min) / 2, RData[iT].RError);
+      GData.SetPoint(iT, (RData[iT].Min + RData[iT].Max) / 2 / M_PI, RData[iT].R);
+      GData.SetPointError(iT, (RData[iT].Max - RData[iT].Min) / 2 / M_PI, RData[iT].RError);
    }
    for(int iT = 0; iT < (int)RMC.size(); iT++)
    {
-      GMC.SetPoint(iT, (RMC[iT].Min + RMC[iT].Max) / 2, RMC[iT].R);
-      GMC.SetPointError(iT, (RMC[iT].Max - RMC[iT].Min) / 2, RMC[iT].RError);
+      GMC.SetPoint(iT, (RMC[iT].Min + RMC[iT].Max) / 2 / M_PI, RMC[iT].R);
+      GMC.SetPointError(iT, (RMC[iT].Max - RMC[iT].Min) / 2 / M_PI, RMC[iT].RError);
    }
    for(int iT = 0; iT < (int)RMC.size(); iT++)
    {
       double RelMC = RMC[iT].RError / RMC[iT].R;
       double RelData = RData[iT].RError / RData[iT].R;
       double Rel = sqrt(RelMC * RelMC + RelData * RelData);
-      GRatio.SetPoint(iT, (RMC[iT].Min + RMC[iT].Max) / 2, RMC[iT].R / RData[iT].R);
-      GRatio.SetPointError(iT, (RMC[iT].Max - RMC[iT].Min) / 2, RMC[iT].R / RData[iT].R * Rel);
+      GRatio.SetPoint(iT, (RMC[iT].Min + RMC[iT].Max) / 2 / M_PI, RMC[iT].R / RData[iT].R);
+      GRatio.SetPointError(iT, (RMC[iT].Max - RMC[iT].Min) / 2 / M_PI, RMC[iT].R / RData[iT].R * Rel);
    }
 
    PdfFile.AddTextPage("Summary Plot");
+
+   GData.SetMarkerSize(2);
+   GData.SetLineWidth(2);
+   GMC.SetMarkerSize(2);
+   GMC.SetLineWidth(2);
+   GRatio.SetMarkerSize(2);
+   GRatio.SetLineWidth(2);
 
    TCanvas Canvas;
    GData.Draw("ap");
@@ -326,10 +353,10 @@ void DrawSummary(PdfFileHelper &PdfFile, vector<BinResult> &RData, vector<BinRes
 
    TLatex Latex;
    Latex.SetTextFont(42);
-   Latex.SetTextSize(0.03);
+   Latex.SetTextSize(0.06);
    Latex.SetTextAlign(12);
    Latex.SetNDC();
-   Latex.DrawLatex(0.12, 0.87, "#color[1]{Data} #color[2]{MC}");
+   Latex.DrawLatex(0.40, 0.30, "#color[1]{Data} #color[2]{MC}");
 
    PdfFile.AddCanvas(Canvas);
 
