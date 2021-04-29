@@ -46,9 +46,8 @@ int main(int argc, char *argv[])
 
       TH1D *HTruth = (TH1D *)File.Get("HMCTruth");
 
-      double SimpleChi2 = CalculateSimpleChi2(HTruth, HUnfolded, IgnoreBin);
-
-      cout << SimpleChi2 << endl;
+      // double SimpleChi2 = CalculateSimpleChi2(HTruth, HUnfolded, IgnoreBin);
+      // cout << SimpleChi2 << endl;
 
       for(int i = 1; i <= BinCount; i++)
       {
