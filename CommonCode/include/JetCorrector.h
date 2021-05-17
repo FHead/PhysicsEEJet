@@ -1,10 +1,11 @@
 // SingleJetCorrector
-// v3.0
+// v3.1
 // Author: Yi Chen
 // 
 // This class applies JEC for any given level using TF1 as the workhorse
 // Supposedly runs faster than v1.0
 // v3.0: one can add list of text files to apply them one by one
+// v3.1: enable JetE, JetP, JetPT, JetEta, JetTheta support.  They are all independent for now
 
 #include <iostream>
 #include <fstream>
@@ -22,29 +23,34 @@ class JetCorrector
 {
 private:
    std::vector<SingleJetCorrector> JEC;
-   double JetP, JetTheta, JetPhi, JetArea, Rho;
+   double JetE, JetP, JetPT, JetEta, JetTheta, JetPhi, JetArea, Rho;
 public:
    JetCorrector()                               {}
    JetCorrector(std::string File)               { Initialize(File); }
    JetCorrector(std::vector<std::string> Files) { Initialize(Files); }
    void Initialize(std::string File)            { std::vector<std::string> X; X.push_back(File); Initialize(X); }
    void Initialize(std::vector<std::string> Files);
+   void SetJetE(double value)      { JetE = value; }
    void SetJetP(double value)      { JetP = value; }
+   void SetJetPT(double value)     { JetPT = value; }
+   void SetJetEta(double value)    { JetEta = value; }
    void SetJetTheta(double value)  { JetTheta = value; }
    void SetJetPhi(double value)    { JetPhi = value; }
    void SetJetArea(double value)   { JetArea = value; }
    void SetRho(double value)       { Rho = value; }
    double GetCorrection();
+   double GetCorrectedE();
    double GetCorrectedP();
+   double GetCorrectedPT();
 };
 
 class SingleJetCorrector
 {
 private:
-   enum Type { TypeNone, TypeJetP, TypeJetTheta, TypeJetPhi, TypeJetArea, TypeRho };
+   enum Type { TypeNone, TypeJetE, TypeJetP, TypeJetPT, TypeJetEta, TypeJetTheta, TypeJetPhi, TypeJetArea, TypeRho };
    bool Initialized;
    bool IsFunction;
-   double JetP, JetTheta, JetPhi, JetArea, Rho;
+   double JetE, JetP, JetPT, JetEta, JetTheta, JetPhi, JetArea, Rho;
    std::vector<std::string> Formulas;
    std::vector<std::vector<double>> Parameters;
    std::vector<std::vector<Type>> BinTypes;
@@ -56,7 +62,10 @@ public:
    SingleJetCorrector()                  { Initialized = false; }
    SingleJetCorrector(std::string File)  { Initialized = false; Initialize(File); }
    ~SingleJetCorrector()                 { for(auto P : Functions) if(P != nullptr) delete P; }
-   void SetJetP(double value)     { JetP = value; }
+   void SetJetE(double value)      { JetE = value; }
+   void SetJetP(double value)      { JetP = value; }
+   void SetJetPT(double value)     { JetPT = value; }
+   void SetJetEta(double value)    { JetEta = value; }
    void SetJetTheta(double value)  { JetTheta = value; }
    void SetJetPhi(double value)    { JetPhi = value; }
    void SetJetArea(double value)   { JetArea = value; }
@@ -67,7 +76,9 @@ public:
    std::string StripBracket(std::string Line);
    SingleJetCorrector::Type ToType(std::string Line);
    double GetCorrection();
+   double GetCorrectedE();
    double GetCorrectedP();
+   double GetCorrectedPT();
    double GetValue(Type T);
 private:
    std::string Hack4(std::string Formula, char V, int N);
@@ -88,25 +99,88 @@ double JetCorrector::GetCorrection()
    return P / JetP;
 }
 
-double JetCorrector::GetCorrectedP()
+double JetCorrector::GetCorrectedE()
 {
+   double E = JetE;
    double P = JetP;
+   double PT = JetPT;
 
    for(int i = 0; i < (int)JEC.size(); i++)  
    {
+      JEC[i].SetJetE(E);
       JEC[i].SetJetP(P);
+      JEC[i].SetJetPT(PT);
+      JEC[i].SetJetEta(JetEta);
       JEC[i].SetJetTheta(JetTheta);
       JEC[i].SetJetPhi(JetPhi);
       JEC[i].SetRho(Rho);
       JEC[i].SetJetArea(JetArea);
 
+      E = JEC[i].GetCorrectedE();
       P = JEC[i].GetCorrectedP();
+      PT = JEC[i].GetCorrectedPT();
+
+      if(E < 0)
+         break;
+   }
+
+   return E;
+}
+
+double JetCorrector::GetCorrectedP()
+{
+   double E = JetE;
+   double P = JetP;
+   double PT = JetPT;
+
+   for(int i = 0; i < (int)JEC.size(); i++)  
+   {
+      JEC[i].SetJetE(E);
+      JEC[i].SetJetP(P);
+      JEC[i].SetJetPT(PT);
+      JEC[i].SetJetEta(JetEta);
+      JEC[i].SetJetTheta(JetTheta);
+      JEC[i].SetJetPhi(JetPhi);
+      JEC[i].SetRho(Rho);
+      JEC[i].SetJetArea(JetArea);
+
+      E = JEC[i].GetCorrectedE();
+      P = JEC[i].GetCorrectedP();
+      PT = JEC[i].GetCorrectedPT();
 
       if(P < 0)
          break;
    }
 
    return P;
+}
+
+double JetCorrector::GetCorrectedPT()
+{
+   double E = JetE;
+   double P = JetP;
+   double PT = JetPT;
+
+   for(int i = 0; i < (int)JEC.size(); i++)  
+   {
+      JEC[i].SetJetE(E);
+      JEC[i].SetJetP(P);
+      JEC[i].SetJetPT(PT);
+      JEC[i].SetJetEta(JetEta);
+      JEC[i].SetJetTheta(JetTheta);
+      JEC[i].SetJetPhi(JetPhi);
+      JEC[i].SetRho(Rho);
+      JEC[i].SetJetArea(JetArea);
+
+      E = JEC[i].GetCorrectedE();
+      P = JEC[i].GetCorrectedP();
+      PT = JEC[i].GetCorrectedPT();
+
+      if(PT < 0)
+         break;
+   }
+
+   return PT;
 }
 
 void SingleJetCorrector::Initialize(std::string FileName)
@@ -248,7 +322,10 @@ std::string SingleJetCorrector::StripBracket(std::string Line)
 
 SingleJetCorrector::Type SingleJetCorrector::ToType(std::string Line)
 {
+   if(Line == "JetE")     return TypeJetE;
    if(Line == "JetP")     return TypeJetP;
+   if(Line == "JetPT")    return TypeJetPT;
+   if(Line == "JetEta")   return TypeJetEta;
    if(Line == "JetTheta") return TypeJetTheta;
    if(Line == "JetPhi")   return TypeJetPhi;
    if(Line == "JetA")     return TypeJetArea;
@@ -343,6 +420,16 @@ double SingleJetCorrector::GetCorrection()
    return -1;
 }
 
+double SingleJetCorrector::GetCorrectedE()
+{
+   double Correction = GetCorrection();
+
+   if(Correction < 0)
+      return -1;
+
+   return JetE * Correction;
+}
+
 double SingleJetCorrector::GetCorrectedP()
 {
    double Correction = GetCorrection();
@@ -353,10 +440,23 @@ double SingleJetCorrector::GetCorrectedP()
    return JetP * Correction;
 }
 
+double SingleJetCorrector::GetCorrectedPT()
+{
+   double Correction = GetCorrection();
+
+   if(Correction < 0)
+      return -1;
+
+   return JetPT * Correction;
+}
+
 double SingleJetCorrector::GetValue(Type T)
 {
    if(T == TypeNone)      return 0;
-   if(T == TypeJetP)     return JetP;
+   if(T == TypeJetE)      return JetE;
+   if(T == TypeJetP)      return JetP;
+   if(T == TypeJetPT)     return JetPT;
+   if(T == TypeJetEta)    return JetEta;
    if(T == TypeJetTheta)  return JetTheta;
    if(T == TypeJetPhi)    return JetPhi;
    if(T == TypeJetArea)   return JetArea;
