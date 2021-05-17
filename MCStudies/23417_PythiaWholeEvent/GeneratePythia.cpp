@@ -76,6 +76,7 @@ void GenerateEvents(string OutputFileName, int NEvent, double EPythia, double EB
    float phi[MAX];
    float mass[MAX];
    int subevent[MAX];
+   vector<vector<int>> mother;
    // charge, pwflag
    int pid[MAX];
    int status[MAX];
@@ -111,6 +112,7 @@ void GenerateEvents(string OutputFileName, int NEvent, double EPythia, double EB
    OutputTree.Branch("subevent", &subevent, "subevent[nParticle]/I");
    OutputTree.Branch("pid", &pid, "pid[nParticle]/I");
    OutputTree.Branch("status", &status, "status[nParticle]/I");
+   OutputTree.Branch("mother", &mother);
    OutputTree.Branch("vx", &vx, "vx[nParticle]/F");
    OutputTree.Branch("vy", &vy, "vy[nParticle]/F");
    OutputTree.Branch("vz", &vz, "vz[nParticle]/F");
@@ -134,8 +136,8 @@ void GenerateEvents(string OutputFileName, int NEvent, double EPythia, double EB
    pythia.readString(Form("Beams:eCM = %f", EPythia));     // Collision energy from input
 
    pythia.readString("Next:numberCount = 0");              // how often to print to screen on progress
-   pythia.readString("Next:numberShowProcess = 0");        // do we print first hard process?  No!
-   pythia.readString("Next:numberShowEvent = 0");          // do we print first event?  No!
+   pythia.readString("Next:numberShowProcess = 10");       // do we print first hard process?  No!
+   pythia.readString("Next:numberShowEvent = 10");         // do we print first event?  No!
 
    pythia.init();
 
@@ -285,6 +287,8 @@ void GenerateEvents(string OutputFileName, int NEvent, double EPythia, double EB
          BallParticles[i] = BallParticles[i].GammaBoost(-Total, BoostGamma);
 
       // Finally, write everything out
+      mother.clear();
+      mother.resize(Tree.ParticleCount());
       for(int i = 0; i < Tree.ParticleCount(); i++)
       {
          e[i]        = Tree[i].P[0];
@@ -304,6 +308,7 @@ void GenerateEvents(string OutputFileName, int NEvent, double EPythia, double EB
          vx[i]       = Tree[i].V[1];
          vy[i]       = Tree[i].V[2];
          vz[i]       = Tree[i].V[3];
+         mother[i]   = Tree[i].Mothers;
       }
 
       for(int i = 0; i < (int)BallParticles.size(); i++)

@@ -16,10 +16,10 @@ using namespace std;
 #include "CommandLine.h"
 
 int main(int argc, char *argv[]);
-void PlotPClosure(PdfFileHelper &PdfFile, TTree *Tree,
-   double ThetaPIMin, double ThetaPIMax, double PMin, double PMax, double R);
+void PlotEClosure(PdfFileHelper &PdfFile, TTree *Tree,
+   double ThetaPIMin, double ThetaPIMax, double EMin, double EMax, double R);
 void PlotThetaClosure(PdfFileHelper &PdfFile, TTree *Tree,
-   double ThetaPIMin, double ThetaPIMax, double PMin, double PMax, double R);
+   double ThetaPIMin, double ThetaPIMax, double EMin, double EMax, double R);
 
 int main(int argc, char *argv[])
 {
@@ -37,28 +37,25 @@ int main(int argc, char *argv[])
    TFile File(FileName.c_str());
 
    TTree *Tree = (TTree *)File.Get("MatchedTree");
-   Tree->SetAlias("GenP", "(GenPT*cosh(GenEta))");
-   Tree->SetAlias("RecoP", "(RecoPT*cosh(RecoEta))");
-   Tree->SetAlias("CorrectedP", "(CorrectedPT*cosh(RecoEta))");
 
-   PlotPClosure(PdfFile, Tree, 0.00, 0.10, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.10, 0.15, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.15, 0.20, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.20, 0.25, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.25, 0.30, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.30, 0.35, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.35, 0.40, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.40, 0.45, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.45, 0.50, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.50, 0.55, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.55, 0.60, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.60, 0.65, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.65, 0.70, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.70, 0.75, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.75, 0.80, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.80, 0.85, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.85, 0.90, 0, 50, R);
-   PlotPClosure(PdfFile, Tree, 0.90, 1.00, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.00, 0.10, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.10, 0.15, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.15, 0.20, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.20, 0.25, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.25, 0.30, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.30, 0.35, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.35, 0.40, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.40, 0.45, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.45, 0.50, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.50, 0.55, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.55, 0.60, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.60, 0.65, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.65, 0.70, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.70, 0.75, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.75, 0.80, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.80, 0.85, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.85, 0.90, 0, 50, R);
+   PlotEClosure(PdfFile, Tree, 0.90, 1.00, 0, 50, R);
    
    PlotThetaClosure(PdfFile, Tree, 0.00, 1.00,  5, 10, R);
    PlotThetaClosure(PdfFile, Tree, 0.00, 1.00, 10, 15, R);
@@ -78,19 +75,19 @@ int main(int argc, char *argv[])
    return 0;
 }
 
-void PlotPClosure(PdfFileHelper &PdfFile, TTree *Tree,
-   double ThetaPIMin, double ThetaPIMax, double PMin, double PMax, double R)
+void PlotEClosure(PdfFileHelper &PdfFile, TTree *Tree,
+   double ThetaPIMin, double ThetaPIMax, double EMin, double EMax, double R)
 {
    double ThetaMin = ThetaPIMin * M_PI;
    double ThetaMax = ThetaPIMax * M_PI;
 
-   TProfile P1("P1", ";Gen P;Response", 50, PMin, PMax);
-   TProfile P2("P2", ";Gen P;Response", 50, PMin, PMax);
+   TProfile P1("P1", ";Gen E;Response", 50, EMin, EMax);
+   TProfile P2("P2", ";Gen E;Response", 50, EMin, EMax);
 
    double Threshold = (R < 0.6) ? 0.2 : 0.37;
 
-   Tree->Draw("RecoP/GenP:GenP>>P1", Form("GenTheta > %f && GenTheta < %f && 1-cos(Angle) < %f", ThetaMin, ThetaMax, Threshold));
-   Tree->Draw("CorrectedP/GenP:GenP>>P2", Form("GenTheta > %f && GenTheta < %f && 1-cos(Angle) < %f", ThetaMin, ThetaMax, Threshold));
+   Tree->Draw("RecoE/GenE:GenE>>P1", Form("GenTheta > %f && GenTheta < %f && 1-cos(Angle) < %f", ThetaMin, ThetaMax, Threshold));
+   Tree->Draw("CorrectedE/GenE:GenE>>P2", Form("GenTheta > %f && GenTheta < %f && 1-cos(Angle) < %f", ThetaMin, ThetaMax, Threshold));
 
    P2.SetLineWidth(2);
    P2.SetLineColor(kBlack);
@@ -120,7 +117,7 @@ void PlotPClosure(PdfFileHelper &PdfFile, TTree *Tree,
    G2.SetPoint(3, -1000, 0.99);
    G2.SetLineStyle(kDashed);
 
-   TH2D HWorld("HWorld", ";Gen P;Response", 50, PMin, PMax, 50, 0.75, 1.25);
+   TH2D HWorld("HWorld", ";Gen E;Response", 50, EMin, EMax, 50, 0.75, 1.25);
    HWorld.SetStats(0);
    HWorld.GetYaxis()->SetNdivisions(505);
    HWorld.GetXaxis()->SetNdivisions(505);
@@ -147,7 +144,7 @@ void PlotPClosure(PdfFileHelper &PdfFile, TTree *Tree,
 }
 
 void PlotThetaClosure(PdfFileHelper &PdfFile, TTree *Tree,
-   double ThetaPIMin, double ThetaPIMax, double PMin, double PMax, double R)
+   double ThetaPIMin, double ThetaPIMax, double EMin, double EMax, double R)
 {
    double ThetaMin = ThetaPIMin * M_PI;
    double ThetaMax = ThetaPIMax * M_PI;
@@ -157,8 +154,8 @@ void PlotThetaClosure(PdfFileHelper &PdfFile, TTree *Tree,
 
    double Threshold = (R < 0.6) ? 0.2 : 0.37;
 
-   Tree->Draw("RecoP/GenP:GenTheta/3.1415926535>>P1", Form("GenP > %f && GenP < %f && 1-cos(Angle) < %f", PMin, PMax, Threshold));
-   Tree->Draw("CorrectedP/GenP:GenTheta/3.1415926535>>P2", Form("GenP > %f && GenP < %f && 1-cos(Angle) < %f", PMin, PMax, Threshold));
+   Tree->Draw("RecoE/GenE:GenTheta/3.1415926535>>P1", Form("GenE > %f && GenE < %f && 1-cos(Angle) < %f", EMin, EMax, Threshold));
+   Tree->Draw("CorrectedE/GenE:GenTheta/3.1415926535>>P2", Form("GenE > %f && GenE < %f && 1-cos(Angle) < %f", EMin, EMax, Threshold));
 
    P2.SetLineWidth(2);
    P2.SetLineColor(kBlack);
@@ -209,7 +206,7 @@ void PlotThetaClosure(PdfFileHelper &PdfFile, TTree *Tree,
    Latex.SetNDC();
    Latex.SetTextAlign(12);
    Latex.DrawLatex(0.20, 0.82, "#color[2]{Raw} #color[1]{Corrected}");
-   Latex.DrawLatex(0.20, 0.75, Form("P = %.1f ~ %.1f GeV", PMin, PMax));
+   Latex.DrawLatex(0.20, 0.75, Form("E = %.1f ~ %.1f GeV", EMin, EMax));
 
    PdfFile.AddCanvas(Canvas);
 }

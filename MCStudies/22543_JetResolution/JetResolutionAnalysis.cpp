@@ -22,7 +22,7 @@ vector<double> JERFit(PdfFileHelper &PdfFile, TTree *Tree, double ThetaMin, doub
 
 int main(int argc, char *argv[])
 {
-   SetThesisStyle();
+   SetThumbStyle();
 
    CommandLine CL(argc, argv);
 
@@ -270,13 +270,18 @@ vector<double> JERFit(PdfFileHelper &PdfFile, TTree *Tree, double ThetaMin, doub
       F4.Draw("same");
    HRMS.Draw("same");
 
+   HRMS.SetMarkerSize(2);
+
    TLatex Latex;
    Latex.SetNDC();
    Latex.SetTextFont(42);
-   Latex.SetTextSize(0.025);
-   Latex.SetTextAlign(12);
+   Latex.SetTextSize(0.05);
+   Latex.SetTextAlign(32);
    if(Mode == MODE_P)
-      Latex.DrawLatex(0.12, 0.87, "#color[2]{sqrt(P3)} #color[4]{sqrt(P4)} #color[3]{P4}");
+      Latex.DrawLatex(0.85, 0.80, "#color[2]{sqrt(P3)} #color[4]{sqrt(P4)} #color[3]{P4}");
+
+   Latex.SetTextAlign(12);
+   Latex.DrawLatex(0.20, 0.20, Form("%.2f-%.2f#pi", ThetaMin, ThetaMax));
    
    PdfFile.AddCanvas(Canvas);
 

@@ -1,4 +1,4 @@
-N = 1000000
+N = 5000000
 
 default:
 	echo Hello world
@@ -30,22 +30,7 @@ RunPythiaOnShell: Execute
 	time ./Execute --Output PurePythia91.root --N $(N) --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
 
 TestRun: Execute
-	# time ./Execute --Output PythiaBall0_Mean020.root --N $(N) --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
-	# time ./Execute --Output PythiaBall1_Mean020.root --N $(N) --EPythia 90.2 --EBall 1 --Mean 0.2 --ExcludeE true
-	# time ./Execute --Output PythiaBall5_Mean020.root --N $(N) --EPythia 86.2 --EBall 5 --Mean 0.2 --ExcludeE true
-	# time ./Execute --Output PythiaBall10_Mean020.root --N $(N) --EPythia 81.2 --EBall 10 --Mean 0.2 --ExcludeE true
-	# time ./Execute --Output PythiaBall20_Mean020.root --N $(N) --EPythia 71.2 --EBall 20 --Mean 0.2 --ExcludeE true
-	# time ./Execute --Output PythiaBall40_Mean020.root --N $(N) --EPythia 51.2 --EBall 40 --Mean 0.2 --ExcludeE true
-	# time ./Execute --Output PythiaBall1_Mean060.root --N $(N) --EPythia 90.2 --EBall 1 --Mean 0.6 --ExcludeE true
-	# time ./Execute --Output PythiaBall5_Mean060.root --N $(N) --EPythia 86.2 --EBall 5 --Mean 0.6 --ExcludeE true
-	# time ./Execute --Output PythiaBall10_Mean060.root --N $(N) --EPythia 81.2 --EBall 10 --Mean 0.6 --ExcludeE true
-	# time ./Execute --Output PythiaBall20_Mean060.root --N $(N) --EPythia 71.2 --EBall 20 --Mean 0.6 --ExcludeE true
-	# time ./Execute --Output PythiaBall40_Mean060.root --N $(N) --EPythia 51.2 --EBall 40 --Mean 0.6 --ExcludeE true
-	# time ./Execute --Output PythiaBall1_Mean090.root --N $(N) --EPythia 90.2 --EBall 1 --Mean 0.9 --ExcludeE true
-	# time ./Execute --Output PythiaBall5_Mean090.root --N $(N) --EPythia 86.2 --EBall 5 --Mean 0.9 --ExcludeE true
-	# time ./Execute --Output PythiaBall10_Mean090.root --N $(N) --EPythia 81.2 --EBall 10 --Mean 0.9 --ExcludeE true
-	# time ./Execute --Output PythiaBall20_Mean090.root --N $(N) --EPythia 71.2 --EBall 20 --Mean 0.9 --ExcludeE true
-	# time ./Execute --Output PythiaBall40_Mean090.root --N $(N) --EPythia 51.2 --EBall 40 --Mean 0.9 --ExcludeE true
+	time ./Execute --Output TestRunPurePythia91.root --N 10 --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
 
 FullRun: Execute
 	time ./Execute --Output PythiaBall0_Mean020.root --N $(N) --EPythia 91.2 --EBall 0 --Mean 0.2 --ExcludeE true
@@ -70,4 +55,4 @@ FullRun2: Execute
 	time ./Execute --Output PythiaBall10_Mean060.root --N $(N) --EPythia 81.2 --EBall 10 --Mean 0.6 --ExcludeE true
 
 Execute: GeneratePythia.cpp
-	CompileRootMacro GeneratePythia.cpp Execute
+	CompileRootMacro GeneratePythia.cpp Execute Dictionary.o
