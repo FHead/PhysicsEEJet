@@ -21,15 +21,18 @@ Prepare:
 	mkdir -p Unfolded Plots
 
 RunStatistics: Execute
-	for i in `seq 1001 1250`; do \
+	for i in `seq 1251 1500`; do \
 		./Execute --Input InputToy/ToyDataJetEStatistics_$${i}.root --Output Unfolded/ToyDataJetEStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataLeadingDiJetEStatistics_$${i}.root --Output Unfolded/ToyDataLeadingDiJetEStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataLeadingDiJetSumEStatistics_$${i}.root --Output Unfolded/ToyDataLeadingDiJetSumEStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataJetZGStatistics_$${i}.root --Output Unfolded/ToyDataJetZGStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataJetRGStatistics_$${i}.root --Output Unfolded/ToyDataJetRGStatistics_$${i}.root; \
-		./Execute --Input InputToy/ToyDataJetMGStatistics_$${i}.root --Output Unfolded/ToyDataJetMGStatistics_$${i}.root; \
 		./Execute --Input InputToy/ToyDataJetMGEStatistics_$${i}.root --Output Unfolded/ToyDataJetMGEStatistics_$${i}.root; \
+		./Execute --Input InputToy/ToyDataJetMEStatistics_$${i}.root --Output Unfolded/ToyDataJetMEStatistics_$${i}.root; \
 	done
+		# ./Execute --Input InputToy/ToyDataJetMStatistics_$${i}.root --Output Unfolded/ToyDataJetMStatistics_$${i}.root; \
+		# ./Execute --Input InputToy/ToyDataJetMGStatistics_$${i}.root --Output Unfolded/ToyDataJetMGStatistics_$${i}.root; \
+
 
 RunThrustUnfold: Execute ExecutePlot
 	./Execute --Input Input/MCThrustNominal.root --Output Unfolded/MCThrustNominal.root

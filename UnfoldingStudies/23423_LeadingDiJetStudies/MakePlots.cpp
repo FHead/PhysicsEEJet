@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-   SetThesisStyle();
+   SetThumbStyle();
 
    CommandLine CL(argc, argv);
 
@@ -39,23 +39,43 @@ int main(int argc, char *argv[])
    PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
       "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
       "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
       "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 80, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
       "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
       "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
       "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 80, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
       "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
       "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 70, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
       "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
    PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
       "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 50, 88, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 88, 91.2);
 
    TH1D HSumE("HSumE", ";E_{sum} Cut;Cut efficiency", 500, 0, 91.2);
    Tree->Draw((Tier + "SumE>>HSumE").c_str());

@@ -634,10 +634,15 @@ TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2)
       G2.GetPoint(i, X2, Y2);
 
       if(Y2 == 0)
-         continue;
-
-      G.SetPoint(i, X1, Y1 / Y2);
-      G.SetPointError(i, E1XL, E1XH, E1YL / Y2, E1YH / Y2);
+      {
+         G.SetPoint(i, X1, 0);
+         G.SetPointError(i, E1XL, E1XH, 0, 0);
+      }
+      else
+      {
+         G.SetPoint(i, X1, Y1 / Y2);
+         G.SetPointError(i, E1XL, E1XH, E1YL / Y2, E1YH / Y2);
+      }
    }
 
    return G;

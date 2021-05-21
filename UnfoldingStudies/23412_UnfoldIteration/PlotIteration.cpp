@@ -15,7 +15,7 @@ double CalculateChi2(TH1D *H1, TH1D *H2, int IgnoreBin = 0, bool UseError = true
 
 int main(int argc, char *argv[])
 {
-   SetThesisStyle();
+   SetThumbStyle();
 
    CommandLine CL(argc, argv);
 
@@ -70,8 +70,13 @@ int main(int argc, char *argv[])
 
    PdfFile.AddTextPage("Summary plots");
 
-   Graph.SetNameTitle("GChi2", "Chi2");
-   GraphD.SetNameTitle("GD2", "D2");
+   Graph.SetNameTitle("GChi2", "");
+   GraphD.SetNameTitle("GD2", "");
+
+   Graph.GetXaxis()->SetTitle("Number of iterations");
+   Graph.GetYaxis()->SetTitle("#chi^{2}");
+   GraphD.GetXaxis()->SetTitle("Number of iterations");
+   GraphD.GetYaxis()->SetTitle("Distance^{2}");
 
    PdfFile.AddPlot(Graph, "apl");
    PdfFile.AddPlot(Graph, "apl", false, false, true, true);

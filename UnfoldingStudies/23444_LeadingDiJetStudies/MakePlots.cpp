@@ -17,7 +17,7 @@ void AddPlot(PdfFileHelper &PdfFile, TH1D &H1, TH1D &H2);
 
 int main(int argc, char *argv[])
 {
-   SetThesisStyle();
+   SetThumbStyle();
    vector<int> Colors = GetPrimaryColors();
 
    CommandLine CL(argc, argv);
@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
    bool RecalculateSumE    = CL.GetBool("RecalculateSumE", false);
    double ParticleThetaGap = RecalculateSumE ? CL.GetDouble("ParticleThetaGap") : 0;
    string SumEString       = RecalculateSumE ? "GenSumE[0]" : CL.Get("SumEString");
+   string Tier             = CL.Get("Tier", "Gen");
 
    PdfFileHelper PdfFile(OutputFileName);
    PdfFile.AddTextPage("Leading jets");
@@ -41,12 +42,12 @@ int main(int argc, char *argv[])
    string JetThetaCut2 = Form("(GenJetTheta[1]>%f&&GenJetTheta[1]<%f)", JetThetaGap * M_PI, (1 - JetThetaGap) * M_PI);
    string JetThetaCut  = "(" + JetThetaCut1 + "&&" + JetThetaCut2 + ")";
 
-   string SumECut = "";
+   string OnlySumE = "";
    if(RecalculateSumE == true)
-      SumECut = Form("(Sum$(GenE*(GenTheta>%f&&GenTheta<%f&&GenStatus==1))>83)", ParticleThetaGap * M_PI, (1 - ParticleThetaGap) * M_PI);
+      OnlySumE = Form("(Sum$(GenE*(GenTheta>%f&&GenTheta<%f&&GenStatus==1)))", ParticleThetaGap * M_PI, (1 - ParticleThetaGap) * M_PI);
    else
-      SumECut = Form("(%s>83)", SumEString.c_str());
-   SumECut = "(" + SumECut + " && " + JetThetaCut + ")";
+      OnlySumE = Form("(%s)", SumEString.c_str());
+   string SumECut = "(" + OnlySumE + " > 83 && " + JetThetaCut + ")";
 
    TFile InputFile(InputFileName.c_str());
 
@@ -76,6 +77,65 @@ int main(int argc, char *argv[])
    AddPlot(PdfFile, HA2, HB2);
    AddPlot(PdfFile, HA12, HB12);
    AddPlot(PdfFile, HAS, HBS);
+
+   Tree->SetAlias("TargetSumE", OnlySumE.c_str());
+   Tree->SetAlias("TargetJetTheta", (Tier + "JetTheta").c_str());
+   Tree->SetAlias("Jet1Cut", JetThetaCut1.c_str());
+   Tree->SetAlias("Jet2Cut", JetThetaCut2.c_str());
+   Tree->SetAlias("Jet12Cut", JetThetaCut.c_str());
+
+   PdfFile.AddPlot(Tree, "TargetJetTheta", "", "", Tier + " Jet Theta;#theta;", 100, 0, M_PI);
+   PdfFile.AddPlot(Tree, "TargetJetTheta[0]", "", "", "Leading " + Tier + " Jet Theta;#theta;", 100, 0, M_PI);
+   PdfFile.AddPlot(Tree, "TargetJetTheta[1]", "", "", "Subleading " + Tier + " Jet Theta;#theta;", 100, 0, M_PI);
+   PdfFile.AddPlot(Tree, "TargetSumE", "", "", "Total " + Tier + " energy within 0.2-0.8#pi;E (GeV);", 100, 0, 91.5);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet1Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      "Fraction of events with subleading jet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet2Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 0, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 100, 70, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 80, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      "Fraction of events with leading dijet within 0.2-0.8#pi;E (GeV);", 50, 88, 91.2);
+   PdfFile.AddPlotProfile(Tree, "Jet12Cut:TargetSumE", "", "prof",
+      ";E (GeV);", 50, 88, 91.2);
+
+   TH1D HSumE("HSumE", ";E Cut;Cut efficiency", 500, 0, 91.2);
+   Tree->Draw((OnlySumE + ">>HSumE").c_str());
+   for(int i = HSumE.GetNbinsX() - 1; i >= 1; i--)
+      HSumE.SetBinContent(i, HSumE.GetBinContent(i) + HSumE.GetBinContent(i + 1));
+   HSumE.Scale(1 / HSumE.GetBinContent(1));
+   HSumE.SetStats(0);
+   PdfFile.AddPlot(HSumE, "", false, false, true);
 
    InputFile.Close();
 

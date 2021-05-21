@@ -16,7 +16,7 @@ void SetAxis(TH2D &H);
 
 int main(int argc, char *argv[])
 {
-   SetThesisStyle();
+   SetThumbStyle();
 
    CommandLine CL(argc, argv);
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
    Tree->SetBranchAddress("MatchedJetAngle", &MatchedJetAngle);
 
    int MaxGenRank = 7, MaxRecoRank = 7;
-   TH2D HCounts("HCounts", "Counts;RecoJetRank;GenJetRank", MaxRecoRank, 0, MaxRecoRank, MaxGenRank, 0, MaxGenRank);
+   TH2D HCounts("HCounts", "Counts;Reco Jet Rank;Gen Jet Rank", MaxRecoRank, 0, MaxRecoRank, MaxGenRank, 0, MaxGenRank);
    SetAxis(HCounts);
 
    int EntryCount = Tree->GetEntries() * Fraction;
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
       }
    }
 
-   TH2D HRowNormalize("HRowNormalize", "Row-normalized;RecoJetRank;GenJetRank", MaxRecoRank, 0, MaxRecoRank, MaxGenRank, 0, MaxGenRank);
+   TH2D HRowNormalize("HRowNormalize", "Row-normalized;Reco Jet Rank;Gen Jet Rank", MaxRecoRank, 0, MaxRecoRank, MaxGenRank, 0, MaxGenRank);
    SetAxis(HRowNormalize);
    HRowNormalize.Fill(0.0, 0.0, 0.0);
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
          HRowNormalize.SetBinContent(iX, iY, HCounts.GetBinContent(iX, iY) / Total);
    }
    
-   TH2D HColumnNormalize("HColumnNormalize", "Column-normalized;RecoJetRank;GenJetRank", MaxRecoRank, 0, MaxRecoRank, MaxGenRank, 0, MaxGenRank);
+   TH2D HColumnNormalize("HColumnNormalize", "Column-normalized;Reco Jet Rank;Gen Jet Rank", MaxRecoRank, 0, MaxRecoRank, MaxGenRank, 0, MaxGenRank);
    SetAxis(HColumnNormalize);
    HColumnNormalize.Fill(0.0, 0.0, 0.0);
    
@@ -121,9 +121,9 @@ int main(int argc, char *argv[])
    PdfFileHelper PdfFile("Ranking.pdf");
    PdfFile.AddTextPage("Jet ranking");
 
-   PdfFile.AddPlot(HCounts, "colz text00");
-   PdfFile.AddPlot(HRowNormalize, "colz text00");
-   PdfFile.AddPlot(HColumnNormalize, "colz text00");
+   PdfFile.AddPlot(HCounts, "col text00");
+   PdfFile.AddPlot(HRowNormalize, "col text00");
+   PdfFile.AddPlot(HColumnNormalize, "col text00");
 
    PdfFile.AddTimeStampPage();
    PdfFile.Close();

@@ -52,7 +52,7 @@ TestRun: Execute
 		--Output Output/ToyJetMENominal.root
 
 TestRunStatistics: Execute
-	for i in `seq 1001 1250`; do \
+	for i in `seq 1251 1500`; do \
 		echo $$i; \
 		./Execute --MC Input/MCJetENominal.root \
 			--Shape PerfectInput/PerfectDataJetENominal.root \
@@ -140,4 +140,4 @@ TestRunData: Execute
 		--Output Output/ToyDataJetMENominal.root
 
 Execute: GenerateFakeData.cpp
-	CompileRootMacro GenerateFakeData.cpp Execute
+	CXXFLAGS="-mmacosx-version-min=11.2" CompileRootMacro GenerateFakeData.cpp Execute 

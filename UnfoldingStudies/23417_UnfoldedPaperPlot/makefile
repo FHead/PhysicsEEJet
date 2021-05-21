@@ -7,15 +7,18 @@ Prepare:
 	ln -sf ../23412_Systematics/ Systematics
 	mkdir -p Plots
 
+PYQUEN = MCPyquen
+# PYQUEN = MCPyquenStrong
+
 RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetZG2 RunJetRG2 RunJetM RunJetME
 
 RunJetE: Execute
 	# Jet E: Count
 	./Execute --Input Input/DataJetENominal.root \
 		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominalCount.pdf --FinalOutput Plots/MeowPCount.pdf \
-		--MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCHerwigJetE.root",OriginalInput/MCSherpaJetE.root,OriginalInput/MCHerwig715JetE.root \
+		--MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCHerwigJetE.root",OriginalInput/MCSherpaJetE.root,OriginalInput/$(PYQUEN)JetE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 722","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 722","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize false \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -28,9 +31,9 @@ RunJetE: Execute
 	# Jet E: Normalized
 	./Execute --Input Input/DataJetENominal.root \
 		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowPLog.pdf \
-		--MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCHerwigJetE.root",OriginalInput/MCSherpaJetE.root,OriginalInput/MCHerwig715JetE.root \
+		--MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCHerwigJetE.root",OriginalInput/MCSherpaJetE.root,OriginalInput/$(PYQUEN)JetE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -43,9 +46,9 @@ RunJetE: Execute
 	# Jet E: Normalized - log
 	./Execute --Input Input/DataJetENominal.root \
 		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowP.pdf \
-		--MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCHerwigJetE.root",OriginalInput/MCSherpaJetE.root,OriginalInput/MCHerwig715JetE.root \
+		--MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCHerwigJetE.root",OriginalInput/MCSherpaJetE.root,OriginalInput/$(PYQUEN)JetE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -60,9 +63,9 @@ RunDiJetE: Execute
 	# DiJet E
 	./Execute --Input Input/DataLeadingDiJetENominal.root \
 		--Systematic Systematics/DataLeadingDiJetE.root --Output Plots/DataLeadingDiJetENominal.pdf --FinalOutput Plots/MeowLeadingDiJetE.pdf \
-		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCHerwigLeadingDiJetE.root",OriginalInput/MCSherpaLeadingDiJetE.root,OriginalInput/MCHerwig715LeadingDiJetE.root \
+		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCHerwigLeadingDiJetE.root",OriginalInput/MCSherpaLeadingDiJetE.root,OriginalInput/$(PYQUEN)LeadingDiJetE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -75,9 +78,9 @@ RunDiJetE: Execute
 	# DiJet E: log
 	./Execute --Input Input/DataLeadingDiJetENominal.root \
 		--Systematic Systematics/DataLeadingDiJetE.root --Output Plots/DataLeadingDiJetENominal.pdf --FinalOutput Plots/MeowLeadingDiJetELog.pdf \
-		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCHerwigLeadingDiJetE.root",OriginalInput/MCSherpaLeadingDiJetE.root,OriginalInput/MCHerwig715LeadingDiJetE.root \
+		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCHerwigLeadingDiJetE.root",OriginalInput/MCSherpaLeadingDiJetE.root,OriginalInput/$(PYQUEN)LeadingDiJetE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -92,9 +95,9 @@ RunDiJetSumE: Execute
 	# DiJet SumE
 	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
 		--Systematic Systematics/DataLeadingDiJetSumE.root --Output Plots/DataLeadingDiJetSumENominal.pdf --FinalOutput Plots/MeowLeadingDiJetSumE.pdf \
-		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCHerwigLeadingDiJetSumE.root",OriginalInput/MCSherpaLeadingDiJetSumE.root,OriginalInput/MCHerwig715LeadingDiJetSumE.root \
+		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCHerwigLeadingDiJetSumE.root",OriginalInput/MCSherpaLeadingDiJetSumE.root,OriginalInput/$(PYQUEN)LeadingDiJetSumE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes15 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
@@ -107,9 +110,9 @@ RunDiJetSumE: Execute
 	# DiJet SumE: log
 	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
 		--Systematic Systematics/DataLeadingDiJetSumE.root --Output Plots/DataLeadingDiJetSumENominal.pdf --FinalOutput Plots/MeowLeadingDiJetSumELog.pdf \
-		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCHerwigLeadingDiJetSumE.root",OriginalInput/MCSherpaLeadingDiJetSumE.root,OriginalInput/MCHerwig715LeadingDiJetSumE.root \
+		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCHerwigLeadingDiJetSumE.root",OriginalInput/MCSherpaLeadingDiJetSumE.root,OriginalInput/$(PYQUEN)LeadingDiJetSumE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes16 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
@@ -123,9 +126,9 @@ RunDiJetSumE: Execute
 RunJetZG: Execute
 	./Execute --Input Input/DataJetZGNominal.root \
 		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/MeowZG.pdf \
-		--MCFile "Input/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root,OriginalInput/MCHerwig715JetZG.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCFile "OriginalInput/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root,OriginalInput/$(PYQUEN)JetZG.root \
+		--MCHistogram HMCGen,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
@@ -139,9 +142,9 @@ RunJetZG: Execute
 RunJetRG: Execute
 	./Execute --Input Input/DataJetRGNominal.root \
 		--Systematic Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/MeowRG.pdf \
-		--MCFile "Input/DataJetRGNominal.root","OriginalInput/MCPythia8JetRG.root","OriginalInput/MCHerwigJetRG.root",OriginalInput/MCSherpaJetRG.root,OriginalInput/MCHerwig715JetRG.root \
+		--MCFile "Input/DataJetRGNominal.root","OriginalInput/MCPythia8JetRG.root","OriginalInput/MCHerwigJetRG.root",OriginalInput/MCSherpaJetRG.root,OriginalInput/$(PYQUEN)JetRG.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes8 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
@@ -155,9 +158,9 @@ RunJetRG: Execute
 RunJetMG: Execute
 	./Execute --Input Input/DataJetMGNominal.root \
 		--Systematic Systematics/DataJetMGNormalized.root --Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/MeowMG.pdf \
-		--MCFile "Input/DataJetMGNominal.root","OriginalInput/MCPythia8JetMG.root","OriginalInput/MCHerwigJetMG.root",OriginalInput/MCSherpaJetMG.root,OriginalInput/MCHerwig715JetMG.root \
+		--MCFile "Input/DataJetMGNominal.root","OriginalInput/MCPythia8JetMG.root","OriginalInput/MCHerwigJetMG.root",OriginalInput/MCSherpaJetMG.root,OriginalInput/$(PYQUEN)JetMG.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes16 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.1 --GenPrimaryMax 14.999 \
@@ -171,9 +174,9 @@ RunJetMG: Execute
 RunJetMGE: Execute
 	./Execute --Input Input/DataJetMGENominal.root \
 		--Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/MeowMGE.pdf \
-		--MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root","OriginalInput/MCHerwigJetMGE.root",OriginalInput/MCSherpaJetMGE.root,OriginalInput/MCHerwig715JetMGE.root \
+		--MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root","OriginalInput/MCHerwigJetMGE.root",OriginalInput/MCSherpaJetMGE.root,OriginalInput/$(PYQUEN)JetMGE.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes16 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
@@ -187,9 +190,9 @@ RunJetMGE: Execute
 RunJetZG2: Execute
 	./Execute --Input Input/DataJetZG2Nominal.root \
 		--Systematic None --Output Plots/DataJetZG2Nominal.pdf --FinalOutput Plots/MeowZG2.pdf \
-		--MCFile "Input/DataJetZG2Nominal.root","OriginalInput/MCPythia8JetZG2.root","OriginalInput/MCHerwigJetZG2.root",OriginalInput/MCSherpaJetZG2.root,OriginalInput/MCHerwig715JetZG2.root \
+		--MCFile "Input/DataJetZG2Nominal.root","OriginalInput/MCPythia8JetZG2.root","OriginalInput/MCHerwigJetZG2.root",OriginalInput/MCSherpaJetZG2.root,OriginalInput/$(PYQUEN)JetZG2.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes14 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
@@ -203,9 +206,9 @@ RunJetZG2: Execute
 RunJetRG2: Execute
 	./Execute --Input Input/DataJetRG2Nominal.root \
 		--Systematic None --Output Plots/DataJetRG2Nominal.pdf --FinalOutput Plots/MeowRG2.pdf \
-		--MCFile "Input/DataJetRG2Nominal.root","OriginalInput/MCPythia8JetRG2.root","OriginalInput/MCHerwigJetRG2.root",OriginalInput/MCSherpaJetRG2.root,OriginalInput/MCHerwig715JetRG2.root \
+		--MCFile "Input/DataJetRG2Nominal.root","OriginalInput/MCPythia8JetRG2.root","OriginalInput/MCHerwigJetRG2.root",OriginalInput/MCSherpaJetRG2.root,OriginalInput/$(PYQUEN)JetRG2.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes14 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
@@ -219,9 +222,9 @@ RunJetRG2: Execute
 RunJetM: Execute
 	./Execute --Input Input/DataJetMNominal.root \
 		--Systematic Systematics/DataJetMNormalized.root --Output Plots/DataJetMNominal.pdf --FinalOutput Plots/MeowM.pdf \
-		--MCFile "Input/DataJetMNominal.root","OriginalInput/MCPythia8JetM.root","OriginalInput/MCHerwigJetM.root",OriginalInput/MCSherpaJetM.root,OriginalInput/MCHerwig715JetM.root \
+		--MCFile "Input/DataJetMNominal.root","OriginalInput/MCPythia8JetM.root","OriginalInput/MCHerwigJetM.root",OriginalInput/MCSherpaJetM.root,OriginalInput/$(PYQUEN)JetM.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin 0 --GenPrimaryMax 14.999 \
@@ -235,9 +238,9 @@ RunJetM: Execute
 RunJetME: Execute
 	./Execute --Input Input/DataJetMENominal.root \
 		--Systematic Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/MeowME.pdf \
-		--MCFile "Input/DataJetMENominal.root","OriginalInput/MCPythia8JetME.root","OriginalInput/MCHerwigJetME.root",OriginalInput/MCSherpaJetME.root,OriginalInput/MCHerwig715JetME.root \
+		--MCFile "Input/DataJetMENominal.root","OriginalInput/MCPythia8JetME.root","OriginalInput/MCHerwigJetME.root",OriginalInput/MCSherpaJetME.root,OriginalInput/$(PYQUEN)JetME.root \
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","HERWIG 715" \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin 0 --GenPrimaryMax 0.5 \

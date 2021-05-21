@@ -40,7 +40,7 @@ RunNominal: Preparation DataNominalRun DataSumERun MCNominalRun \
 	MCSumERun \
 	DataLargeThetaGapRun MCLargeThetaGapRun DataThetaSideRun MCThetaSideRun MCExtra
 
-MCExtra: MCPythia8 MCHerwig MCSherpa MCHerwig715
+MCExtra: MCPythia8 MCHerwig MCSherpa MCHerwig715 MCPyquen MCPyquenStrong
 
 RunAll: Preparation RunThrust RunNominal
 
@@ -1611,6 +1611,185 @@ MCHerwig715: Execute
 		--ObservableRecoBins $(RecoJetRGBins) \
 		--BinningGenBins $(GenJetECoarseBins) \
 		--BinningRecoBins $(RecoJetECoarseBins)
+
+MCPyquen: Execute
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetE.root \
+		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetEBins) \
+		--ObservableRecoBins $(RecoJetEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	# time ./Execute --MC MCPyquenSumE.root --Data MCPyquenSumE.root --Output Output/MCPyquenLeadingDiJetE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	# time ./Execute --MC MCPyquenSumE.root --Data MCPyquenSumE.root --Output Output/MCPyquenLeadingDiJetSumE.root \
+	# 	--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetSEBins) \
+	# 	--ObservableRecoBins $(RecoJetSEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCPyquenLeading.root --Data MCPyquenLeading.root --Output Output/MCPyquenLeadingDiJetE.root \
+		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetLEBins) \
+		--ObservableRecoBins $(RecoJetLEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MCPyquenLeading.root --Data MCPyquenLeading.root --Output Output/MCPyquenLeadingDiJetSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetZG.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetRG.root \
+		--Observable JetRG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetMG.root \
+		--Observable JetMG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetMGBins) \
+		--ObservableRecoBins $(RecoJetMGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetMGE.root \
+		--Observable JetMGE --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--BinningGenMin $(MGEMin) --BinningRecoMin $(MGEMin) \
+		--ObservableGenBins $(GenJetMGEBins) \
+		--ObservableRecoBins $(RecoJetMGEBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetM.root \
+		--Observable JetM --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetMBins) \
+		--ObservableRecoBins $(RecoJetMBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetME.root \
+		--Observable JetME --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--BinningGenMin $(MEMin) --BinningRecoMin $(MEMin) \
+		--ObservableGenBins $(GenJetMEBins) \
+		--ObservableRecoBins $(RecoJetMEBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetZG2.root \
+		--Observable JetZG --ObservableIndex 1 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquen.root --Data MCPyquen.root --Output Output/MCPyquenJetRG2.root \
+		--Observable JetRG --ObservableIndex 1 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+
+MCPyquenStrong: Execute
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetE.root \
+		--Observable JetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetEBins) \
+		--ObservableRecoBins $(RecoJetEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	# time ./Execute --MC MCPyquenStrongSumE.root --Data MCPyquenStrongSumE.root --Output Output/MCPyquenStrongLeadingDiJetE.root \
+	# 	--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetLEBins) \
+	# 	--ObservableRecoBins $(RecoJetLEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	# time ./Execute --MC MCPyquenStrongSumE.root --Data MCPyquenStrongSumE.root --Output Output/MCPyquenStrongLeadingDiJetSumE.root \
+	# 	--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+	# 	--ObservableGenBins $(GenJetSEBins) \
+	# 	--ObservableRecoBins $(RecoJetSEBins) \
+	# 	--BinningGenBins 0,1 \
+	# 	--BinningRecoBins 0,1
+	time ./Execute --MC MCPyquenStrongLeading.root --Data MCPyquenStrongLeading.root --Output Output/MCPyquenStrongLeadingDiJetE.root \
+		--Observable LeadingDiJetE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetLEBins) \
+		--ObservableRecoBins $(RecoJetLEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MCPyquenStrongLeading.root --Data MCPyquenStrongLeading.root --Output Output/MCPyquenStrongLeadingDiJetSumE.root \
+		--Observable LeadingDiJetSumE --ObservableIndex -1 --Binning None --BinningIndex -1 \
+		--ObservableGenBins $(GenJetSEBins) \
+		--ObservableRecoBins $(RecoJetSEBins) \
+		--BinningGenBins 0,1 \
+		--BinningRecoBins 0,1
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetZG.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetRG.root \
+		--Observable JetRG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetMG.root \
+		--Observable JetMG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetMGBins) \
+		--ObservableRecoBins $(RecoJetMGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetMGE.root \
+		--Observable JetMGE --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--BinningGenMin $(MGEMin) --BinningRecoMin $(MGEMin) \
+		--ObservableGenBins $(GenJetMGEBins) \
+		--ObservableRecoBins $(RecoJetMGEBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetM.root \
+		--Observable JetM --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetMBins) \
+		--ObservableRecoBins $(RecoJetMBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetME.root \
+		--Observable JetME --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--BinningGenMin $(MEMin) --BinningRecoMin $(MEMin) \
+		--ObservableGenBins $(GenJetMEBins) \
+		--ObservableRecoBins $(RecoJetMEBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetZG2.root \
+		--Observable JetZG --ObservableIndex 1 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MCPyquenStrong.root --Data MCPyquenStrong.root --Output Output/MCPyquenStrongJetRG2.root \
+		--Observable JetRG --ObservableIndex 1 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetRGBins) \
+		--ObservableRecoBins $(RecoJetRGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+
+DebugRun: Execute
+	time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetZGNominal.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins)
+	time ./Execute --MC MC.root --Data Data.root --Output Output/DataJetZGNominal.root \
+		--Observable JetZG --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+		--ObservableGenBins $(GenJetZGBins) \
+		--ObservableRecoBins $(RecoJetZGBins) \
+		--BinningGenBins $(GenJetECoarseBins) \
+		--BinningRecoBins $(RecoJetECoarseBins) \
+		--BinningUncertaintySmear 1.025
 
 Execute: PrepareUnfold.cpp
 	CompileRootMacro PrepareUnfold.cpp Execute \

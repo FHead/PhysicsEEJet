@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
    int NSumE = 5;
    vector<float> SumECut{0.08 * M_PI, 0.10 * M_PI, 0.12 * M_PI, 0.15 * M_PI, 0.20 * M_PI};
    vector<float> RecoSumE;
+   vector<float> RecoHybridE;
    int NRecoJets;
    vector<float> RecoJetPX;
    vector<float> RecoJetPY;
@@ -118,6 +119,7 @@ int main(int argc, char *argv[])
    OutputTree.Branch("SumECut",         &SumECut);
    OutputTree.Branch("HybridJetMin",    &HybridJetMin, "HybridJetMin/D");
    OutputTree.Branch("RecoSumE",        &RecoSumE);
+   OutputTree.Branch("RecoHybridE",     &RecoHybridE);
    OutputTree.Branch("NRecoJets",       &NRecoJets, "NRecoJets/I");
    OutputTree.Branch("RecoJetPX",       &RecoJetPX);
    OutputTree.Branch("RecoJetPY",       &RecoJetPY);
@@ -538,6 +540,37 @@ int main(int argc, char *argv[])
 
                if(Include == true)
                   GenHybridE[i] = GenHybridE[i] + P[0];
+            }
+         }
+
+         RecoHybridE.resize(NSumE);
+         for(int i = 0; i < NSumE; i++)
+            RecoHybridE[i] = 0;
+         for(FourVector &P : RecoParticles)
+         {
+            for(int i = 0; i < NSumE; i++)
+            {
+               bool Include = false;
+               
+               if(P.GetTheta() > SumECut[i] && P.GetTheta() < M_PI - SumECut[i])
+                  Include = true;
+               else
+               {
+                  for(pair<FourVector, PseudoJet> &Pair : RecoJets)
+                  {
+                     FourVector &J = Pair.first;
+                     if(J[0] < HybridJetMin)
+                        continue;
+
+                     if(J.GetTheta() > SumECut[i] && J.GetTheta() < M_PI - SumECut[i] && GetAngle(P, J) < JetR)
+                        Include = true;
+                     if(Include == true)
+                        break;
+                  }
+               }
+
+               if(Include == true)
+                  RecoHybridE[i] = RecoHybridE[i] + P[0];
             }
          }
 

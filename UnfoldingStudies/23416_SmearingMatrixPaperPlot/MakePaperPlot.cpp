@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
    double WorldYMax = CL.GetDouble("WorldYMax", GenBins1[GenBins1.size()-1]);
    double WorldZMin = CL.GetDouble("WorldZMin", (LogZ ? 0.001 : 0.000));
    double WorldZMax = CL.GetDouble("WorldZMax", 1.000);
+   bool UseActualZMax = CL.GetBool("UseActualZMax", false);
 
    int IgnoreGroupColumn = CL.GetInt("IgnoreGroupColumn", 0);
    int IgnoreGroupRow    = CL.GetInt("IgnoreGroupRow", 0);
@@ -117,6 +118,19 @@ int main(int argc, char *argv[])
       for(int C = 0; C < Column; C++)
          H2[R][C] = Transcribe(HMaster, R, C, MatchedBins1, GenBins1, DoRowNormalize, DoColumnNormalize);
    }
+
+   double ActualMaximum = 0;
+   for(int R = 0; R < Row; R++)
+   {
+      for(int C = 0; C < Column; C++)
+      {
+         if(H2[R][C] == nullptr)
+            continue;
+         ActualMaximum = max(ActualMaximum, H2[R][C]->GetMaximum());
+      }
+   }
+   if(UseActualZMax == true)
+      WorldZMax = ActualMaximum;
 
    int PadWidth     = 250;
    int PadHeight    = 250;
@@ -379,11 +393,14 @@ void SelfNormalize(TH1D *H, vector<double> Bins1, vector<double> Bins2)
       double Total = 0;
       for(int i = 0; i < BinCount; i++)
          Total = Total + H->GetBinContent(i + 1 + iB * BinCount);
-      
-      for(int i = 0; i < BinCount; i++)
+     
+      if(Total > 0)
       {
-         H->SetBinContent(i + 1 + iB * BinCount, H->GetBinContent(i + 1 + iB * BinCount) / Total);
-         H->SetBinError(i + 1 + iB * BinCount, H->GetBinError(i + 1 + iB * BinCount) / Total);
+         for(int i = 0; i < BinCount; i++)
+         {
+            H->SetBinContent(i + 1 + iB * BinCount, H->GetBinContent(i + 1 + iB * BinCount) / Total);
+            H->SetBinError(i + 1 + iB * BinCount, H->GetBinError(i + 1 + iB * BinCount) / Total);
+         }
       }
    }
 }
@@ -455,8 +472,9 @@ void RowNormalize(TH2D *H)
       double Total = 0;
       for(int iX = 1; iX <= H->GetNbinsX(); iX++)
          Total = Total + H->GetBinContent(iX, iY);
-      for(int iX = 1; iX <= H->GetNbinsX(); iX++)
-         H->SetBinContent(iX, iY, H->GetBinContent(iX, iY) / Total);
+      if(Total > 0)
+         for(int iX = 1; iX <= H->GetNbinsX(); iX++)
+            H->SetBinContent(iX, iY, H->GetBinContent(iX, iY) / Total);
    }
 }
 
@@ -470,8 +488,9 @@ void ColumnNormalize(TH2D *H)
       double Total = 0;
       for(int iY = 1; iY <= H->GetNbinsY(); iY++)
          Total = Total + H->GetBinContent(iX, iY);
-      for(int iY = 1; iY <= H->GetNbinsY(); iY++)
-         H->SetBinContent(iX, iY, H->GetBinContent(iX, iY) / Total);
+      if(Total > 0)
+         for(int iY = 1; iY <= H->GetNbinsY(); iY++)
+            H->SetBinContent(iX, iY, H->GetBinContent(iX, iY) / Total);
    }
 }
 

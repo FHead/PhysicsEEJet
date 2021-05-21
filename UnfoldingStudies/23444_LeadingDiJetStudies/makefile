@@ -47,22 +47,27 @@ RunSherpa: Execute
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpa.root \
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
 
+RunPythia6: Execute
+	time ./Execute --Input $(MCSample) --Fraction 1.00 --Output MCPythia6.root \
+		--MC true --BaselineCut false --GenTreeName tgen --RecoTreeName t \
+		--ThetaMin 0 --ThetaMax 3.1416 --HybridJetMin 1
+
 DebugRun: Execute
 	time ./Execute --Input $(Pythia8Sample) --Fraction 1.00 --Output MCNoCutDebug.root \
 		--MC true --BaselineCut false --GenTreeName tgen --ThetaMin 0 --ThetaMax 3.1416 --HybridJetMin 1
 
 DebugRunPlot: ExecutePlot
-	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_020.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.20
-	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_015.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.15
-	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_012.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.12
-	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_010.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.10
-	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_008.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.08
+	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_020.pdf \
+	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.20 --Tier Gen
+	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_015.pdf \
+	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.15 --Tier Gen
+	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_012.pdf \
+	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.12 --Tier Gen
+	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_010.pdf \
+	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.10 --Tier Gen
+	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_008.pdf \
+	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.08 --Tier Gen
 	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_Stored020.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenSumE[4]'
+		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenSumE[4]' --Tier Gen
 	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_Hybrid020.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenHybridE[4]'
+		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenHybridE[4]' --Tier Gen
