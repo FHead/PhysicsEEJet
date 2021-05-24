@@ -93,10 +93,15 @@ int main(int argc, char *argv[])
 
    DataHelper DHFile("Correction.dh");
 
+   DHFile["DijetSumE"]["Formula"] = "1/min([0]+[1]*x,1.0)";
+   DHFile["DijetSumE"]["N"] = 2;
    DHFile["DijetSumE"]["P0"] = F.GetParameter(0);
    DHFile["DijetSumE"]["E0"] = F.GetParError(0);
    DHFile["DijetSumE"]["P1"] = F.GetParameter(1);
    DHFile["DijetSumE"]["E1"] = F.GetParError(1);
+
+   DHFile["DijetJetE"]["Formula"] = "1/min([0]+[1]*x,[2]+[3]*erf((x-[4])/[5]))";
+   DHFile["DijetJetE"]["N"] = 6;
    DHFile["DijetJetE"]["P0"] = F3.GetParameter(0);
    DHFile["DijetJetE"]["E0"] = F3.GetParError(0);
    DHFile["DijetJetE"]["P1"] = F3.GetParameter(1);
