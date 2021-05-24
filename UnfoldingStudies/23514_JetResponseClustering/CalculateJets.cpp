@@ -429,11 +429,12 @@ int main(int argc, char *argv[])
          sort(GenJets.begin(), GenJets.end(), DecreasingEnergy);
          sort(RecoJets.begin(), RecoJets.end(), DecreasingEnergy);
 
-         if(GenJets.size() > 0 && GenJets[0].first[0] < 10)
-         {
-            for(int iJ = 0; iJ < GenJets.size(); iJ++)
-               cout << iJ << " " << GenJets[iJ].first[0] << " " << GenJets[iJ].first.GetTheta() << endl;
-         }
+         // What?
+         // if(GenJets.size() > 0 && GenJets[0].first[0] < 10)
+         // {
+         //    for(int iJ = 0; iJ < GenJets.size(); iJ++)
+         //       cout << iJ << " " << GenJets[iJ].first[0] << " " << GenJets[iJ].first.GetTheta() << endl;
+         // }
 
          // Check leading jet if applicable
          if(CheckLeadingGenDiJet == true)

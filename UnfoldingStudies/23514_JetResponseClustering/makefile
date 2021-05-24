@@ -1,15 +1,13 @@
-Fraction        = 1
+Fraction           = 1
 
-DataSample      = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
-MCSample        = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
-Pythia8Sample   = Pythia8Samples/PurePythia91.root
-HerwigSample    = HerwigSamples/run_00/Belle_0_0.root,HerwigSamples/run_01/Belle_0_0.root
-Herwig715Sample = Herwig715Samples/run_00/Belle_0_0.root
-SherpaSample    = SherpaSamples/run_00/Belle_0_0.root
-
-# MCJEC       = ../../CommonCode/text/JEC_EEAK4_MC_20200625.txt
-# ResidualJEC = ../../CommonCode/text/JEC_EEAK4_DataL2_20200625.txt,../../CommonCode/text/JEC_EEAK4_DataL3_20200625.txt
-# DataJEC     = $(MCJEC),$(ResidualJEC)
+DataSample         = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
+MCSample           = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
+Pythia8Sample      = Pythia8Samples/PurePythia91.root
+HerwigSample       = HerwigSamples/run_00/Belle_0_0.root,HerwigSamples/run_01/Belle_0_0.root
+Herwig715Sample    = Herwig715Samples/run_00/Belle_0_0.root
+SherpaSample       = SherpaSamples/run_00/Belle_0_0.root
+PyquenSample       = PyquenSamples/OutputEE.root
+PyquenStrongSample = PyquenSamples/OutputEE_PbPbWide_0_10.root
 
 MCJEC       = ../../JetCorrection/23474_MC/JECR4.txt
 ResidualJEC = ../../JetCorrection/23475_DataRel/JECRelativeResidualR4.txt,../../JetCorrection/23475_DataAbs/JECResidualR4.txt
@@ -18,9 +16,9 @@ DataJEC     = $(MCJEC),$(ResidualJEC)
 default: DebugRun
 # RunGenVsGenBefore RunGenBeforeOnly
 
-RunGroup1: RunCut RunNominal RunNoResidual RunNoJEC RunLargeThetaGap RunStock RunThetaSides RunPythia8 RunHerwig RunSherpa RunHerwig715
+RunGroup1: RunCut RunNominal RunNoResidual RunNoJEC RunLargeThetaGap RunStock RunThetaSides RunPythia8 RunHerwig RunSherpa RunHerwig715 RunPyquen
 
-RunGroup2: RunCutSumE RunCutSmearedSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE
+RunGroup2: RunCutSumE RunCutSmearedSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE RunPyquenSumE
 
 Prepare:
 	rm -f Pythia8Samples SamplesData SamplesMC HerwigSamples SherpaSamples
@@ -30,6 +28,7 @@ Prepare:
 	ln -sf ../../Samples/HERWIG7 HerwigSamples
 	ln -sf ../../Samples/HERWIG715 Herwig715Samples
 	ln -sf ../../Samples/SHERPA/ SherpaSamples
+	ln -sf ../../MCStudies/23451_PU14ToALEPHTree/ PyquenSamples
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \
@@ -185,6 +184,23 @@ RunSherpaSumE: Execute
 RunSherpa: Execute
 	time ./Execute --Input $(SherpaSample) --Fraction $(Fraction) --Output MCSherpa.root \
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
+
+RunPyquenSumE: Execute
+	time ./Execute --Input $(PyquenStrongSample) --Fraction $(Fraction) --Output MCPyquenStrongSumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco --DoHybridSumE true
+	time ./Execute --Input $(PyquenStrongSample) --Fraction $(Fraction) --Output MCPyquenStrongLeading.root \
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+	time ./Execute --Input $(PyquenSample) --Fraction $(Fraction) --Output MCPyquenSumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName t --RecoTreeName treco --DoHybridSumE true
+	time ./Execute --Input $(PyquenSample) --Fraction $(Fraction) --Output MCPyquenLeading.root \
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+
+RunPyquen: Execute
+	time ./Execute --Input $(PyquenStrongSample) --Fraction $(Fraction) --Output MCPyquenStrong.root \
+		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
+	time ./Execute --Input $(PyquenSample) --Fraction $(Fraction) --Output MCPyquen.root \
+		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
+
 
 DebugRun: Execute
 	time ./Execute --Input $(MCSample)   --Fraction 0.01 --Output MCNoCutDebug.root \

@@ -13,6 +13,7 @@ using namespace std;
 #include "TLegend.h"
 #include "TGraphAsymmErrors.h"
 #include "TLatex.h"
+#include "TObject.h"
 
 #include "PlotHelper4.h"
 #include "CommandLine.h"
@@ -521,7 +522,7 @@ TH1D *BuildSystematics(TH1D *HResult, TH1D *HVariation)
       double R = HVariation->GetBinContent(i);
       HSystematics->SetBinContent(i, V * (R + 1));
 
-      cout << i << " " << V << " " << R << endl;
+      // cout << i << " " << V << " " << R << endl;
    }
 
    return HSystematics;
@@ -568,7 +569,7 @@ vector<TGraphAsymmErrors> Transcribe(TH1D *H, vector<double> Bins1, vector<doubl
             double YUp = H->GetBinContent(i + iB * PrimaryBinCount + 1);
             double YDown = H2->GetBinContent(i + iB * PrimaryBinCount + 1);
 
-            cout << iB << " " << i << " " << YUp << " " << YDown << endl;
+            // cout << iB << " " << i << " " << YUp << " " << YDown << endl;
 
             Y = (YUp + YDown) / 2;
             DY = fabs(YUp - YDown) / 2;
@@ -693,18 +694,71 @@ double AddUp(TH1D *H, double XMin, double XMax, vector<double> Bins)
 }
 
 vector<TGraphAsymmErrors> TranscribeMC(string FileName, string HistogramName,
-   double MinOverwrite, double MaxOverwrite, double XMin, double XMax,  bool DoSelfNormalize, double Scale)
+   double MinOverwrite, double MaxOverwrite, double XMin, double XMax, bool DoSelfNormalize, double Scale)
 {
    vector<TGraphAsymmErrors> G;
 
    TFile File(FileName.c_str());
 
-   TH1D *H = (TH1D *)File.Get(HistogramName.c_str());
-   if(H == nullptr)
+   TObject *Object = (TObject *)File.Get(HistogramName.c_str());
+   if(Object == nullptr)
    {
       File.Close();
       return G;
    }
+
+   if(Object->ClassName() == TString("TGraphAsymmErrors"))
+   {
+      TGraphAsymmErrors GRaw = *((TGraphAsymmErrors *)Object);
+      TGraphAsymmErrors GNew;
+
+      double Total = 0;
+      for(int i = 0; i < GRaw.GetN(); i++)
+      {
+         double X, Y;
+         double EXL, EXH, EYL, EYH;
+
+         GRaw.GetPoint(i, X, Y);
+         EXL = GRaw.GetErrorXlow(i);
+         EXH = GRaw.GetErrorXhigh(i);
+         EYL = GRaw.GetErrorYlow(i);
+         EYH = GRaw.GetErrorYhigh(i);
+
+         if(X + EXH < XMin)
+            continue;
+         if(X - EXL > XMax)
+            continue;
+
+         double DX = EXL + EXH;
+         if(X - EXL < XMin)
+            DX = X + EXH - XMin;
+         if(X + EXH > XMax)
+            DX = XMax - (X - EXL);
+
+         Total = Total + DX * Y;
+      }
+
+      for(int i = 0; i < GRaw.GetN(); i++)
+      {
+         double X, Y;
+         double EXL, EXH, EYL, EYH;
+
+         GRaw.GetPoint(i, X, Y);
+         EXL = GRaw.GetErrorXlow(i);
+         EXH = GRaw.GetErrorXhigh(i);
+         EYL = GRaw.GetErrorYlow(i);
+         EYH = GRaw.GetErrorYhigh(i);
+
+         GNew.SetPoint(i, X, Y * Scale / Total);
+         GNew.SetPointError(i, EXL, EXH, EYL * Scale / Total, EYH * Scale / Total);
+      }
+
+      G.push_back(GNew);
+      File.Close();
+      return G;
+   }
+
+   TH1D *H = (TH1D *)Object;
 
    vector<double> GenBins1
       = DetectBins((TH1D *)File.Get("HGenPrimaryBinMin"), (TH1D *)File.Get("HGenPrimaryBinMax"));

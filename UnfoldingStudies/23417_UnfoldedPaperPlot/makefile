@@ -5,6 +5,7 @@ Prepare:
 	ln -sf ../23411_UnfoldingPreparation/Output OriginalInput
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 	ln -sf ../23412_Systematics/ Systematics
+	ln -sf ../23514_JoaoConversion/ JoaoInput
 	mkdir -p Plots
 
 PYQUEN = MCPyquen
@@ -53,6 +54,21 @@ RunJetE: Execute
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
 		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
+		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+		--IgnoreGroup 0 --Row 1 --Column 1
+	# Jet E: Normalized, Joao comparison
+	./Execute --Input Input/DataJetENominal.root \
+		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowPLogJoao.pdf \
+		--MCFile "JoaoInput/GraphsNLO.root","JoaoInput/GraphsNLO.root","Input/DataJetENominal.root" \
+		--MCHistogram GSys,GStat,HMCTruth \
+		--MCLabel "NLO Scale","NLO Stat","PYTHIA 6" \
+		--PrimaryName HUnfoldedBayes17 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0.015 --WorldYMax 0.75 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
