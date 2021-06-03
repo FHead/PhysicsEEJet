@@ -20,4 +20,5 @@ RunMultiJetResidualExploration:
 	(cd 23475_DataMCComparisonEnergy && make Prepare FullRun)
 	(cd 23475_DataZPeakResidualEnergy && make Prepare TestRun RunNScan RunXScan RunXScanV2 RunNScanV2 RunXScanV3 RunHarvest)
 
-
+RunDijetResolution:
+	(cd 23515_DataDijetResolution && make Prepare TestRun RunSummary)
