@@ -2,7 +2,7 @@
 default: RunJECClosure
 
 Prepare:
-	ln -sf ../../Samples/ALEPHMC .
+	ln -sf ../../Samples/ALEPHMC Samples
 
 FullRun: Execute
 	for i in `ls Samples/ | cut -b 28-30`; \
