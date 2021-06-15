@@ -8,7 +8,7 @@ Prepare:
 	ln -sf ../23412_Systematics/ Systematics
 	mkdir -p Plots
 
-RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME
+RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunThrust
 
 RunJetE: Execute
 	./Execute --Input Input/DataJetENominal.root \
@@ -94,6 +94,15 @@ RunJetME: Execute
 		--GenPrimaryMin 0 --GenPrimaryMax 0.5 --RecoPrimaryMin 0 --RecoPrimaryMax 0.5 \
 		--Primary "M/E" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
+
+RunThrust: Execute
+	./Execute --Input Input/DataNoCutThrustUniform.root \
+		--Output Plots/DataThrustNominal.pdf --FinalOutput Plots/MatrixThrust.$(Format) \
+		--WorldXMin 0.58 --WorldXMax 1 --WorldYMin 0.58 --WorldYMax 1 --WorldZMin 0.1 --WorldZMax 100 --LogZ true \
+		--GenPrimaryMin 0.58 --GenPrimaryMax 1 --RecoPrimaryMin 0.58 --RecoPrimaryMax 1 \
+		--Primary "Thrust" --Binning "None" --RowNormalize true \
+		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1
 
 Execute: MakePaperPlot.cpp

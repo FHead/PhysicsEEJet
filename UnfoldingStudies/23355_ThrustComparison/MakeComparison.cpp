@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
    H1.Scale(1 / H1.Integral() / 0.01);
    H2.Scale(1 / H2.Integral() / 0.01);
 
-   PdfFileHelper PdfFile("Meow.pdf");
+   PdfFileHelper PdfFile("ThrustReproductionMeow.pdf");
    PdfFile.AddTextPage("Thrust reproduction");
 
    TCanvas Canvas;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
    Legend1.SetTextFont(42);
    Legend1.SetBorderSize(0);
    Legend1.SetFillStyle(0);
-   Legend1.AddEntry(HA, "HEPData", "l");
+   Legend1.AddEntry(HA, "Published", "l");
    Legend1.AddEntry(&H1, "Unfolded", "p");
    Legend1.AddEntry(&H2, "Input", "p");
    Legend1.Draw();
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
    PdfFile.AddCanvas(Canvas);
    
    H1.GetXaxis()->SetTitle("Thrust");
-   H1.GetYaxis()->SetTitle("Ratio to HEPData");
+   H1.GetYaxis()->SetTitle("Ratio to Published");
 
    H1.Divide(HA);
    H2.Divide(HA);
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
    Legend3.SetTextFont(42);
    Legend3.SetBorderSize(0);
    Legend3.SetFillStyle(0);
-   Legend3.AddEntry(HC, "Folded HEPData", "l");
+   Legend3.AddEntry(HC, "Folded published", "l");
    Legend3.AddEntry(HB2, "Input", "l");
    Legend3.Draw();
 
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
    HB2->Divide(HC);
 
    HB2->SetStats(0);
-   HB2->GetYaxis()->SetTitle("Sample / Folded HEPData");
+   HB2->GetYaxis()->SetTitle("Sample / Folded published");
 
    HB2->Draw();
    GLine.Draw("l");

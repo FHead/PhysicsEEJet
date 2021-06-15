@@ -77,9 +77,9 @@ RunCutHigherSumE: Execute
 
 RunCutSmearedSumE: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataSmearedSumE.root \
-		--MC false --BaselineCut true --RecoSumECut 85 --JEC $(DataJEC) --DoSumESmear true --DoHybridSumE true
+		--MC false --BaselineCut true --RecoSumECut 83 --JEC $(DataJEC) --DoSumESmear true --DoHybridSumE true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCSmearedSumE.root \
-		--MC true --BaselineCut true --GenSumECut 85 --RecoSumECut 85 --JEC $(MCJEC) --DoSumESmear true --DoHybridSumE true
+		--MC true --BaselineCut true --GenSumECut 83 --RecoSumECut 83 --JEC $(MCJEC) --DoSumESmear true --DoHybridSumE true
 
 RunStock: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataStock.root \

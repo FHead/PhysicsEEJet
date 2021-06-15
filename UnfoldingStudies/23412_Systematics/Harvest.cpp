@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
    vector<double> ExtraScaling       = CL.GetDoubleVector("ExtraScaling");
    string BinMappingFileName         = CL.Get("BinMapping");
    string OutputFileName             = CL.Get("Output");
-   bool DoSelfNormalize              = CL.GetBool("DoSelfNormalize", false);
+   vector<bool> DoSelfNormalize      = CL.GetBoolVector("DoSelfNormalize", vector<bool>{false});
 
    Assert(FileNames.size() > 0, "No file names specified");
    Assert(FileNames.size() == HistogramNames.size(), "Inconsistent file name and histogram name");
@@ -39,6 +39,11 @@ int main(int argc, char *argv[])
    Assert(FileNames.size() == Groupings.size(), "Unknown uncertainty grouping");
    Assert(FileNames.size() == BaseFileNames.size(), "Inconsistent file name and base file name");
    Assert(FileNames.size() == BaseHistogramNames.size(), "Inconsistent file name and base histogram name");
+
+   if(DoSelfNormalize.size() == 1)
+      DoSelfNormalize.resize(FileNames.size(), DoSelfNormalize[0]);
+   
+   Assert(FileNames.size() == DoSelfNormalize.size(), "Inconsistent file name and normalization prescription");
 
    if(ExtraScaling.size() < FileNames.size())
       ExtraScaling.insert(ExtraScaling.end(), FileNames.size() - ExtraScaling.size(), 1);
@@ -94,7 +99,7 @@ int main(int argc, char *argv[])
             HTotalPlus->Reset();
             HTotalMinus->Reset();
          }
-         if(DoSelfNormalize == true)
+         if(DoSelfNormalize[i] == true)
          {
             SelfNormalize(HCloned, NormalizationGroupSize);
             SelfNormalize(HBCloned, NormalizationGroupSize);

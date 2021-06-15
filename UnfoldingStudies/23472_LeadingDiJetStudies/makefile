@@ -76,6 +76,6 @@ DebugRunPlot: ExecutePlot
 		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenHybridE[4]' --Tier Gen
 
 RunCorrectionPlot: ExecuteCorrection
-	./ExecuteCorrection
+	./ExecuteCorrection --Input MCNoCutDebug.root --DHFile Correction.dh --Suffix "" --HybridECut 83
 
 

@@ -32,22 +32,22 @@ RunDiJetE: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
-		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE \
-		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection"
 
 RunDiJetSumE: Execute
 	./Execute --Input Systematics/DataLeadingDiJetSumE.root \
 		--Output Plots/DataLeadingDiJetSumENominalCount.pdf --FinalOutput Plots/SystematicsLeadingDiJetSum.pdf \
 		--GenPrimaryMax 92 \
-		--WorldXMin 20 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.75 --LogY false \
+		--WorldXMin 20 --WorldXMax 92 --WorldYMin 0 --WorldYMax 1.05 --LogY false \
 		--XLabel "Leading dijet Sum E (GeV)" --YLabel "Uncertainty" --Binning "None" \
 		--LegendX 0.4 --LegendY 0.5 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
-		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE \
-		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection"
 
 RunJetZG: Execute

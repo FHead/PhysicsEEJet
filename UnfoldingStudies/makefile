@@ -2,7 +2,7 @@
 
 default: Systematics FinalPlot
 
-RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot
+RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan LeadingJetCorrection Systematics FinalPlot
 
 JetClustering:
 	(cd 23514_JetResponseClustering/ && make Prepare RunGroup1 RunGroup2)
@@ -38,6 +38,12 @@ DataIterationScan:
 	# Please change the iteration count in final output code
 	# ==============================================================
 	#
+
+LeadingJetCorrection:
+	(cd 23472_LeadingDiJetStudies/ && make Prepare DebugRun RunCorrectionPlot)
+	(cd 23545_LeadingDiJetUncertainty/ && make Prepare TestRun)
+	(cd 23551_JetReweighting/ && make Prepare TestRun)
+	(cd 23551_JetReweightingUncertainty && make Prepare TestRun)
 
 Systematics:
 	(cd 23412_Systematics && make Prepare RunData RunDataPlot)
