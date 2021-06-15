@@ -258,6 +258,8 @@ pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E, 
       BinCount = N / 100;
    if(BinCount <= 2)
       BinCount = 1;
+   if(N < 400)
+      BinCount = 1;
 
    TGraphErrors G;
    G.GetXaxis()->SetTitle("<#alpha>");
@@ -314,6 +316,8 @@ pair<double, double> GetExtrapolatedR(PdfFileHelper &PdfFile, vector<Event> &E, 
       Latex.DrawLatex(0.20, 0.80, Form("%.2f#pi-%.2f#pi", ThetaMin, ThetaMax));
    else
       Latex.DrawLatex(0.20, 0.30, Form("%.2f#pi-%.2f#pi", ThetaMin, ThetaMax));
+   Latex.SetTextColor(0);
+   Latex.DrawLatex(0.15, 0.93, Form("N = %d", N));
 
    PdfFile.AddCanvas(Canvas);
 

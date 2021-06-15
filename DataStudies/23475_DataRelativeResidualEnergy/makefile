@@ -35,7 +35,7 @@ TestRunSummary: ExecuteSummary
 		--Labels "Data E_{3} < 10 GeV","Data E_{3} < 5 GeV","Data E_{3} < 3 GeV","MC E_{3} < 5 GeV" \
 		--States "DataR4_10","DataR4_5","DataR4_3","MCR4_5" \
 		--Colors 4,1,2,6 \
-		--XMin 0.5 --XMax 0.8 --YMin 0.992 --YMax 1.007
+		--XMin 0.5 --XMax 0.8 --YMin -0.7 --YMax 0.7
 	./ExecuteSummary --DHFile DijetResult.dh --Output ResidualSideSummaryR8.pdf \
 		--Labels "Data E_{3} < 10 GeV","Data E_{3} < 5 GeV","Data E_{3} < 3 GeV","MC E_{3} < 5 GeV" \
 		--States "DataR8_10","DataR8_5","DataR8_3","MCR8_5" \

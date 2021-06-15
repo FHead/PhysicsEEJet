@@ -51,10 +51,10 @@ int main(int argc, char *argv[])
    TCanvas Canvas;
 
    TGraph GLine;
-   GLine.SetPoint(0, 0, 1);
-   GLine.SetPoint(1, 1, 1);
+   GLine.SetPoint(0, 0, 0);
+   GLine.SetPoint(1, 1, 0);
 
-   TH2D HWorld("HWorld", ";#theta(#pi);<E+>/<E->", 100, XMin, XMax, 100, YMin, YMax);
+   TH2D HWorld("HWorld", ";#theta(#pi);<E+>/<E-> - 1 (%)", 100, XMin, XMax, 100, YMin, YMax);
    HWorld.SetStats(0);
 
    HWorld.Draw("axis");
@@ -84,8 +84,8 @@ void Transcribe(DataHelper &DHFile, string State, TGraphAsymmErrors &G, double O
    {
       double XMin   = DHFile[State][Form("B%dMin",i)].GetDouble();
       double XMax   = DHFile[State][Form("B%dMax",i)].GetDouble();
-      double Y      = DHFile[State][Form("B%dPMR",i)].GetDouble();
-      double YError = DHFile[State][Form("B%dPME",i)].GetDouble();
+      double Y      = (DHFile[State][Form("B%dPMR",i)].GetDouble() - 1)* 100;
+      double YError = DHFile[State][Form("B%dPME",i)].GetDouble() * 100;
 
       double X = (XMin + XMax) / 2 + Offset;
       double EXL = X - XMin;

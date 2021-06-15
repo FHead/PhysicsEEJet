@@ -585,7 +585,7 @@ int main(int argc, char *argv[])
    Legend5.Draw();
    PdfFile.AddCanvas(Canvas);
 
-   HWorld.SetTitle("A lot of curves or order 0");
+   HWorld.SetTitle("A lot of curves of order 0");
    HWorld.Draw("axis");
    F330.Draw("same");
    F430.Draw("same");
@@ -610,7 +610,7 @@ int main(int argc, char *argv[])
    F9100.Draw("same");
    PdfFile.AddCanvas(Canvas);
    
-   HWorld.SetTitle("A lot of curves or order 1");
+   HWorld.SetTitle("A lot of curves of order 1");
    HWorld.Draw("axis");
    F331.Draw("same");
    F431.Draw("same");
@@ -635,7 +635,7 @@ int main(int argc, char *argv[])
    F9101.Draw("same");
    PdfFile.AddCanvas(Canvas);
    
-   HWorld.SetTitle("A lot of curves or order 2");
+   HWorld.SetTitle("A lot of curves of order 2");
    HWorld.Draw("axis");
    F332.Draw("same");
    F432.Draw("same");
@@ -660,7 +660,7 @@ int main(int argc, char *argv[])
    F9102.Draw("same");
    PdfFile.AddCanvas(Canvas);
    
-   HWorld.SetTitle("A lot of curves or order 3");
+   HWorld.SetTitle("A lot of curves of order 3");
    HWorld.Draw("axis");
    F333.Draw("same");
    F433.Draw("same");
