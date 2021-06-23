@@ -517,12 +517,12 @@ int main(int argc, char *argv[])
          }
          if(DoSumESmear == false)
          {
-            if(DoHybridSumE == false && RecoHybridE < RecoSumECut)
+            if(DoHybridSumE == true && RecoHybridE < RecoSumECut)
                continue;
          }
          else
          {
-            if(DoHybridSumE == false && RecoHybridE * DrawGaussian(1, SumESmear) < RecoSumECut)
+            if(DoHybridSumE == true && RecoHybridE * DrawGaussian(1, SumESmear) < RecoSumECut)
                continue;
          }
          
