@@ -74,3 +74,20 @@ And then copy the `PurePythia91.root` into `MCStudies/23417_PythiaWholeEvent/` f
 
 Ask Yi where to find the root files
 
+Now we're ready to run things!
+
+
+## Code overview
+
+The code is modularized, with a two-layer folder convention.  The parent folder is the rough category of the code, and the subfolders are the units of code that each does something specific.  And then we link them together.  There are `makefile`s that helps with tasks that we need to run over and over again.
+
+The most important ones to start with are the `MCStudies` folder which contains simulation-based jet calibration code, and `DataStudies` folder which does the data-simulation difference.  The `JetCorrection` folder contains all the calibration constants that are used by later code.  Since they are derived already, we do not usually need to run it again unless we want to rederive things with new jet clustering algorithm.
+
+Then the actual analysis code is in `UnfoldingStudies`
+
+
+
+
+
+
+
