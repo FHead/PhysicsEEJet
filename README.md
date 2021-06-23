@@ -10,12 +10,14 @@ To start running, you will need a few things
 1. CERN `ROOT` with `RooFit` enabled
    - we need to link to it
    - make sure `root-config` is in `PATH` variable
-1. fastjet
+1. RooUnfold
+   - go https://gitlab.cern.ch/RooUnfold/RooUnfold#building-the-library and follow the instructions
+3. fastjet
    - go to fastjet.fr and install it somewhere!
    - make sure `fastjet-config` is in `PATH` variable
-1. helper codes
+4. helper codes
    - go clone this https://github.com/FHead/fheadhelpercode somewhere
-1. (optional) `pythia8` installation
+5. (optional) `pythia8` installation
 
 
 ### CompileRootMacro script
