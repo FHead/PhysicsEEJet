@@ -4,6 +4,8 @@ default: Systematics FinalPlot
 
 RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan LeadingJetCorrection Systematics FinalPlot
 
+RunAllQuick: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot
+
 JetClustering:
 	(cd 23514_JetResponseClustering/ && make Prepare RunGroup1 RunGroup2)
 
