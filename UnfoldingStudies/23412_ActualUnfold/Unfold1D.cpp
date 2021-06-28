@@ -91,10 +91,14 @@ int main(int argc, char *argv[])
    InputFile.Get("HMatchedBinningBinMin")->Clone()->Write();
    InputFile.Get("HMatchedBinningBinMax")->Clone()->Write();
 
-   if(InputFile.Get("MCEventCount") != nullptr)
-      InputFile.Get("MCEventCount")->Clone("MCEventCount")->Write();
-   if(InputFile.Get("DataEventCount") != nullptr)
-      InputFile.Get("DataEventCount")->Clone("DataEventCount")->Write();
+   vector<string> ToCopy
+   {
+      "MCEventCount", "MCAllEventCount", "MCBaselineEventCount",
+      "DataEventCount", "DataAllEventCount", "DataBaselineEventCount"
+   };
+   for(string S : ToCopy)
+      if(InputFile.Get(S.c_str()) != nullptr)
+         InputFile.Get(S.c_str())->Clone(S.c_str())->Write();
 
    OutputFile.Close();
 

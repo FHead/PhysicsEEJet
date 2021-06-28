@@ -609,10 +609,14 @@ int main(int argc, char *argv[])
    TFile FData(DataFileName.c_str());
    TFile FOutput(OutputFileName.c_str(), "RECREATE");
 
-   if(FData.Get("EventCount") != nullptr)
-      FData.Get("EventCount")->Clone("DataEventCount")->Write();
-   if(FMC.Get("EventCount") != nullptr)
-      FMC.Get("EventCount")->Clone("MCEventCount")->Write();
+   vector<string> ToCopy{"EventCount", "BaselineEventCount", "AllEventCount"};
+   for(string S : ToCopy)
+   {
+      if(FData.Get(S.c_str()) != nullptr)
+         FData.Get(S.c_str())->Clone(("Data" + S).c_str())->Write();
+      if(FMC.Get(S.c_str()) != nullptr)
+         FMC.Get(S.c_str())->Clone(("MC" + S).c_str())->Write();
+   }
 
    int GenBinCount = PrimaryGenBins.size() + 1;
    if(BinningType != ObservableNone)

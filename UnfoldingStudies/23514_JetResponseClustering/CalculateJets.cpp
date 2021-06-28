@@ -170,6 +170,7 @@ int main(int argc, char *argv[])
 
    int PassedEventCount = 0;
    int AllEventCount = 0;
+   int BaselineEventCount = 0;
 
    for(string FileName : InputFileName)
    {
@@ -311,6 +312,8 @@ int main(int argc, char *argv[])
             PSum = PSum + RecoP[i];
          if(PSum > 200)
             continue;
+
+         BaselineEventCount = BaselineEventCount + 1;
 
          // Calculate SumE and cut if needed
          GenSumE = 0;
@@ -780,6 +783,14 @@ int main(int argc, char *argv[])
    TNamed Count;
    Count.SetNameTitle("EventCount", Form("%d", PassedEventCount));
    Count.Write();
+   
+   TNamed BaselineCount;
+   BaselineCount.SetNameTitle("BaselineEventCount", Form("%d", BaselineEventCount));
+   BaselineCount.Write();
+   
+   TNamed AllCount;
+   AllCount.SetNameTitle("AllEventCount", Form("%d", AllEventCount));
+   AllCount.Write();
 
    OutputFile.Close();
 
