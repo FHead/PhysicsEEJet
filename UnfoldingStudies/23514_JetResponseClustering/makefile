@@ -20,6 +20,8 @@ RunGroup1: RunCut RunNominal RunNoResidual RunNoJEC RunLargeThetaGap RunStock Ru
 
 RunGroup2: RunCutSumE RunCutSmearedSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE RunPyquenSumE
 
+RunGroup3: RunMultiplicity
+
 Prepare:
 	rm -f Pythia8Samples SamplesData SamplesMC HerwigSamples SherpaSamples
 	ln -sf ../../MCStudies/23417_PythiaWholeEvent/ Pythia8Samples
@@ -201,6 +203,13 @@ RunPyquen: Execute
 	time ./Execute --Input $(PyquenSample) --Fraction $(Fraction) --Output MCPyquen.root \
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
 
+RunMultiplicity: Execute
+	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataLowN.root \
+		--MC false --BaselineCut true --JEC $(DataJEC) --RecoMultiplicityMin 0 --RecoMultiplicityMax 1000
+	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataMidN.root \
+		--MC false --BaselineCut true --JEC $(DataJEC) --RecoMultiplicityMin 0 --RecoMultiplicityMax 1000
+	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataHighN.root \
+		--MC false --BaselineCut true --JEC $(DataJEC) --RecoMultiplicityMin 0 --RecoMultiplicityMax 1000
 
 DebugRun: Execute
 	time ./Execute --Input $(MCSample)   --Fraction 0.01 --Output MCNoCutDebug.root \

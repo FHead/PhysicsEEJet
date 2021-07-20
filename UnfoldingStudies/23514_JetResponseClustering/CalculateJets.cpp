@@ -48,6 +48,13 @@ int main(int argc, char *argv[])
    string RecoTreeName           = CL.Get("RecoTreeName", "t");
    string GenTreeName            = CL.Get("GenTreeName", "tgenBefore");
    bool CheckLeadingGenDiJet     = CL.GetBool("CheckLeadingGenDiJet", false);
+   double MultiplicityEMin       = CL.GetDouble("MultiplicityEMin", 0);
+   double MultiplicityThetaMin   = CL.GetDouble("MultiplicityThetaMin", ThetaMin);
+   double MultiplicityThetaMax   = CL.GetDouble("MultiplicityThetaMax", ThetaMax);
+   int GenMultiplicityMin        = CL.GetInt("GenMultiplicityMin", -1);
+   int GenMultiplicityMax        = CL.GetInt("GenMultiplicityMax", -1);
+   int RecoMultiplicityMin       = CL.GetInt("RecoMultiplicityMin", -1);
+   int RecoMultiplicityMax       = CL.GetInt("RecoMultiplicityMax", -1);
 
    JetCorrector JEC(JECFiles);
 
@@ -60,6 +67,8 @@ int main(int argc, char *argv[])
    vector<float> SDBeta{0.0, 1.5};
    float RecoSumE;
    float RecoHybridE;
+   int RecoMultiplicity;
+   int GenMultiplicity;
    int NRecoJets;
    vector<float> RecoJetPX;
    vector<float> RecoJetPY;
@@ -111,62 +120,65 @@ int main(int argc, char *argv[])
    vector<float> MatchedJetJEU;
    vector<float> MatchedJetAngle;
 
-   OutputTree.Branch("NSD",             &NSD, "NSD/I");
-   OutputTree.Branch("SDZCut",          &SDZCut);
-   OutputTree.Branch("SDBeta",          &SDBeta);
-   OutputTree.Branch("RecoSumE",        &RecoSumE,    "RecoSumE/F");
-   OutputTree.Branch("RecoHybridE",     &RecoHybridE, "RecoHybridE/F");
-   OutputTree.Branch("NRecoJets",       &NRecoJets,   "NRecoJets/I");
-   OutputTree.Branch("RecoJetPX",       &RecoJetPX);
-   OutputTree.Branch("RecoJetPY",       &RecoJetPY);
-   OutputTree.Branch("RecoJetPZ",       &RecoJetPZ);
-   OutputTree.Branch("RecoJetP",        &RecoJetP);
-   OutputTree.Branch("RecoJetTheta",    &RecoJetTheta);
-   OutputTree.Branch("RecoJetPhi",      &RecoJetPhi);
-   OutputTree.Branch("RecoJetM",        &RecoJetM);
-   OutputTree.Branch("RecoJetE",        &RecoJetE);
-   OutputTree.Branch("RecoJetJEC",      &RecoJetJEC);
-   OutputTree.Branch("RecoJetJEU",      &RecoJetJEU);
-   OutputTree.Branch("RecoJetZG",       &RecoJetZG);
-   OutputTree.Branch("RecoJetRG",       &RecoJetRG);
-   OutputTree.Branch("RecoJetPG",       &RecoJetPG);
-   OutputTree.Branch("RecoJetMG",       &RecoJetMG);
-   OutputTree.Branch("RecoJetNG",       &RecoJetNG);
-   OutputTree.Branch("RecoThrust",      &RecoThrust);
-   OutputTree.Branch("GenSumE",         &GenSumE,    "GenSumE/F");
-   OutputTree.Branch("GenHybridE",      &GenHybridE, "GenHybridE/F");
-   OutputTree.Branch("NGenJets",        &NGenJets,   "NGenJets/I");
-   OutputTree.Branch("GenJetPX",        &GenJetPX);
-   OutputTree.Branch("GenJetPY",        &GenJetPY);
-   OutputTree.Branch("GenJetPZ",        &GenJetPZ);
-   OutputTree.Branch("GenJetP",         &GenJetP);
-   OutputTree.Branch("GenJetTheta",     &GenJetTheta);
-   OutputTree.Branch("GenJetPhi",       &GenJetPhi);
-   OutputTree.Branch("GenJetM",         &GenJetM);
-   OutputTree.Branch("GenJetE",         &GenJetE);
-   OutputTree.Branch("GenJetZG",        &GenJetZG);
-   OutputTree.Branch("GenJetRG",        &GenJetRG);
-   OutputTree.Branch("GenJetPG",        &GenJetPG);
-   OutputTree.Branch("GenJetMG",        &GenJetMG);
-   OutputTree.Branch("GenJetNG",        &GenJetNG);
-   OutputTree.Branch("GenThrust",       &GenThrust);
-   OutputTree.Branch("MatchedJetPX",    &MatchedJetPX);
-   OutputTree.Branch("MatchedJetPY",    &MatchedJetPY);
-   OutputTree.Branch("MatchedJetPZ",    &MatchedJetPZ);
-   OutputTree.Branch("MatchedJetP",     &MatchedJetP);
-   OutputTree.Branch("MatchedJetTheta", &MatchedJetTheta);
-   OutputTree.Branch("MatchedJetPhi",   &MatchedJetPhi);
-   OutputTree.Branch("MatchedJetM",     &MatchedJetM);
-   OutputTree.Branch("MatchedJetE",     &MatchedJetE);
-   OutputTree.Branch("MatchedJetZG",    &MatchedJetZG);
-   OutputTree.Branch("MatchedJetRG",    &MatchedJetRG);
-   OutputTree.Branch("MatchedJetPG",    &MatchedJetPG);
-   OutputTree.Branch("MatchedJetMG",    &MatchedJetMG);
-   OutputTree.Branch("MatchedJetNG",    &MatchedJetNG);
-   OutputTree.Branch("MatchedJetAngle", &MatchedJetAngle);
-   OutputTree.Branch("MatchedJetJEC",   &MatchedJetJEC);
-   OutputTree.Branch("MatchedJetJEU",   &MatchedJetJEU);
-   OutputTree.Branch("MatchedThrust",   &RecoThrust);
+   OutputTree.Branch("NSD",                 &NSD,                 "NSD/I");
+   OutputTree.Branch("SDZCut",              &SDZCut);
+   OutputTree.Branch("SDBeta",              &SDBeta);
+   OutputTree.Branch("RecoMultiplicity",    &RecoMultiplicity,    "RecoMultiplicity/I");
+   OutputTree.Branch("GenMultiplicity",     &GenMultiplicity,     "GenMultiplicity/I");
+   OutputTree.Branch("MatchedMultiplicity", &RecoMultiplicity,    "MatchedMultiplicity/I");
+   OutputTree.Branch("RecoSumE",            &RecoSumE,            "RecoSumE/F");
+   OutputTree.Branch("RecoHybridE",         &RecoHybridE,         "RecoHybridE/F");
+   OutputTree.Branch("NRecoJets",           &NRecoJets,           "NRecoJets/I");
+   OutputTree.Branch("RecoJetPX",           &RecoJetPX);
+   OutputTree.Branch("RecoJetPY",           &RecoJetPY);
+   OutputTree.Branch("RecoJetPZ",           &RecoJetPZ);
+   OutputTree.Branch("RecoJetP",            &RecoJetP);
+   OutputTree.Branch("RecoJetTheta",        &RecoJetTheta);
+   OutputTree.Branch("RecoJetPhi",          &RecoJetPhi);
+   OutputTree.Branch("RecoJetM",            &RecoJetM);
+   OutputTree.Branch("RecoJetE",            &RecoJetE);
+   OutputTree.Branch("RecoJetJEC",          &RecoJetJEC);
+   OutputTree.Branch("RecoJetJEU",          &RecoJetJEU);
+   OutputTree.Branch("RecoJetZG",           &RecoJetZG);
+   OutputTree.Branch("RecoJetRG",           &RecoJetRG);
+   OutputTree.Branch("RecoJetPG",           &RecoJetPG);
+   OutputTree.Branch("RecoJetMG",           &RecoJetMG);
+   OutputTree.Branch("RecoJetNG",           &RecoJetNG);
+   OutputTree.Branch("RecoThrust",          &RecoThrust);
+   OutputTree.Branch("GenSumE",             &GenSumE,            "GenSumE/F");
+   OutputTree.Branch("GenHybridE",          &GenHybridE,         "GenHybridE/F");
+   OutputTree.Branch("NGenJets",            &NGenJets,           "NGenJets/I");
+   OutputTree.Branch("GenJetPX",            &GenJetPX);
+   OutputTree.Branch("GenJetPY",            &GenJetPY);
+   OutputTree.Branch("GenJetPZ",            &GenJetPZ);
+   OutputTree.Branch("GenJetP",             &GenJetP);
+   OutputTree.Branch("GenJetTheta",         &GenJetTheta);
+   OutputTree.Branch("GenJetPhi",           &GenJetPhi);
+   OutputTree.Branch("GenJetM",             &GenJetM);
+   OutputTree.Branch("GenJetE",             &GenJetE);
+   OutputTree.Branch("GenJetZG",            &GenJetZG);
+   OutputTree.Branch("GenJetRG",            &GenJetRG);
+   OutputTree.Branch("GenJetPG",            &GenJetPG);
+   OutputTree.Branch("GenJetMG",            &GenJetMG);
+   OutputTree.Branch("GenJetNG",            &GenJetNG);
+   OutputTree.Branch("GenThrust",           &GenThrust);
+   OutputTree.Branch("MatchedJetPX",        &MatchedJetPX);
+   OutputTree.Branch("MatchedJetPY",        &MatchedJetPY);
+   OutputTree.Branch("MatchedJetPZ",        &MatchedJetPZ);
+   OutputTree.Branch("MatchedJetP",         &MatchedJetP);
+   OutputTree.Branch("MatchedJetTheta",     &MatchedJetTheta);
+   OutputTree.Branch("MatchedJetPhi",       &MatchedJetPhi);
+   OutputTree.Branch("MatchedJetM",         &MatchedJetM);
+   OutputTree.Branch("MatchedJetE",         &MatchedJetE);
+   OutputTree.Branch("MatchedJetZG",        &MatchedJetZG);
+   OutputTree.Branch("MatchedJetRG",        &MatchedJetRG);
+   OutputTree.Branch("MatchedJetPG",        &MatchedJetPG);
+   OutputTree.Branch("MatchedJetMG",        &MatchedJetMG);
+   OutputTree.Branch("MatchedJetNG",        &MatchedJetNG);
+   OutputTree.Branch("MatchedJetAngle",     &MatchedJetAngle);
+   OutputTree.Branch("MatchedJetJEC",       &MatchedJetJEC);
+   OutputTree.Branch("MatchedJetJEU",       &MatchedJetJEU);
+   OutputTree.Branch("MatchedThrust",       &RecoThrust);
 
    int PassedEventCount = 0;
    int AllEventCount = 0;
@@ -317,6 +329,7 @@ int main(int argc, char *argv[])
 
          // Calculate SumE and cut if needed
          GenSumE = 0;
+         GenMultiplicity = 0;
          for(int i = 0; i < NGen; i++)
          {
             if(GenStatus[i] != 1)   // we want only final state particles
@@ -325,18 +338,27 @@ int main(int argc, char *argv[])
             P[0] = sqrt(P.GetP() * P.GetP() + GenMass[i] * GenMass[i]);
             if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                continue;
+            if(P[0] > MultiplicityEMin)
+               GenMultiplicity = GenMultiplicity + 1;
             GenSumE = GenSumE + P[0];
          }
          if(DoHybridSumE == false && GenSumE < GenSumECut)
             continue;
+         if(GenMultiplicityMin >= 0 && GenMultiplicity < GenMultiplicityMin)
+            continue;
+         if(GenMultiplicityMax >= 0 && GenMultiplicity > GenMultiplicityMax)
+            continue;
 
          RecoSumE = 0;
+         RecoMultiplicity = 0;
          for(int i = 0; i < NReco; i++)
          {
             FourVector P(0, RecoPX[i], RecoPY[i], RecoPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + RecoMass[i] * RecoMass[i]);
             if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                continue;
+            if(P[0] > MultiplicityEMin)
+               RecoMultiplicity = RecoMultiplicity + 1;
             RecoSumE = RecoSumE + P[0];
          }
          if(DoSumESmear == false)
@@ -349,6 +371,10 @@ int main(int argc, char *argv[])
             if(DoHybridSumE == false && RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
                continue;
          }
+         if(RecoMultiplicityMin >= 0 && RecoMultiplicity < RecoMultiplicityMin)
+            continue;
+         if(RecoMultiplicityMax >= 0 && RecoMultiplicity > RecoMultiplicityMax)
+            continue;
 
          // Collect particles for jet clustering and other usages
          vector<FourVector> GenParticles;
