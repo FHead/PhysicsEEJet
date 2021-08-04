@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
    TFile SystematicFile(SystematicFileName.c_str());
 
    if(DoEventNormalize == true)
-      Assert(InputFile.Get("DataEventCount") != nullptr, "No event count found in input file but option enabled");
+      Assert(InputFile.Get("DataBaselineEventCount") != nullptr, "No event count found in input file but option enabled");
 
    vector<double> GenBins1
       = DetectBins((TH1D *)InputFile.Get("HGenPrimaryBinMin"), (TH1D *)InputFile.Get("HGenPrimaryBinMax"));
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
    {
       if(DoEventNormalize == true)
       {
-         double EventCount = atof(InputFile.Get("DataEventCount")->GetTitle());
+         double EventCount = atof(InputFile.Get("DataBaselineEventCount")->GetTitle());
          H1[PrimaryName]->Scale(1 / EventCount);
       }
       if(ExtraScale > 0)

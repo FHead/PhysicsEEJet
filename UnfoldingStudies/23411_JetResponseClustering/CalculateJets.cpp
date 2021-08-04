@@ -48,6 +48,13 @@ int main(int argc, char *argv[])
    string RecoTreeName           = CL.Get("RecoTreeName", "t");
    string GenTreeName            = CL.Get("GenTreeName", "tgenBefore");
    bool CheckLeadingGenDiJet     = CL.GetBool("CheckLeadingGenDiJet", false);
+   double MultiplicityEMin       = CL.GetDouble("MultiplicityEMin", 0);
+   double MultiplicityThetaMin   = CL.GetDouble("MultiplicityThetaMin", ThetaMin);
+   double MultiplicityThetaMax   = CL.GetDouble("MultiplicityThetaMax", ThetaMax);
+   int GenMultiplicityMin        = CL.GetInt("GenMultiplicityMin", -1);
+   int GenMultiplicityMax        = CL.GetInt("GenMultiplicityMax", -1);
+   int RecoMultiplicityMin       = CL.GetInt("RecoMultiplicityMin", -1);
+   int RecoMultiplicityMax       = CL.GetInt("RecoMultiplicityMax", -1);
 
    JetCorrector JEC(JECFiles);
 
@@ -192,6 +199,7 @@ int main(int argc, char *argv[])
       float RecoPZ[MAX];
       float RecoP[MAX];
       float RecoMass[MAX];
+      int RecoMultiplicity;
       bool RecoHighPurity[MAX];
       bool RecoPassSTheta = true;
       bool RecoPassAll = true;
@@ -202,6 +210,7 @@ int main(int argc, char *argv[])
       float GenPZ[MAX];
       float GenMass[MAX];
       int GenStatus[MAX];
+      int GenMultiplicity;
       bool GenPassSTheta = true;
 
       for(int i = 0; i < MAX; i++)
@@ -312,8 +321,9 @@ int main(int argc, char *argv[])
          if(PSum > 200)
             continue;
 
-         // Calculate SumE and cut if needed
+         // Calculate SumE and cut if needed - also multiplicities
          GenSumE = 0;
+         GenMultiplicity = 0;
          for(int i = 0; i < NGen; i++)
          {
             if(GenStatus[i] != 1)   // we want only final state particles
@@ -322,9 +332,15 @@ int main(int argc, char *argv[])
             P[0] = sqrt(P.GetP() * P.GetP() + GenMass[i] * GenMass[i]);
             if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                continue;
+            if(P[0] > MultiplicityEMin)
+               GenMultiplicity = GenMultiplicity + 1;
             GenSumE = GenSumE + P[0];
          }
          if(DoHybridSumE == false && GenSumE < GenSumECut)
+            continue;
+         if(GenMultiplicityMin >= 0 && GenMultiplicity < GenMultiplicityMin)
+            continue;
+         if(GenMultiplicityMax >= 0 && GenMultiplicity > GenMultiplicityMax)
             continue;
 
          RecoSumE = 0;
@@ -334,6 +350,8 @@ int main(int argc, char *argv[])
             P[0] = sqrt(P.GetP() * P.GetP() + RecoMass[i] * RecoMass[i]);
             if(P.GetTheta() < ThetaMin || P.GetTheta() > ThetaMax)
                continue;
+            if(P[0] > MultiplicityEMin)
+               RecoMultiplicity = RecoMultiplicity + 1;
             RecoSumE = RecoSumE + P[0];
          }
          if(DoSumESmear == false)
@@ -346,6 +364,10 @@ int main(int argc, char *argv[])
             if(DoHybridSumE == false && RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
                continue;
          }
+         if(RecoMultiplicityMin >= 0 && RecoMultiplicity < RecoMultiplicityMin)
+            continue;
+         if(RecoMultiplicityMax >= 0 && RecoMultiplicity > RecoMultiplicityMax)
+            continue;
 
          // Collect particles for jet clustering and other usages
          vector<FourVector> GenParticles;

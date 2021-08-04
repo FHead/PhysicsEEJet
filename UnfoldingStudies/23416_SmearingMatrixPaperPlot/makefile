@@ -8,7 +8,7 @@ Prepare:
 	ln -sf ../23412_Systematics/ Systematics
 	mkdir -p Plots
 
-RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunThrust
+RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME
 
 RunJetE: Execute
 	./Execute --Input Input/DataJetENominal.root \
