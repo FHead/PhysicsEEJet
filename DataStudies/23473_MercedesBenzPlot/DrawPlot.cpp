@@ -20,9 +20,11 @@ int main(int argc, char *argv[])
    int Bin = 100;
 
    TH1D HData("HData", ";Total momentum (GeV);a.u.", Bin, Min, Max);
+   TH1D HData1994("HData1994", ";Total momentum (GeV);a.u.", Bin, Min, Max);
    TH1D HMC("HMC", ";Total momentum (GeV);a.u.", Bin, Min, Max);
 
    HData.Sumw2();
+   HData1994.Sumw2();
    HMC.Sumw2();
 
    TChain DataChain("Data", "Data");
@@ -33,6 +35,12 @@ int main(int argc, char *argv[])
    DataChain.AddFile("DataSamples/LEP1Data1994P3_recons_aftercut-MERGED.root", TTree::kMaxEntries, "t");
    DataChain.AddFile("DataSamples/LEP1Data1995_recons_aftercut-MERGED.root", TTree::kMaxEntries, "t");
    DataChain.Draw("Sum$(pmag)>>HData", "");
+
+   TChain DataChain1994("Data", "Data");
+   DataChain1994.AddFile("DataSamples/LEP1Data1994P1_recons_aftercut-MERGED.root", TTree::kMaxEntries, "t");
+   DataChain1994.AddFile("DataSamples/LEP1Data1994P2_recons_aftercut-MERGED.root", TTree::kMaxEntries, "t");
+   DataChain1994.AddFile("DataSamples/LEP1Data1994P3_recons_aftercut-MERGED.root", TTree::kMaxEntries, "t");
+   DataChain1994.Draw("Sum$(pmag)>>HData1994", "");
 
    TChain MCChain;
    MCChain.AddFile("MCSamples/LEP1MC1994_recons_aftercut-001.root", TTree::kMaxEntries, "t");
@@ -79,29 +87,39 @@ int main(int argc, char *argv[])
 
    double BinWidth = (Max - Min) / Bin;
    HData.Scale(1 / HData.Integral() / BinWidth);
+   HData1994.Scale(1 / HData1994.Integral() / BinWidth);
    HMC.Scale(1 / HMC.Integral() / BinWidth);
 
    HData.SetStats(0);
    HData.SetMarkerColor(Colors[0]);
+   HData.SetMarkerSize(2);
    HData.SetLineColor(Colors[0]);
    HData.SetLineWidth(2);
+   
+   HData1994.SetStats(0);
+   HData1994.SetMarkerColor(Colors[5]);
+   HData1994.SetMarkerSize(2);
+   HData1994.SetLineColor(Colors[5]);
+   HData1994.SetLineWidth(2);
 
    HMC.SetStats(0);
    HMC.SetMarkerColor(Colors[1]);
    HMC.SetLineColor(Colors[1]);
    HMC.SetLineWidth(2);
 
-   TLegend Legend(0.5, 0.8, 0.8, 0.65);
+   TLegend Legend(0.35, 0.8, 0.65, 0.55);
    Legend.SetTextFont(42);
    Legend.SetTextSize(0.05);
    Legend.SetBorderSize(0);
    Legend.SetFillStyle(0);
-   Legend.AddEntry(&HData, "Data", "pl");
+   Legend.AddEntry(&HData, "Data (1992-1995)", "pl");
+   Legend.AddEntry(&HData1994, "Data (1994)", "pl");
    Legend.AddEntry(&HMC, "Simulation", "l");
 
    TCanvas Canvas;
 
    HData.Draw();
+   HData1994.Draw("same");
    HMC.Draw("hist same");
    Legend.Draw();
 
