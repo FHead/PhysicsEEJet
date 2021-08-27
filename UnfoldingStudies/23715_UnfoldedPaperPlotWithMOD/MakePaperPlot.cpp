@@ -15,6 +15,8 @@ using namespace std;
 #include "TGraphAsymmErrors.h"
 #include "TLatex.h"
 #include "TObject.h"
+#include "TImage.h"
+#include "TASImage.h"
 
 #include "PlotHelper4.h"
 #include "CommandLine.h"
@@ -73,7 +75,9 @@ int main(int argc, char *argv[])
 
    vector<string> Texts           = CL.GetStringVector("Texts", vector<string>());
 
-   double MarkerModifier          = CL.GetDouble("MarkerModifier", 1.0);
+   double CanvasScale             = CL.GetDouble("CanvasScale", 10); // set to large number if logo looks pixelated
+
+   double MarkerModifier          = CL.GetDouble("MarkerModifier", 1.0) * CanvasScale;
 
    double WorldXMin               = CL.GetDouble("WorldXMin", 10);
    double WorldXMax               = CL.GetDouble("WorldXMax", 50);
@@ -163,13 +167,13 @@ int main(int argc, char *argv[])
       Row = 1;
    }
 
-   int PadWidth     = 250;
-   int PadHeight    = 250;
-   int PadRHeight   = 100;
-   int MarginLeft   = 50 + (Column - 1) * 15;
-   int MarginRight  = 25 + (Column - 1) * 10;
-   int MarginTop    = 25 + (Column - 1) * 10;
-   int MarginBottom = 50 + (Column - 1) * 15;
+   int PadWidth     = CanvasScale * 250;
+   int PadHeight    = CanvasScale * 250;
+   int PadRHeight   = CanvasScale * 100;
+   int MarginLeft   = CanvasScale * (50 + (Column - 1) * 15);
+   int MarginRight  = CanvasScale * (25 + (Column - 1) * 10);
+   int MarginTop    = CanvasScale * (25 + (Column - 1) * 10);
+   int MarginBottom = CanvasScale * (50 + (Column - 1) * 15);
 
    double CanvasWidth = MarginLeft + PadWidth * Column + MarginRight;
    double CanvasHeight = MarginBottom + PadHeight * Row + PadRHeight * Row + MarginTop;
@@ -441,6 +445,23 @@ int main(int argc, char *argv[])
       Latex.SetTextAlign(12);
       Latex.DrawLatex(X, Y, Text.c_str());
    }
+
+   double LogoX = CL.GetDouble("LogoX", 0.90);
+   double LogoY = CL.GetDouble("LogoY", 0.90);
+   double LogoW = CL.GetDouble("LogoW", 0.05);
+   double LogoH = LogoW * CanvasWidth / CanvasHeight * 0.4;
+
+   Canvas.cd();
+   TPad PadLogo("PadLogo", "", LogoX - LogoW / 2, LogoY - LogoH / 2, LogoX + LogoW / 2, LogoY + LogoH / 2);
+   PadLogo.SetLeftMargin(0);
+   PadLogo.SetTopMargin(0);
+   PadLogo.SetRightMargin(0);
+   PadLogo.SetBottomMargin(0);
+   PadLogo.Draw();
+   PadLogo.cd();
+   TImage *Logo = (TImage *)TImage::Open("MOD.eps");
+   // Logo->SetJpegDpi("MOD.jpg", 300);
+   Logo->Draw("xxxz");
 
    Canvas.SaveAs(FinalOutputFileName.c_str());
 
