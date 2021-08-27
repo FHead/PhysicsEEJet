@@ -14,6 +14,7 @@ using namespace std;
 #include "TGraphAsymmErrors.h"
 #include "TPaletteAxis.h"
 #include "TLatex.h"
+#include "TImage.h"
 
 #include "PlotHelper4.h"
 #include "CommandLine.h"
@@ -60,6 +61,8 @@ int main(int argc, char *argv[])
 
    int XAxisSpacing               = CL.GetInt("XAxis", 505);
    int YAxisSpacing               = CL.GetInt("YAxis", 505);
+
+   double CanvasScale             = CL.GetDouble("CanvasScale", 1);
 
    Assert(DoRowNormalize == false || DoColumnNormalize == false, "Conflicting normalization options!");
 
@@ -132,14 +135,14 @@ int main(int argc, char *argv[])
    if(UseActualZMax == true)
       WorldZMax = ActualMaximum;
 
-   int PadWidth     = 250;
-   int PadHeight    = 250;
-   int MarginLeft   = 50 + (Column - 1) * 15;
-   int MarginRight  = 50 + (Column - 1) * 10;
-   int MarginTop    = 25 + (Column - 1) * 10;
-   int MarginBottom = 50 + (Column - 1) * 15;
-   int ColorGap     = 5 + (Column - 1) * 1.5;
-   int ColorWidth   = 10 + (Column - 1) * 2;
+   int PadWidth     = CanvasScale * 250;
+   int PadHeight    = CanvasScale * 250;
+   int MarginLeft   = CanvasScale * (50 + (Column - 1) * 15);
+   int MarginRight  = CanvasScale * (50 + (Column - 1) * 10);
+   int MarginTop    = CanvasScale * (25 + (Column - 1) * 10);
+   int MarginBottom = CanvasScale * (50 + (Column - 1) * 15);
+   int ColorGap     = CanvasScale * (5 + (Column - 1) * 1.5);
+   int ColorWidth   = CanvasScale * (10 + (Column - 1) * 2);
 
    double CanvasWidth = MarginLeft + PadWidth * Column + MarginRight;
    double CanvasHeight = MarginBottom + PadHeight * Row + MarginTop;
@@ -319,6 +322,23 @@ int main(int argc, char *argv[])
 
    if(LogZ == true)
       Canvas.SetLogz();
+
+   double LogoX = CL.GetDouble("LogoX", 0.90);
+   double LogoY = CL.GetDouble("LogoY", 0.90);
+   double LogoW = CL.GetDouble("LogoW", 0.05);
+   double LogoH = LogoW * CanvasWidth / CanvasHeight * 0.4;
+
+   Canvas.cd();
+   TPad PadLogo("PadLogo", "", LogoX - LogoW / 2, LogoY - LogoH / 2, LogoX + LogoW / 2, LogoY + LogoH / 2);
+   PadLogo.SetLeftMargin(0);
+   PadLogo.SetTopMargin(0);
+   PadLogo.SetRightMargin(0);
+   PadLogo.SetBottomMargin(0);
+   PadLogo.Draw();
+   PadLogo.cd();
+   TImage *Logo = (TImage *)TImage::Open("MOD.eps");
+   // Logo->SetJpegDpi("MOD.jpg", 300);
+   Logo->Draw("xxxz");
 
    Canvas.SaveAs(FinalOutputFileName.c_str());
 
