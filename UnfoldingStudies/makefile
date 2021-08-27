@@ -51,8 +51,8 @@ Systematics:
 	(cd 23412_Systematics && make Prepare RunData RunDataPlot)
 
 FinalPlot:
-	(cd 23521_UnfoldedPaperPlot && make Prepare RunTest)
-	(cd 23416_SystematicsPaperPlot && make Prepare RunTest)
+	(cd 23715_UnfoldedPaperPlotWithMOD && make Prepare RunTest)
+	(cd 23715_SystematicsPaperPlotWithMOD && make Prepare RunTest)
 	(cd 23416_SmearingMatrixPaperPlot && make Prepare RunTest)
 
 
