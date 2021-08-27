@@ -53,6 +53,7 @@ Systematics:
 FinalPlot:
 	(cd 23715_UnfoldedPaperPlotWithMOD && make Prepare RunTest)
 	(cd 23715_SystematicsPaperPlotWithMOD && make Prepare RunTest)
-	(cd 23416_SmearingMatrixPaperPlot && make Prepare RunTest)
+	(cd 23715_SmearingMatrixPaperPlotWithMOD && make Prepare RunTest)
+
 
 
