@@ -157,25 +157,43 @@ int main(int argc, char *argv[])
    H1["HSystematicsPlus"] = BuildSystematics(H1[PrimaryName], H1["HSystematicsRatioPlus"]);
    H1["HSystematicsMinus"] = BuildSystematics(H1[PrimaryName], H1["HSystematicsRatioMinus"]);
 
-   int IgnoreGroup = CL.GetInt("IgnoreGroup", 2);
-   int Column      = CL.GetInt("Column", 4);
-   int Row         = CL.GetInt("Row", 2);
+   vector<int> Group = CL.GetIntVector("Group", vector<int>{});
+   int Column        = CL.GetInt("Column", 4);
+   int Row           = CL.GetInt("Row", 2);
+
+   sort(Group.begin(), Group.end());
+   Group.erase(unique(Group.begin(), Group.end()), Group.end());
+
+   for(int i = 0; i < (int)Group.size(); i++)
+   {
+      if(Group[i] < 0 || Group[i] >= (int)GenBins2.size() - 1)
+      {
+         Group.erase(Group.begin() + i);
+         i = i - 1;
+      }
+   }
 
    int BinningCount = GenBins2.size() - 1;
    if(BinningCount == 1)
    {
-      IgnoreGroup = 0;
+      Group = vector<int>{0};
       Column = 1;
       Row = 1;
    }
+
+   if(Group.size() == 0)
+      for(int i = 0; i < BinningCount; i++)
+         Group.push_back(i);
+   if(Group.size() > Column * Row)
+      Group.resize(Column * Row);
 
    int PadWidth     = CanvasScale * 250;
    int PadHeight    = CanvasScale * 250;
    int PadRHeight   = CanvasScale * 100;
    int MarginLeft   = CanvasScale * (50 + (Column - 1) * 15);
-   int MarginRight  = CanvasScale * (25 + (Column - 1) * 10);
-   int MarginTop    = CanvasScale * (25 + (Column - 1) * 10);
-   int MarginBottom = CanvasScale * (50 + (Column - 1) * 15);
+   int MarginRight  = CanvasScale * (25 + (Column - 1) * 5);
+   int MarginTop    = CanvasScale * (25 + (Column - 1) * 5);
+   int MarginBottom = CanvasScale * (40 + (Column - 1) * 10);
 
    double CanvasWidth = MarginLeft + PadWidth * Column + MarginRight;
    double CanvasHeight = MarginBottom + PadHeight * Row + PadRHeight * Row + MarginTop;
@@ -185,6 +203,14 @@ int main(int argc, char *argv[])
    double PadX0 = MarginLeft / CanvasWidth;
    double PadY0 = MarginBottom / CanvasHeight;
    double PadDR = PadRHeight / CanvasHeight;
+
+   double TextSize = 0.040 - Row * 0.002;
+   double InsideTextSize = TextSize;
+   if(Column > 1)
+   {
+      TextSize = 0.050;
+      InsideTextSize = 0.070;
+   }
 
    vector<TGraphAsymmErrors> GResult = Transcribe(H1[PrimaryName], GenBins1, GenBins2, nullptr);
    vector<TGraphAsymmErrors> GSystematics = Transcribe(H1["HSystematicsPlus"], GenBins1, GenBins2, H1["HSystematicsMinus"]);
@@ -227,10 +253,10 @@ int main(int argc, char *argv[])
    // Setup pads
    vector<TPad *> Pads;
    vector<TPad *> RPads;
-   for(int i = IgnoreGroup; i < BinningCount; i++)
+   for(int i = 0; i < (int)Group.size(); i++)
    {
-      int R = (i - IgnoreGroup) / Column;
-      int C = (i - IgnoreGroup) % Column;
+      int R = i / Column;
+      int C = i % Column;
 
       double XMin = PadX0 + PadDX * C;
       double XMax = PadX0 + PadDX * (C + 1);
@@ -241,7 +267,7 @@ int main(int argc, char *argv[])
       RPads.emplace_back(new TPad(Form("RP%d", i), "", XMin, YMin, XMax, YMin + PadDR));
 
       if(LogY == true)
-         Pads[i-IgnoreGroup]->SetLogy();
+         Pads[i]->SetLogy();
    }
 
    for(TPad *P : Pads)
@@ -255,7 +281,7 @@ int main(int argc, char *argv[])
    {
       XAxis.emplace_back(new TGaxis(PadX0 + PadDX * i, PadY0, PadX0 + PadDX * (i + 1), PadY0, WorldXMin, WorldXMax, XAxisSpacing, ""));
       SetAxis(*XAxis[i]);
-      XAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
+      XAxis[i]->SetLabelSize(TextSize);
    }
    for(int i = 0; i < Row; i++)
    {
@@ -266,19 +292,19 @@ int main(int argc, char *argv[])
       RAxis.emplace_back(new TGaxis(PadX0, YMin, PadX0, YMin + PadDR, WorldRMin, WorldRMax, RAxisSpacing, ""));
       SetAxis(*YAxis[i]);
       SetAxis(*RAxis[i]);
-      YAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
-      RAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
+      YAxis[i]->SetLabelSize(TextSize);
+      RAxis[i]->SetLabelSize(TextSize);
    }
 
    // Setup axis labels
    TLatex Latex;
    Latex.SetTextFont(42);
-   Latex.SetTextSize(0.035 - max(Column, Row) * 0.002);
+   Latex.SetTextSize(TextSize);
    Latex.SetTextAngle(0);
    Latex.SetTextAlign(22);
    Latex.SetNDC();
    for(int i = 0; i < Column; i++)
-      Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.5, XLabel.c_str());
+      Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.3, XLabel.c_str());
    Latex.SetTextAngle(90);
    Latex.SetTextAlign(22);
    for(int i = 0; i < Row; i++)
@@ -294,9 +320,9 @@ int main(int argc, char *argv[])
    // Setup worlds
    vector<TH2D *> HWorld;
    vector<TH2D *> HWorldR;
-   for(int i = IgnoreGroup; i < BinningCount; i++)
+   for(int i = 0; i < (int)Group.size(); i++)
    {
-      int Index = i - IgnoreGroup;
+      int Index = i;
 
       Pads[Index]->cd();
       HWorld.emplace_back(new TH2D(Form("HWorld%d", i), "", 100, WorldXMin, WorldXMax, 100, WorldYMin, WorldYMax));
@@ -314,20 +340,20 @@ int main(int argc, char *argv[])
    // Adding panel labeling
    if(Column > 1 || Row > 1)
    {
-      for(int i = IgnoreGroup; i < BinningCount; i++)
+      for(int i = 0; i < (int)Group.size(); i++)
       {
-         int Index = i - IgnoreGroup;
+         int Index = i;
          Pads[Index]->cd();
 
          string BinLabel = "";
-         if(GenBins2[i] > -999)
-            BinLabel = BinLabel + Form("%.1f < ", GenBins2[i]);
+         if(GenBins2[Group[i]] > -999)
+            BinLabel = BinLabel + Form("%.1f < ", GenBins2[Group[i]]);
          BinLabel = BinLabel + BinningLabel;
-         if(GenBins2[i+1] < 999)
-            BinLabel = BinLabel + Form(" < %.1f", GenBins2[i+1]);
+         if(GenBins2[Group[i]+1] < 999)
+            BinLabel = BinLabel + Form(" < %.1f", GenBins2[Group[i]+1]);
 
          Latex.SetTextFont(42);
-         Latex.SetTextSize(0.075);
+         Latex.SetTextSize(InsideTextSize);
          Latex.SetTextAlign(33);
          Latex.DrawLatex(0.9, 0.9, BinLabel.c_str());
       }
@@ -344,37 +370,37 @@ int main(int argc, char *argv[])
       Legend.AddEntry(&GMC[j][BinningCount-1], MCLabels[j].c_str(), "l");
 
    // Plot the actual curves & legend
-   for(int i = IgnoreGroup; i < BinningCount; i++)
+   for(int i = 0; i < (int)Group.size(); i++)
    {
-      int Index = i - IgnoreGroup;
+      int Index = i;
 
       Pads[Index]->cd();
 
       for(int j = 0; j < MCCount; j++)
       {
-         GMC[j][i].SetLineWidth(2);
-         GMC[j][i].SetLineColor(Colors[MCColors[j]]);
-         GMC[j][i].SetMarkerStyle(1);
-         GMC[j][i].SetMarkerColor(Colors[MCColors[j]]);
+         GMC[j][Group[i]].SetLineWidth(2);
+         GMC[j][Group[i]].SetLineColor(Colors[MCColors[j]]);
+         GMC[j][Group[i]].SetMarkerStyle(1);
+         GMC[j][Group[i]].SetMarkerColor(Colors[MCColors[j]]);
       }
       
-      GSystematics[i].SetLineWidth(2);
-      GSystematics[i].SetLineColor(Colors[6]);
-      GSystematics[i].SetFillColor(Colors[2]);
-      GSystematics[i].SetMarkerStyle(20);
-      GSystematics[i].SetMarkerSize(MarkerModifier);
-      GSystematics[i].SetMarkerColor(Colors[6]);
+      GSystematics[Group[i]].SetLineWidth(2);
+      GSystematics[Group[i]].SetLineColor(Colors[6]);
+      GSystematics[Group[i]].SetFillColor(Colors[2]);
+      GSystematics[Group[i]].SetMarkerStyle(20);
+      GSystematics[Group[i]].SetMarkerSize(MarkerModifier);
+      GSystematics[Group[i]].SetMarkerColor(Colors[6]);
       
-      GResult[i].SetLineWidth(2);
-      GResult[i].SetLineColor(Colors[6]);
-      GResult[i].SetMarkerStyle(20);
-      GResult[i].SetMarkerSize(MarkerModifier);
-      GResult[i].SetMarkerColor(Colors[6]);
+      GResult[Group[i]].SetLineWidth(2);
+      GResult[Group[i]].SetLineColor(Colors[6]);
+      GResult[Group[i]].SetMarkerStyle(20);
+      GResult[Group[i]].SetMarkerSize(MarkerModifier);
+      GResult[Group[i]].SetMarkerColor(Colors[6]);
 
-      GSystematics[i].Draw("2");
+      GSystematics[Group[i]].Draw("2");
       for(int j = 0; j < MCCount; j++)
-         GMC[j][i].Draw("lz");
-      GResult[i].Draw("pz");
+         GMC[j][Group[i]].Draw("lz");
+      GResult[Group[i]].Draw("pz");
 
       HWorld[Index]->Draw("axis same");
 
@@ -390,41 +416,41 @@ int main(int argc, char *argv[])
 
          Latex.SetNDC();
          Latex.SetTextFont(42);
-         Latex.SetTextSize(0.035);
+         Latex.SetTextSize(InsideTextSize);
          Latex.SetTextAlign(12);
          Latex.DrawLatex(X, Y, Text.c_str());
       }
 
-      if(i == BinningCount - 1)
+      if(i == (int)Group.size() - 1)
          Legend.Draw();
 
       RPads[Index]->cd();
 
       for(int j = 0; j < MCCount; j++)
       {
-         GRMC[j][i].SetLineWidth(2);
-         GRMC[j][i].SetLineColor(Colors[MCColors[j]]);
-         GRMC[j][i].SetMarkerStyle(1);
-         GRMC[j][i].SetMarkerColor(Colors[MCColors[j]]);
+         GRMC[j][Group[i]].SetLineWidth(2);
+         GRMC[j][Group[i]].SetLineColor(Colors[MCColors[j]]);
+         GRMC[j][Group[i]].SetMarkerStyle(1);
+         GRMC[j][Group[i]].SetMarkerColor(Colors[MCColors[j]]);
       }
 
-      GRSystematics[i].SetLineWidth(2);
-      GRSystematics[i].SetLineColor(Colors[6]);
-      GRSystematics[i].SetFillColor(Colors[2]);
-      GRSystematics[i].SetMarkerStyle(20);
-      GRSystematics[i].SetMarkerSize(MarkerModifier);
-      GRSystematics[i].SetMarkerColor(Colors[6]);
+      GRSystematics[Group[i]].SetLineWidth(2);
+      GRSystematics[Group[i]].SetLineColor(Colors[6]);
+      GRSystematics[Group[i]].SetFillColor(Colors[2]);
+      GRSystematics[Group[i]].SetMarkerStyle(20);
+      GRSystematics[Group[i]].SetMarkerSize(MarkerModifier);
+      GRSystematics[Group[i]].SetMarkerColor(Colors[6]);
       
-      GRResult[i].SetLineWidth(2);
-      GRResult[i].SetLineColor(Colors[6]);
-      GRResult[i].SetMarkerStyle(20);
-      GRResult[i].SetMarkerSize(MarkerModifier);
-      GRResult[i].SetMarkerColor(Colors[6]);
+      GRResult[Group[i]].SetLineWidth(2);
+      GRResult[Group[i]].SetLineColor(Colors[6]);
+      GRResult[Group[i]].SetMarkerStyle(20);
+      GRResult[Group[i]].SetMarkerSize(MarkerModifier);
+      GRResult[Group[i]].SetMarkerColor(Colors[6]);
 
-      GRSystematics[i].Draw("2");
+      GRSystematics[Group[i]].Draw("2");
       for(int j = 0; j < MCCount; j++)
-         GRMC[j][i].Draw("lz");
-      GRResult[i].Draw("pz");
+         GRMC[j][Group[i]].Draw("lz");
+      GRResult[Group[i]].Draw("pz");
       
       HWorldR[Index]->Draw("axis same");
    }
@@ -443,7 +469,7 @@ int main(int argc, char *argv[])
 
       Latex.SetNDC();
       Latex.SetTextFont(42);
-      Latex.SetTextSize(0.035);
+      Latex.SetTextSize(TextSize);
       Latex.SetTextAlign(12);
       Latex.DrawLatex(X, Y, Text.c_str());
    }

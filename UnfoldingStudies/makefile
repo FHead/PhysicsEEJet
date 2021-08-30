@@ -2,9 +2,9 @@
 
 default: Systematics FinalPlot
 
-RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan LeadingJetCorrection Systematics FinalPlot
+RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan LeadingJetCorrection Systematics FinalPlot FinalPlotSmall
 
-RunAllQuick: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot
+RunAllQuick: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot FinalPlotSmall
 
 JetClustering:
 	(cd 23514_JetResponseClustering/ && make Prepare RunGroup1 RunGroup2)
@@ -54,7 +54,11 @@ FinalPlot:
 	(cd 23715_UnfoldedPaperPlotWithMOD && make Prepare RunTest)
 	(cd 23715_SystematicsPaperPlotWithMOD && make Prepare RunTest)
 	(cd 23715_SmearingMatrixPaperPlotWithMOD && make Prepare RunTest)
+
+FinalPlotSmall:
 	(cd 23721_SmearingMatrixPaperPlotSmallWithMOD && make Prepare RunTest)
+	(cd 23721_SystematicsPaperPlotSinglePanelWithMOD && make Prepare RunTest)
+	(cd 23721_UnfoldedPaperPlotSinglePanelWithMOD && make Prepare RunTest)
 
 
 
