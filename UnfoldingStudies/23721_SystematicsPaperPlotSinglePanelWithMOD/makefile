@@ -9,6 +9,7 @@ Prepare:
 	mkdir -p Plots
 
 RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunConversion
+# RunTest: RunJetE RunJetZG RunConversion
 
 RunJetE: Execute
 	./Execute --Input Systematics/DataJetE.root \
@@ -19,7 +20,7 @@ RunJetE: Execute
 		--LegendX 0.4 --LegendY 0.5 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 0 --Row 1 --Column 1 \
+		--Group 0 --Row 1 --Column 1 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
@@ -34,7 +35,7 @@ RunDiJetE: Execute
 		--LegendX 0.4 --LegendY 0.5 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
-		--IgnoreGroup 0 --Row 1 --Column 1 \
+		--Group 0 --Row 1 --Column 1 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
 		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection" \
@@ -49,7 +50,7 @@ RunDiJetSumE: Execute
 		--LegendX 0.4 --LegendY 0.5 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
-		--IgnoreGroup 0 --Row 1 --Column 1 \
+		--Group 0 --Row 1 --Column 1 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
 		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection" \
@@ -62,8 +63,8 @@ RunJetZG: Execute
 		--XLabel "Jet z_{G}" --YLabel "Uncertainty" --Binning "Jet E" \
 		--LegendX 0.15 --LegendY 0.2 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 2 --Row 2 --Column 4 \
+		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4" \
+		--Group 2,7 --Row 1 --Column 2 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
@@ -77,7 +78,7 @@ RunJetRG: Execute
 		--LegendX 0.15 --LegendY 0.2 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 2 --Row 2 --Column 4 \
+		--Group 2,7 --Row 1 --Column 2 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
@@ -91,7 +92,7 @@ RunJetMG: Execute
 		--LegendX 0.15 --LegendY 0.2 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 2 --Row 2 --Column 4 \
+		--Group 2,7 --Row 1 --Column 2 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
@@ -105,7 +106,7 @@ RunJetMGE: Execute
 		--LegendX 0.15 --LegendY 0.2 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 2 --Row 2 --Column 4 \
+		--Group 2,7 --Row 1 --Column 2 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
@@ -119,7 +120,7 @@ RunJetM: Execute
 		--LegendX 0.15 --LegendY 0.2 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 2 --Row 2 --Column 4 \
+		--Group 2,7 --Row 1 --Column 2 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
@@ -133,7 +134,7 @@ RunJetME: Execute
 		--LegendX 0.15 --LegendY 0.2 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts -1,0.76,0.9,"Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4" \
-		--IgnoreGroup 2 --Row 2 --Column 4 \
+		--Group 2,7 --Row 1 --Column 2 \
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \

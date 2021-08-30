@@ -129,24 +129,42 @@ int main(int argc, char *argv[])
    H1["HSystematicsRatioPlus"] = (TH1D *)InputFile.Get("HTotalPlus");
    H1["HSystematicsRatioMinus"] = (TH1D *)InputFile.Get("HTotalMinus");
 
-   int IgnoreGroup = CL.GetInt("IgnoreGroup", 2);
-   int Column      = CL.GetInt("Column", 4);
-   int Row         = CL.GetInt("Row", 2);
+   vector<int> Group = CL.GetIntVector("Group", vector<int>{});
+   int Column        = CL.GetInt("Column", 4);
+   int Row           = CL.GetInt("Row", 2);
+
+   sort(Group.begin(), Group.end());
+   Group.erase(unique(Group.begin(), Group.end()), Group.end());
+   
+   for(int i = 0; i < (int)Group.size(); i++)
+   {
+      if(Group[i] < 0 || Group[i] >= (int)GenBins2.size() - 1)
+      {
+         Group.erase(Group.begin() + i);
+         i = i - 1;
+      }
+   }
 
    int BinningCount = GenBins2.size() - 1;
    if(BinningCount == 1)
    {
-      IgnoreGroup = 0;
+      Group = vector<int>{0};
       Column = 1;
       Row = 1;
    }
 
+   if(Group.size() == 0)
+      for(int i = 0; i < (int)GenBins2.size() - 1; i++)
+         Group.push_back(i);
+   if(Group.size() > Column * Row)
+      Group.resize(Column * Row);
+
    int PadWidth     = CanvasScale * 250;
    int PadHeight    = CanvasScale * 250;
-   int MarginLeft   = CanvasScale * (50 + (Column - 1) * 15);
-   int MarginRight  = CanvasScale * (25 + (Column - 1) * 10);
-   int MarginTop    = CanvasScale * (25 + (Column - 1) * 10);
-   int MarginBottom = CanvasScale * (50 + (Column - 1) * 15);
+   int MarginLeft   = CanvasScale * (30 + (Column - 1) * 15);
+   int MarginRight  = CanvasScale * (25 + (Column - 1) * 5);
+   int MarginTop    = CanvasScale * (25 + (Column - 1) * 5);
+   int MarginBottom = CanvasScale * (30 + (Column - 1) * 10);
 
    double CanvasWidth = MarginLeft + PadWidth * Column + MarginRight;
    double CanvasHeight = MarginBottom + PadHeight * Row + MarginTop;
@@ -155,6 +173,14 @@ int main(int argc, char *argv[])
    double PadDY = PadHeight / CanvasHeight;
    double PadX0 = MarginLeft / CanvasWidth;
    double PadY0 = MarginBottom / CanvasHeight;
+
+   double TextSize = 0.040 - Row * 0.002;
+   double InsideTextSize = TextSize;
+   if(Column > 1)
+   {
+      TextSize = 0.050;
+      InsideTextSize = 0.075;
+   }
 
    vector<vector<TGraphAsymmErrors>> GCurves(SystematicGroupCount);
    GCurves[0] = Transcribe(H1["HSystematicsRatioPlus"], GenBins1, GenBins2);
@@ -175,12 +201,12 @@ int main(int argc, char *argv[])
 
    // Setup pads
    vector<TPad *> Pads;
-   for(int i = IgnoreGroup; i < BinningCount; i++)
+   for(int i = 0; i < (int)Group.size(); i++)
    {
-      int R = (i - IgnoreGroup) / Column;
-      int C = (i - IgnoreGroup) % Column;
+      int R = i / Column;
+      int C = i % Column;
 
-      cout << i << " " << IgnoreGroup << " " << R << " " << C << endl;
+      cout << i << " " << R << " " << C << endl;
 
       double XMin = PadX0 + PadDX * C;
       double XMax = PadX0 + PadDX * (C + 1);
@@ -190,7 +216,7 @@ int main(int argc, char *argv[])
       Pads.emplace_back(new TPad(Form("P%d", i), "", XMin, YMin, XMax, YMax));
 
       if(LogY == true)
-         Pads[i-IgnoreGroup]->SetLogy();
+         Pads[i]->SetLogy();
    }
 
    for(TPad *P : Pads)
@@ -202,7 +228,7 @@ int main(int argc, char *argv[])
    {
       XAxis.emplace_back(new TGaxis(PadX0 + PadDX * i, PadY0, PadX0 + PadDX * (i + 1), PadY0, WorldXMin, WorldXMax, XAxisSpacing, ""));
       SetAxis(*XAxis[i]);
-      XAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
+      XAxis[i]->SetLabelSize(TextSize);
    }
    for(int i = 0; i < Row; i++)
    {
@@ -211,18 +237,18 @@ int main(int argc, char *argv[])
       string Option = (LogY ? "G" : "");
       YAxis.emplace_back(new TGaxis(PadX0, YMin, PadX0, YMax, WorldYMin, WorldYMax, YAxisSpacing, Option.c_str()));
       SetAxis(*YAxis[i]);
-      YAxis[i]->SetLabelSize(0.030 - max(Row, Column) * 0.001);
+      YAxis[i]->SetLabelSize(TextSize);
    }
 
    // Setup axis labels
    TLatex Latex;
    Latex.SetTextFont(42);
-   Latex.SetTextSize(0.035 - max(Column, Row) * 0.002);
+   Latex.SetTextSize(TextSize);
    Latex.SetTextAngle(0);
    Latex.SetTextAlign(22);
    Latex.SetNDC();
    for(int i = 0; i < Column; i++)
-      Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.5, XLabel.c_str());
+      Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.3, XLabel.c_str());
    Latex.SetTextAngle(90);
    Latex.SetTextAlign(22);
    for(int i = 0; i < Row; i++)
@@ -235,9 +261,9 @@ int main(int argc, char *argv[])
 
    // Setup worlds
    vector<TH2D *> HWorld;
-   for(int i = IgnoreGroup; i < BinningCount; i++)
+   for(int i = 0; i < (int)Group.size(); i++)
    {
-      int Index = i - IgnoreGroup;
+      int Index = i;
 
       cout << Index << endl;
       
@@ -251,20 +277,20 @@ int main(int argc, char *argv[])
    // Adding panel labeling
    if(Column > 1 || Row > 1)
    {
-      for(int i = IgnoreGroup; i < BinningCount; i++)
+      for(int i = 0; i < (int)Group.size(); i++)
       {
-         int Index = i - IgnoreGroup;
+         int Index = i;
          Pads[Index]->cd();
 
          string BinLabel = "";
-         if(GenBins2[i] > -999)
-            BinLabel = BinLabel + Form("%.1f < ", GenBins2[i]);
+         if(GenBins2[Group[i]] > -999)
+            BinLabel = BinLabel + Form("%.1f < ", GenBins2[Group[i]]);
          BinLabel = BinLabel + BinningLabel;
-         if(GenBins2[i+1] < 999)
-            BinLabel = BinLabel + Form(" < %.1f", GenBins2[i+1]);
+         if(GenBins2[Group[i]+1] < 999)
+            BinLabel = BinLabel + Form(" < %.1f", GenBins2[Group[i]+1]);
 
          Latex.SetTextFont(42);
-         Latex.SetTextSize(0.075);
+         Latex.SetTextSize(InsideTextSize);
          Latex.SetTextAlign(23);
          Latex.DrawLatex(0.5, 0.9, BinLabel.c_str());
       }
@@ -278,24 +304,24 @@ int main(int argc, char *argv[])
    Legend.SetBorderSize(0);
 
    // Plot the actual curves & legend
-   for(int i = IgnoreGroup; i < BinningCount; i++)
+   for(int i = 0; i < (int)Group.size(); i++)
    {
-      int Index = i - IgnoreGroup;
+      int Index = i;
 
       Pads[Index]->cd();
 
       for(int j = 0; j < (int)GCurves.size(); j++)
       {
-         GCurves[j][i].SetLineWidth(2);
-         GCurves[j][i].SetMarkerStyle(20);
-         GCurves[j][i].SetMarkerSize(MarkerModifier);
-         GCurves[j][i].SetLineColor(Colors[j%9]);
-         GCurves[j][i].SetMarkerColor(Colors[j%9]);
+         GCurves[j][Group[i]].SetLineWidth(2);
+         GCurves[j][Group[i]].SetMarkerStyle(20);
+         GCurves[j][Group[i]].SetMarkerSize(MarkerModifier);
+         GCurves[j][Group[i]].SetLineColor(Colors[j%9]);
+         GCurves[j][Group[i]].SetMarkerColor(Colors[j%9]);
                    
-         GCurves[j][i].Draw("pl");
+         GCurves[j][Group[i]].Draw("pl");
 
          if(Index == 0)
-            Legend.AddEntry(&GCurves[j][i], Labels[j].c_str(), "lp");
+            Legend.AddEntry(&GCurves[j][Group[i]], Labels[j].c_str(), "lp");
       }
       
       HWorld[Index]->Draw("axis same");
@@ -314,7 +340,7 @@ int main(int argc, char *argv[])
 
          Latex.SetNDC();
          Latex.SetTextFont(42);
-         Latex.SetTextSize(0.035);
+         Latex.SetTextSize(InsideTextSize);
          Latex.SetTextAlign(12);
          Latex.DrawLatex(X, Y, Text.c_str());
       }
@@ -339,7 +365,7 @@ int main(int argc, char *argv[])
 
       Latex.SetNDC();
       Latex.SetTextFont(42);
-      Latex.SetTextSize(0.035);
+      Latex.SetTextSize(TextSize);
       Latex.SetTextAlign(12);
       Latex.DrawLatex(X, Y, Text.c_str());
    }
