@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
          Latex.DrawLatex(X, Y, Text.c_str());
       }
 
-      if(i == BinningCount - 1)
+      if(i == Group.size() - 1)
          Legend.Draw();
    }
 
