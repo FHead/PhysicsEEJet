@@ -62,7 +62,8 @@ int main(int argc, char *argv[])
    int XAxisSpacing               = CL.GetInt("XAxis", 505);
    int YAxisSpacing               = CL.GetInt("YAxis", 505);
 
-   double CanvasScale             = CL.GetDouble("CanvasScale", 1);
+   bool DoMOD                     = CL.GetBool("DoMOD", true);
+   double CanvasScale             = DoMOD ? CL.GetDouble("CanvasScale", 1) : 1;
 
    Assert(DoRowNormalize == false || DoColumnNormalize == false, "Conflicting normalization options!");
 
@@ -334,11 +335,16 @@ int main(int argc, char *argv[])
    PadLogo.SetTopMargin(0);
    PadLogo.SetRightMargin(0);
    PadLogo.SetBottomMargin(0);
-   PadLogo.Draw();
-   PadLogo.cd();
-   TImage *Logo = (TImage *)TImage::Open("MOD.eps");
-   // Logo->SetJpegDpi("MOD.jpg", 300);
-   Logo->Draw("xxxz");
+   TImage *Logo = nullptr;
+   if(DoMOD == true)
+   {
+      PadLogo.Draw();
+      PadLogo.cd();
+      Logo = (TImage *)TImage::Open("MOD.eps");
+      // Logo->SetJpegDpi("MOD.jpg", 300);
+      if(DoMOD == true)
+         Logo->Draw("xxxz");
+   }
 
    Canvas.SaveAs(FinalOutputFileName.c_str());
 
