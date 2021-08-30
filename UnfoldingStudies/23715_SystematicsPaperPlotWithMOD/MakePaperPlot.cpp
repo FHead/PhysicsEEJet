@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
 
    vector<string> Texts           = CL.GetStringVector("Texts", vector<string>());
 
-   double CanvasScale             = CL.GetDouble("CanvasScale", 1);
+   bool DoMOD                     = CL.GetBool("DoMOD", false);
+   double CanvasScale             = DoMOD ? CL.GetDouble("CanvasScale", 1) : 1;
 
    double MarkerModifier          = CL.GetDouble("MarkerModifier", 1.0) * CanvasScale;
 
@@ -354,11 +355,15 @@ int main(int argc, char *argv[])
    PadLogo.SetTopMargin(0);
    PadLogo.SetRightMargin(0);
    PadLogo.SetBottomMargin(0);
-   PadLogo.Draw();
-   PadLogo.cd();
-   TImage *Logo = (TImage *)TImage::Open("MOD.eps");
-   // Logo->SetJpegDpi("MOD.jpg", 300);
-   Logo->Draw("xxxz");
+   TImage *Logo = nullptr;
+   if(DoMOD == true)
+   {
+      PadLogo.Draw();
+      PadLogo.cd();
+      TImage *Logo = (TImage *)TImage::Open("MOD.eps");
+      // Logo->SetJpegDpi("MOD.jpg", 300);
+      Logo->Draw("xxxz");
+   }
 
    Canvas.SaveAs(FinalOutputFileName.c_str());
 

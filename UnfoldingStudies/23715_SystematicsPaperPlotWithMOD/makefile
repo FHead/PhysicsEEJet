@@ -1,3 +1,5 @@
+DoMOD = false
+
 default: RunTest
 
 Prepare:
@@ -21,7 +23,7 @@ RunJetE: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 10 --LogoX 0.8 --LogoY 0.8 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.8 --LogoY 0.8 --LogoW 0.12
 
 RunDiJetE: Execute
 	./Execute --Input Systematics/DataLeadingDiJetE.root \
@@ -36,7 +38,7 @@ RunDiJetE: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
 		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection" \
-		--CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
 
 RunDiJetSumE: Execute
 	./Execute --Input Systematics/DataLeadingDiJetSumE.root \
@@ -51,7 +53,7 @@ RunDiJetSumE: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
 		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection" \
-		--CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
 
 RunJetZG: Execute
 	./Execute --Input Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/SystematicsZG.eps \
@@ -65,7 +67,7 @@ RunJetZG: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
 
 RunJetRG: Execute
 	./Execute --Input Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/SystematicsRG.eps \
@@ -79,7 +81,7 @@ RunJetRG: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
 
 RunJetMG: Execute
 	./Execute --Input Systematics/DataJetMGNormalized.root --Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/SystematicsMG.eps \
@@ -93,7 +95,7 @@ RunJetMG: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
 
 RunJetMGE: Execute
 	./Execute --Input Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/SystematicsMGE.eps \
@@ -107,7 +109,7 @@ RunJetMGE: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
 
 RunJetM: Execute
 	./Execute --Input Systematics/DataJetMNormalized.root --Output Plots/DataJetMNominal.pdf --FinalOutput Plots/SystematicsM.eps \
@@ -121,7 +123,7 @@ RunJetM: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
 
 RunJetME: Execute
 	./Execute --Input Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/SystematicsME.eps \
@@ -135,7 +137,7 @@ RunJetME: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
 
 RunConversion:
 	bash ConvertEPS.sh

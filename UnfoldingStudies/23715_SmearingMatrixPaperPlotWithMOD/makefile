@@ -1,4 +1,5 @@
 Format = eps
+DoMOD  = false
 
 default: RunTest
 
@@ -18,7 +19,7 @@ RunJetE: Execute
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
 
 RunDiJetE: Execute
 	./Execute --Input Input/DataLeadingDiJetENominal.root \
@@ -28,7 +29,7 @@ RunDiJetE: Execute
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
 
 RunDiJetSumE: Execute
 	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
@@ -39,7 +40,7 @@ RunDiJetSumE: Execute
 		--Primary "Leading Dijet Sum E (GeV)" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
 
 RunJetZG: Execute
 	./Execute --Input Input/DataJetZGNominal.root \
@@ -50,7 +51,7 @@ RunJetZG: Execute
 		--Primary "z_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
 
 RunJetRG: Execute
 	./Execute --Input Input/DataJetRGNominal.root \
@@ -61,7 +62,7 @@ RunJetRG: Execute
 		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
 
 RunJetMG: Execute
 	./Execute --Input Input/DataJetMGNominal.root \
@@ -71,7 +72,7 @@ RunJetMG: Execute
 		--Primary "M_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
 
 RunJetMGE: Execute
 	./Execute --Input Input/DataJetMGENominal.root \
@@ -82,7 +83,7 @@ RunJetMGE: Execute
 		--Primary "M_{G}/E" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
 
 RunJetM: Execute
 	./Execute --Input Input/DataJetMNominal.root \
@@ -92,7 +93,7 @@ RunJetM: Execute
 		--Primary "M" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
 
 RunJetME: Execute
 	./Execute --Input Input/DataJetMENominal.root \
@@ -103,7 +104,7 @@ RunJetME: Execute
 		--Primary "M/E" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
 
 RunThrust: Execute
 	./Execute --Input Input/DataNoCutThrustUniform.root \
@@ -113,7 +114,7 @@ RunThrust: Execute
 		--Primary "Thrust" --Binning "None" --RowNormalize true \
 		--XAxis 505 --YAxis 505 \
 		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
-		--CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
 
 RunConversion:
 	bash ConvertEPS.sh
