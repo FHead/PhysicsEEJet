@@ -59,6 +59,9 @@ int main(int argc, char *argv[])
    string PrimaryLabel            = CL.Get("Primary", "Jet P");
    string BinningLabel            = CL.Get("Binning", "Jet P");
 
+   vector<int> GroupX             = CL.GetIntVector("GroupX", vector<int>{});
+   vector<int> GroupY             = CL.GetIntVector("GroupY", vector<int>{});
+
    int XAxisSpacing               = CL.GetInt("XAxis", 505);
    int YAxisSpacing               = CL.GetInt("YAxis", 505);
 
@@ -94,18 +97,39 @@ int main(int argc, char *argv[])
    double WorldZMax = CL.GetDouble("WorldZMax", 1.000);
    bool UseActualZMax = CL.GetBool("UseActualZMax", false);
 
-   int IgnoreGroupColumn = CL.GetInt("IgnoreGroupColumn", 0);
-   int IgnoreGroupRow    = CL.GetInt("IgnoreGroupRow", 0);
-   int Column            = MatchedBins2.size() - 1;
-   int Row               = GenBins2.size() - 1;
+   sort(GroupX.begin(), GroupX.end());
+   sort(GroupY.begin(), GroupY.end());
+   GroupX.erase(unique(GroupX.begin(), GroupX.end()), GroupX.end());
+   GroupY.erase(unique(GroupY.begin(), GroupY.end()), GroupY.end());
 
-   if(Column == 1 && Row == 1)
+   for(int i = 0; i < (int)GroupX.size(); i++)
    {
-      IgnoreGroupColumn = 0;
-      IgnoreGroupRow = 0;
+      if(GroupX[i] >= (int)MatchedBins2.size() - 1)
+      {
+         GroupX.erase(GroupX.begin() + i);
+         i = i - 1;
+      }
+   }
+   for(int i = 0; i < (int)GroupY.size(); i++)
+   {
+      if(GroupY[i] >= (int)GenBins2.size() - 1)
+      {
+         GroupY.erase(GroupY.begin() + i);
+         i = i - 1;
+      }
    }
 
-   Assert(IgnoreGroupColumn == 0 && IgnoreGroupRow == 0, "Ignore group not implemented yet!");
+   if(GroupX.size() == 0)
+      for(int i = 0; i < (int)MatchedBins2.size() - 1; i++)
+         GroupX.push_back(i);
+   if(GroupY.size() == 0)
+      for(int i = 0; i < (int)GenBins2.size() - 1; i++)
+         GroupY.push_back(i);
+   
+   int Column            = MatchedBins2.size() - 1;
+   int Row               = GenBins2.size() - 1;
+   int VisibleColumn     = GroupX.size();
+   int VisibleRow        = GroupY.size();
 
    TH2D *HMaster = (TH2D *)InputFile.Get(InputResponseName.c_str());
    Assert(HMaster != nullptr, "Response not found!");
@@ -138,15 +162,15 @@ int main(int argc, char *argv[])
 
    int PadWidth     = CanvasScale * 250;
    int PadHeight    = CanvasScale * 250;
-   int MarginLeft   = CanvasScale * (50 + (Column - 1) * 15);
-   int MarginRight  = CanvasScale * (50 + (Column - 1) * 10);
-   int MarginTop    = CanvasScale * (25 + (Column - 1) * 10);
-   int MarginBottom = CanvasScale * (50 + (Column - 1) * 15);
-   int ColorGap     = CanvasScale * (5 + (Column - 1) * 1.5);
-   int ColorWidth   = CanvasScale * (10 + (Column - 1) * 2);
+   int MarginLeft   = CanvasScale * (50 + (VisibleColumn - 1) * 20);
+   int MarginRight  = CanvasScale * (50 + (VisibleColumn - 1) * 10);
+   int MarginTop    = CanvasScale * (25 + (VisibleColumn - 1) * 10);
+   int MarginBottom = CanvasScale * (50 + (VisibleColumn - 1) * 20);
+   int ColorGap     = CanvasScale * ( 5 + (VisibleColumn - 1) * 1.5);
+   int ColorWidth   = CanvasScale * (10 + (VisibleColumn - 1) * 2);
 
-   double CanvasWidth = MarginLeft + PadWidth * Column + MarginRight;
-   double CanvasHeight = MarginBottom + PadHeight * Row + MarginTop;
+   double CanvasWidth = MarginLeft + PadWidth * VisibleColumn + MarginRight;
+   double CanvasHeight = MarginBottom + PadHeight * VisibleRow + MarginTop;
 
    double PadDX = PadWidth / CanvasWidth;
    double PadDY = PadHeight / CanvasHeight;
@@ -157,16 +181,19 @@ int main(int argc, char *argv[])
 
    TCanvas Canvas("Canvas", "", CanvasWidth, CanvasHeight);
 
-   // Setup pads
-   vector<vector<TPad *>> Pads(Row - IgnoreGroupRow);
-   for(int R = IgnoreGroupRow; R < Row; R++)
-   {
-      int IndexR = R - IgnoreGroupRow;
-      Pads[IndexR].resize(Column - IgnoreGroupColumn, nullptr);
+   double TextSize = 0.035 - max(VisibleColumn, VisibleRow) * 0.0015;
+   // double TextSize = 0.0386 - max(VisibleColumn, VisibleRow) * 0.0018;
 
-      for(int C = IgnoreGroupColumn; C < Column; C++)
+   // Setup pads
+   vector<vector<TPad *>> Pads(VisibleRow);
+   for(int R = 0; R < VisibleRow; R++)
+   {
+      int IndexR = R;
+      Pads[IndexR].resize(VisibleColumn, nullptr);
+
+      for(int C = 0; C < VisibleColumn; C++)
       {
-         int IndexC = C - IgnoreGroupColumn;
+         int IndexC = C;
 
          double XMin = PadX0 + PadDX * IndexC;
          double XMax = PadX0 + PadDX * (IndexC + 1);
@@ -186,74 +213,74 @@ int main(int argc, char *argv[])
 
    // Setup axes
    vector<TGaxis *> XAxis, YAxis;
-   for(int i = 0; i < Column; i++)
+   for(int i = 0; i < VisibleColumn; i++)
    {
       XAxis.emplace_back(new TGaxis(PadX0 + PadDX * i, PadY0, PadX0 + PadDX * (i + 1), PadY0,
          WorldXMin, WorldXMax, XAxisSpacing, ""));
       SetAxis(*XAxis[i]);
-      XAxis[i]->SetLabelSize(0.035 - max(Row, Column) * 0.0015);
+      XAxis[i]->SetLabelSize(TextSize);
    }
-   for(int i = 0; i < Row; i++)
+   for(int i = 0; i < VisibleRow; i++)
    {
       double YMin = PadY0 + PadDY * i;
       double YMax = YMin + PadDY;
       YAxis.emplace_back(new TGaxis(PadX0, YMin, PadX0, YMax,
          WorldYMin, WorldYMax, YAxisSpacing, ""));
       SetAxis(*YAxis[i]);
-      YAxis[i]->SetLabelSize(0.035 - max(Row, Column) * 0.0015);
+      YAxis[i]->SetLabelSize(TextSize);
    }
 
    // Setup axis labels
    TLatex Latex;
    Latex.SetTextFont(42);
-   Latex.SetTextSize(0.035 - max(Column, Row) * 0.0015);
+   Latex.SetTextSize(TextSize);
    Latex.SetTextAngle(0);
    Latex.SetTextAlign(22);
    Latex.SetNDC();
-   if(Column == 1)
+   if(VisibleColumn == 1)
       Latex.DrawLatex(PadX0 + PadDX * 0.5, PadY0 * 0.5, ("Reco " + PrimaryLabel).c_str());
    else
    {
-      for(int i = 0; i < Column; i++)
+      for(int i = 0; i < VisibleColumn; i++)
       {
          string Label = "Reco " + PrimaryLabel;
          Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.5, Label.c_str());
          Label = "[";
-         if(MatchedBins2[i] > -999)
-            Label = Label + Form("%.1f", MatchedBins2[i]);
+         if(MatchedBins2[GroupX[i]] > -999)
+            Label = Label + Form("%.1f", MatchedBins2[GroupX[i]]);
          Label = Label + " < ";
-         if(MatchedBins2[i+1] < 999)
-            Label = Label + Form("%.1f", MatchedBins2[i+1]);
+         if(MatchedBins2[GroupX[i]+1] < 999)
+            Label = Label + Form("%.1f", MatchedBins2[GroupX[i]+1]);
          Label = Label + "]";
-         Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.25, Label.c_str());
+         Latex.DrawLatex(PadX0 + PadDX * (i + 0.5), PadY0 * 0.2, Label.c_str());
       }
    }
    Latex.SetTextAngle(90);
    Latex.SetTextAlign(22);
-   if(Row == 1)
+   if(VisibleRow == 1)
       Latex.DrawLatex(PadX0 * 0.5, PadY0 + PadDY * 0.5, ("Gen " + PrimaryLabel).c_str());
    else
    {
-      for(int i = 0; i < Row; i++)
+      for(int i = 0; i < VisibleRow; i++)
       {
          string Label = "Gen " + PrimaryLabel;
-         Latex.DrawLatex(PadX0 * 0.25, PadY0 + PadDY * (i + 0.5), Label.c_str());
+         Latex.DrawLatex(PadX0 * 0.2, PadY0 + PadDY * (i + 0.5), Label.c_str());
          Label = "[";
-         if(GenBins2[i] > -999)
-            Label = Label + Form("%.1f", GenBins2[i]);
+         if(GenBins2[GroupY[i]] > -999)
+            Label = Label + Form("%.1f", GenBins2[GroupY[i]]);
          Label = Label + " < ";
-         if(GenBins2[i+1] < 999)
-            Label = Label + Form("%.1f", GenBins2[i+1]);
+         if(GenBins2[GroupY[i]+1] < 999)
+            Label = Label + Form("%.1f", GenBins2[GroupY[i]+1]);
          Label = Label + "]";
          Latex.DrawLatex(PadX0 * 0.5, PadY0 + PadDY * (i + 0.5), Label.c_str());
       }
    }
 
-   if(Row > 1 || Column > 1)
+   if(VisibleRow > 1 || VisibleColumn > 1)
    {
       Latex.SetTextAngle(45);
-      Latex.DrawLatex(PadX0 * 0.43, PadY0 * 0.57, PrimaryLabel.c_str());
-      Latex.DrawLatex(PadX0 * 0.57, PadY0 * 0.43, ("[" + BinningLabel + "]").c_str());
+      Latex.DrawLatex(PadX0 * 0.41, PadY0 * 0.59, PrimaryLabel.c_str());
+      Latex.DrawLatex(PadX0 * 0.59, PadY0 * 0.41, ("[" + BinningLabel + "]").c_str());
    }
 
    // Setup general information
@@ -262,14 +289,14 @@ int main(int argc, char *argv[])
    Latex.DrawLatex(PadX0, PadY0 + PadDY * Row + 0.01, "ALEPH Archived MC 1994, e^{+}e^{-} #sqrt{s} = 91.2 GeV");
 
    // Setup worlds
-   vector<vector<TH2D *>> HWorld(Row - IgnoreGroupRow);
-   for(int R = IgnoreGroupRow; R < Row; R++)
+   vector<vector<TH2D *>> HWorld(VisibleRow);
+   for(int R = 0; R < VisibleRow; R++)
    {
-      int IndexR = R - IgnoreGroupRow;
-      HWorld[IndexR].resize(Column - IgnoreGroupColumn, nullptr);
-      for(int C = IgnoreGroupColumn; C < Column; C++)
+      int IndexR = R;
+      HWorld[IndexR].resize(VisibleColumn, nullptr);
+      for(int C = 0; C < VisibleColumn; C++)
       {
-         int IndexC = C - IgnoreGroupColumn;
+         int IndexC = C;
 
          HWorld[IndexR][IndexC]
             = new TH2D(Form("HWorld%d%d", R, C), ";;", 100, WorldXMin, WorldXMax, 100, WorldYMin, WorldYMax);
@@ -288,22 +315,22 @@ int main(int argc, char *argv[])
 
    // Plot the actual histograms
    TH2D *SomeH2 = nullptr;
-   for(int R = IgnoreGroupRow; R < Row; R++)
+   for(int R = 0; R < VisibleRow; R++)
    {
-      for(int C = IgnoreGroupColumn; C < Column; C++)
+      for(int C = 0; C < VisibleColumn; C++)
       {
-         int IndexR = R - IgnoreGroupRow;
-         int IndexC = C - IgnoreGroupColumn;
+         int IndexR = GroupY[R];
+         int IndexC = GroupX[C];
 
-         Pads[IndexR][IndexC]->cd();
+         Pads[R][C]->cd();
 
-         HWorld[IndexR][IndexC]->Draw("axis");
-         H2[R][C]->Draw("col same");
-         HWorld[IndexR][IndexC]->Draw("axis same");
+         HWorld[R][C]->Draw("axis");
+         H2[IndexR][IndexC]->Draw("col same");
+         HWorld[R][C]->Draw("axis same");
 
          if(SomeH2 == nullptr)
          {
-            SomeH2 = H2[R][C];
+            SomeH2 = H2[IndexR][IndexC];
 
             SomeH2->SetMinimum(WorldZMin);
             SomeH2->SetMaximum(WorldZMax);
@@ -316,9 +343,11 @@ int main(int argc, char *argv[])
 
    Canvas.cd();
 
-   TPaletteAxis ColorBar(PadX0 + PadDX * Column + PadCG, PadY0,
-      PadX0 + PadDX * Column + PadCG + PadDC, PadY0 + PadDY * Row,
+   SomeH2->GetZaxis()->SetLabelSize(TextSize);
+   TPaletteAxis ColorBar(PadX0 + PadDX * VisibleColumn + PadCG, PadY0,
+      PadX0 + PadDX * VisibleColumn + PadCG + PadDC, PadY0 + PadDY * VisibleRow,
       SomeH2);
+   ColorBar.SetLabelSize(TextSize);
    ColorBar.Draw();
 
    if(LogZ == true)
