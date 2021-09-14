@@ -540,6 +540,8 @@ int main(int argc, char *argv[])
    double JetAugmentationMax      = CL.GetDouble("JetAugmentationMax", -1);
    vector<double> JetAugmentationRanges = CL.GetDoubleVector("JetAugmentationRanges", vector<double>());
 
+   bool DoFlooring                = CL.GetBool("Flooring", false);
+
    sort(PrimaryGenBins.begin(), PrimaryGenBins.end());
    sort(PrimaryRecoBins.begin(), PrimaryRecoBins.end());
    sort(BinningGenBins.begin(), BinningGenBins.end());
@@ -745,6 +747,14 @@ int main(int argc, char *argv[])
             BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, 1, BinningGenMin, BinningGenMax);
          HMCRecoGenBin.Fill(RecoGenBin);
       }
+   }
+
+   if(DoFlooring == true)
+   {
+      for(int i = 1; i <= HResponse.GetNbinsX(); i++)
+         for(int j = 1; j <= HResponse.GetNbinsY(); j++)
+            if(HResponse.GetBinContent(i, j) == 0)
+               HResponse.SetBinContent(i, j, 1);
    }
 
    Messenger MData(FData);
