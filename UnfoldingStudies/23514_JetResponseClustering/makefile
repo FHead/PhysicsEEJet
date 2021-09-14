@@ -1,4 +1,4 @@
-Fraction           = 1
+Fraction           = 1.00
 
 DataSample         = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
 MCSample           = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
@@ -8,6 +8,8 @@ Herwig715Sample    = Herwig715Samples/run_00/Belle_0_0.root
 SherpaSample       = SherpaSamples/run_00/Belle_0_0.root
 PyquenSample       = PyquenSamples/OutputEE.root
 PyquenStrongSample = PyquenSamples/OutputEE_PbPbWide_0_10.root
+Vincia1Sample      = VinciaSamples/Pythia91Shower1.root
+Vincia2Sample      = VinciaSamples/Pythia91Shower2.root
 
 MCJEC       = ../../JetCorrection/23474_MC/JECR4.txt
 ResidualJEC = ../../JetCorrection/23475_DataRel/JECRelativeResidualR4.txt,../../JetCorrection/23475_DataAbs/JECResidualR4.txt
@@ -16,9 +18,9 @@ DataJEC     = $(MCJEC),$(ResidualJEC)
 default: DebugRun
 # RunGenVsGenBefore RunGenBeforeOnly
 
-RunGroup1: RunCut RunNominal RunNoResidual RunNoJEC RunLargeThetaGap RunStock RunThetaSides RunPythia8 RunHerwig RunSherpa RunHerwig715 RunPyquen
+RunGroup1: RunCut RunNominal RunNoResidual RunNoJEC RunLargeThetaGap RunStock RunThetaSides RunPythia8 RunHerwig RunSherpa RunHerwig715 RunPyquen RunVincia
 
-RunGroup2: RunCutSumE RunCutSmearedSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE RunPyquenSumE
+RunGroup2: RunCutSumE RunCutSmearedSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE RunPyquenSumE RunVinciaSumE
 
 RunGroup3: RunMultiplicity
 
@@ -31,6 +33,7 @@ Prepare:
 	ln -sf ../../Samples/HERWIG715 Herwig715Samples
 	ln -sf ../../Samples/SHERPA/ SherpaSamples
 	ln -sf ../../MCStudies/23451_PU14ToALEPHTree/ PyquenSamples
+	ln -sf ../../MCStudies/23741_VinciaPythiaFullEvent/ VinciaSamples
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \
@@ -202,6 +205,22 @@ RunPyquen: Execute
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
 	time ./Execute --Input $(PyquenSample) --Fraction $(Fraction) --Output MCPyquen.root \
 		--MC true --BaselineCut false --GenTreeName t --RecoTreeName treco
+
+RunVinciaSumE: Execute
+	time ./Execute --Input $(Vincia1Sample) --Fraction $(Fraction) --Output MCVincia1SumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --RecoTreeName treco --DoHybridSumE true
+	time ./Execute --Input $(Vincia1Sample) --Fraction $(Fraction) --Output MCVincia1Leading.root \
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+	time ./Execute --Input $(Vincia2Sample) --Fraction $(Fraction) --Output MCVincia2SumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --RecoTreeName treco --DoHybridSumE true
+	time ./Execute --Input $(Vincia2Sample) --Fraction $(Fraction) --Output MCVincia2Leading.root \
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+
+RunVincia: Execute
+	time ./Execute --Input $(Vincia1Sample) --Fraction $(Fraction) --Output MCVincia1.root \
+		--MC true --BaselineCut false --GenTreeName tgen --RecoTreeName treco
+	time ./Execute --Input $(Vincia2Sample) --Fraction $(Fraction) --Output MCVincia2.root \
+		--MC true --BaselineCut false --GenTreeName tgen --RecoTreeName treco
 
 RunMultiplicity: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataLowN.root \
