@@ -599,7 +599,8 @@ int main(int argc, char *argv[])
                   {
                      FourVector &P1 = SDNode->Child1->P;
                      FourVector &P2 = SDNode->Child2->P;
-                     GenJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
+                     // GenJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
+                     GenJetZG[i][iSD] = min(P1[0], P2[0]) / (P1[0] + P2[0]);
                      GenJetRG[i][iSD] = GetAngle(P1, P2);
                      GenJetPG[i][iSD] = SDNode->P.GetP();
                      GenJetMG[i][iSD] = SDNode->P.GetMass();
@@ -658,7 +659,8 @@ int main(int argc, char *argv[])
                   {
                      FourVector &P1 = SDNode->Child1->P;
                      FourVector &P2 = SDNode->Child2->P;
-                     RecoJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
+                     // RecoJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
+                     RecoJetZG[i][iSD] = min(P1[0], P2[0]) / (P1[0] + P2[0]);
                      RecoJetRG[i][iSD] = GetAngle(P1, P2);
                      RecoJetPG[i][iSD] = SDNode->P.GetP();
                      RecoJetMG[i][iSD] = SDNode->P.GetMass();
