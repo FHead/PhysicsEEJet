@@ -1,5 +1,5 @@
 Format = eps
-DoMOD  = false
+DoMOD  = true
 GroupX = 7,8,9
 GroupY = 7,8
 
@@ -22,7 +22,7 @@ RunJetZG: Execute
 		--Primary "z_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--GroupX $(GroupX) --GroupY $(GroupY) --Row 1 --Column 1 \
-		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.88 --LogoY 0.963 --LogoW 0.1
 
 RunJetRG: Execute
 	./Execute --Input Input/DataJetRGNominal.root \
@@ -33,7 +33,7 @@ RunJetRG: Execute
 		--Primary "R_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--GroupX $(GroupX) --GroupY $(GroupY) --Row 1 --Column 1 \
-		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.88 --LogoY 0.963 --LogoW 0.1
 
 RunJetMG: Execute
 	./Execute --Input Input/DataJetMGNominal.root \
@@ -43,7 +43,7 @@ RunJetMG: Execute
 		--Primary "M_{G}" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--GroupX $(GroupX) --GroupY $(GroupY) --Row 1 --Column 1 \
-		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.88 --LogoY 0.963 --LogoW 0.1
 
 RunJetMGE: Execute
 	./Execute --Input Input/DataJetMGENominal.root \
@@ -54,7 +54,7 @@ RunJetMGE: Execute
 		--Primary "M_{G}/E" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--GroupX $(GroupX) --GroupY $(GroupY) --Row 1 --Column 1 \
-		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.88 --LogoY 0.963 --LogoW 0.1
 
 RunJetM: Execute
 	./Execute --Input Input/DataJetMNominal.root \
@@ -64,7 +64,7 @@ RunJetM: Execute
 		--Primary "M" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--GroupX $(GroupX) --GroupY $(GroupY) --Row 1 --Column 1 \
-		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.88 --LogoY 0.963 --LogoW 0.1
 
 RunJetME: Execute
 	./Execute --Input Input/DataJetMENominal.root \
@@ -75,7 +75,7 @@ RunJetME: Execute
 		--Primary "M/E" --Binning "Jet E" --RowNormalize true \
 		--XAxis 303 --YAxis 303 \
 		--GroupX $(GroupX) --GroupY $(GroupY) --Row 1 --Column 1 \
-		--DoMOD $(DoMOD) --CanvasScale 1 --LogoX 0.88 --LogoY 0.125 --LogoW 0.12
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.88 --LogoY 0.963 --LogoW 0.1
 
 RunConversion:
 	bash ConvertEPS.sh

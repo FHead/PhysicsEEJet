@@ -1,4 +1,4 @@
-DoMOD = false
+DoMOD = true
 Group = --Group 2,7 --Row 1 --Column 2
 
 default: RunTest
@@ -58,7 +58,7 @@ RunDiJetSumE: Execute
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
 
 RunJetZG: Execute
-	./Execute --Input Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/SystematicsZG.eps \
+	./Execute --Input Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/PartialSystematicsZG.eps \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
 		--WorldXMin -0.01 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 0.19 --LogY false \
 		--XLabel "Jet z_{G}" --YLabel "Uncertainty" --Binning "Jet E" \
@@ -69,10 +69,10 @@ RunJetZG: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetRG: Execute
-	./Execute --Input Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/SystematicsRG.eps \
+	./Execute --Input Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/PartialSystematicsRG.eps \
 		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
 		--WorldXMin -0.01 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 0.5 --LogY false \
 		--XLabel "Jet R_{G}" --YLabel "Uncertainty" --Binning "Jet E" \
@@ -83,10 +83,10 @@ RunJetRG: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetMG: Execute
-	./Execute --Input Systematics/DataJetMGNormalized.root --Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/SystematicsMG.eps \
+	./Execute --Input Systematics/DataJetMGNormalized.root --Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/PartialSystematicsMG.eps \
 		--GenPrimaryMin -0.1 --GenPrimaryMax 15 \
 		--WorldXMin -0.1 --WorldXMax 15 --WorldYMin 0 --WorldYMax 0.5 --LogY false \
 		--XLabel "Jet M_{G}" --YLabel "Uncertainty" --Binning "Jet E" \
@@ -97,10 +97,10 @@ RunJetMG: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetMGE: Execute
-	./Execute --Input Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/SystematicsMGE.eps \
+	./Execute --Input Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/PartialSystematicsMGE.eps \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
 		--WorldXMin -0.01 --WorldXMax 0.5 --WorldYMin 0 --WorldYMax 0.5 --LogY false \
 		--XLabel "Jet M_{G} / E" --YLabel "Uncertainty" --Binning "Jet E" \
@@ -111,10 +111,10 @@ RunJetMGE: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetM: Execute
-	./Execute --Input Systematics/DataJetMNormalized.root --Output Plots/DataJetMNominal.pdf --FinalOutput Plots/SystematicsM.eps \
+	./Execute --Input Systematics/DataJetMNormalized.root --Output Plots/DataJetMNominal.pdf --FinalOutput Plots/PartialSystematicsM.eps \
 		--GenPrimaryMin 0 --GenPrimaryMax 15 \
 		--WorldXMin 0 --WorldXMax 15 --WorldYMin 0 --WorldYMax 0.749 --LogY false \
 		--XLabel "Jet M" --YLabel "Uncertainty" --Binning "Jet E" \
@@ -125,10 +125,10 @@ RunJetM: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetME: Execute
-	./Execute --Input Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/SystematicsME.eps \
+	./Execute --Input Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/PartialSystematicsME.eps \
 		--GenPrimaryMin 0 --GenPrimaryMax 0.5 \
 		--WorldXMin 0 --WorldXMax 0.5 --WorldYMin 0 --WorldYMax 0.749 --LogY false \
 		--XLabel "Jet M/E" --YLabel "Uncertainty" --Binning "Jet E" \
@@ -139,7 +139,7 @@ RunJetME: Execute
 		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake \
 		--SystematicGroups 1,1,2,2,3,3,3,4,5,6 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake" \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.60 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunConversion:
 	bash ConvertEPS.sh

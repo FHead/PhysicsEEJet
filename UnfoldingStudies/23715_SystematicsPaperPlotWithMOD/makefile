@@ -1,4 +1,4 @@
-DoMOD = false
+DoMOD = true
 
 default: RunTest
 

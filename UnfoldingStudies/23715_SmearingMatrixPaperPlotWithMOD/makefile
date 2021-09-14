@@ -1,5 +1,5 @@
 Format = eps
-DoMOD  = false
+DoMOD  = true
 
 default: RunTest
 

@@ -1,4 +1,4 @@
-DoMOD = false
+DoMOD = true
 Group = --Group 2,8 --Row 1 --Column 2
 
 default: RunTest
@@ -203,7 +203,7 @@ RunJetZG: Execute
 		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.25 \
 		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetRG: Execute
 	./Execute --Input Input/DataJetRGNominal.root \
@@ -220,7 +220,7 @@ RunJetRG: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.08,0.80,"Preliminary",0,0.08,0.73,"Anti-k_{T} jet R = 0.4",0,0.08,0.66,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.08,0.59,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetMG: Execute
 	./Execute --Input Input/DataJetMGNominal.root \
@@ -237,7 +237,7 @@ RunJetMG: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetMGE: Execute
 	./Execute --Input Input/DataJetMGENominal.root \
@@ -254,7 +254,7 @@ RunJetMGE: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetZG2: Execute
 	./Execute --Input Input/DataJetZG2Nominal.root \
@@ -271,7 +271,7 @@ RunJetZG2: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetRG2: Execute
 	./Execute --Input Input/DataJetRG2Nominal.root \
@@ -288,7 +288,7 @@ RunJetRG2: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetM: Execute
 	./Execute --Input Input/DataJetMNominal.root \
@@ -305,7 +305,7 @@ RunJetM: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunJetME: Execute
 	./Execute --Input Input/DataJetMENominal.root \
@@ -322,7 +322,7 @@ RunJetME: Execute
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
 		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
 RunConversion:
 	bash ConvertEPS.sh
