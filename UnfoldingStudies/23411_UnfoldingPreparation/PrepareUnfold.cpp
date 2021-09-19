@@ -754,7 +754,7 @@ int main(int argc, char *argv[])
       for(int i = 1; i <= HResponse.GetNbinsX(); i++)
          for(int j = 1; j <= HResponse.GetNbinsY(); j++)
             if(HResponse.GetBinContent(i, j) == 0)
-               HResponse.SetBinContent(i, j, 1);
+               HResponse.SetBinContent(i, j, 0.5);
    }
 
    Messenger MData(FData);
