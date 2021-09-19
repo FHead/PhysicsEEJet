@@ -83,7 +83,7 @@ MCThetaSideRun: Execute ExecutePreset
 MCLargeThetaGapRun: Execute ExecutePreset
 	eval `./ExecutePreset --MC MCLargeThetaGap.root --Data MCLargeThetaGap.root \
 		--MCSumE MCLargeThetaGapSumE.root --DataSumE DataLargeThetaGapSumE.root \
-		--Prefix MC --Suffix LargeThetaGap --Shift 0.0 --Smear 1.025 \
+		--Prefix MC --Suffix LargeThetaGap --Shift 0.0 --Smear 1.00 \
 		--Observables $(Observables) | grep ^time`
 
 DataNominalRun: Execute ExecutePreset
@@ -135,7 +135,7 @@ DataJECRunHalf: Execute ExecutePreset
 	eval `./ExecutePreset --MC MC.root --Data Data.root \
 		--MCSumE MCSumE.root --DataSumE DataSumE.root \
 		--Prefix Data --Suffix JECHalfUp --Shift 0.5 --Smear 1.025 \
-		--Observables $(Observables)
+		--Observables $(Observables) | grep ^time`
 	eval `./ExecutePreset --MC MC.root --Data Data.root \
 		--MCSumE MCSumE.root --DataSumE DataSumE.root \
 		--Prefix Data --Suffix JECHalfDown --Shift -0.5 --Smear 1.025 \
