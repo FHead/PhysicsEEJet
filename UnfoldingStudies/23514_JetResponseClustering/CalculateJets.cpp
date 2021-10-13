@@ -15,6 +15,7 @@ using namespace fastjet;
 #include "Code/DrawRandom.h"
 #include "Code/TauHelperFunctions3.h"
 #include "CommandLine.h"
+#include "ProgressBar.h"
 
 #include "JetCorrector.h"
 #include "CATree.h"
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
    string OutputFileName         = CL.Get("Output");
    bool IsMC                     = CL.GetBool("MC", false);
    bool BaselineCut              = CL.GetBool("BaselineCut", false);
+   bool TighterChargedHadronCut  = CL.GetBool("TighterChargedHadronCut", false);
    bool UseStored                = CL.GetBool("UseStored", false);
    double ThetaMin               = CL.GetDouble("ThetaMin", 0.2 * M_PI);
    double ThetaMax               = CL.GetDouble("ThetaMax", 0.8 * M_PI);
@@ -208,6 +210,7 @@ int main(int argc, char *argv[])
       bool RecoHighPurity[MAX];
       bool RecoPassSTheta = true;
       bool RecoPassAll = true;
+      int RecoChargedHadronsHP = 1000;
       int GenEventNumber;
       int NGen;
       float GenPX[MAX];
@@ -235,17 +238,18 @@ int main(int argc, char *argv[])
       }
       if(RecoTree != nullptr)
       {
-         RecoTree->SetBranchAddress("EventNo",      &RecoEventNumber);
-         RecoTree->SetBranchAddress("nParticle",    &NReco);
-         RecoTree->SetBranchAddress("px",           &RecoPX);
-         RecoTree->SetBranchAddress("py",           &RecoPY);
-         RecoTree->SetBranchAddress("pz",           &RecoPZ);
-         RecoTree->SetBranchAddress("pmag",         &RecoP);
-         RecoTree->SetBranchAddress("mass",         &RecoMass);
-         RecoTree->SetBranchAddress("highPurity",   &RecoHighPurity);
-         RecoTree->SetBranchAddress("Thrust",       &RecoThrust);
-         RecoTree->SetBranchAddress("passesAll",    &RecoPassAll);
-         RecoTree->SetBranchAddress("passesSTheta", &RecoPassSTheta);
+         RecoTree->SetBranchAddress("EventNo",           &RecoEventNumber);
+         RecoTree->SetBranchAddress("nParticle",         &NReco);
+         RecoTree->SetBranchAddress("px",                &RecoPX);
+         RecoTree->SetBranchAddress("py",                &RecoPY);
+         RecoTree->SetBranchAddress("pz",                &RecoPZ);
+         RecoTree->SetBranchAddress("pmag",              &RecoP);
+         RecoTree->SetBranchAddress("mass",              &RecoMass);
+         RecoTree->SetBranchAddress("highPurity",        &RecoHighPurity);
+         RecoTree->SetBranchAddress("Thrust",            &RecoThrust);
+         RecoTree->SetBranchAddress("passesAll",         &RecoPassAll);
+         RecoTree->SetBranchAddress("passesSTheta",      &RecoPassSTheta);
+         RecoTree->SetBranchAddress("nChargedHadronsHP", &RecoChargedHadronsHP);
       }
       
       int NStoredRecoJet;
@@ -283,8 +287,16 @@ int main(int argc, char *argv[])
          EntryCount = RecoTree->GetEntries() * Fraction;
       else if(GenTree != nullptr)
          EntryCount = GenTree->GetEntries() * Fraction;
+
+      ProgressBar Bar(cout, EntryCount);
+      Bar.SetStyle(2);
+
       for(int iE = 0; iE < EntryCount; iE++)
       {
+         Bar.Update(iE);
+         if(EntryCount < 1000 || iE % (EntryCount / 300) == 0)
+            Bar.Print();
+
          // This is the number of events before doing anything!
          AllEventCount = AllEventCount + 1;
 
@@ -314,6 +326,8 @@ int main(int argc, char *argv[])
          {
             if(RecoPassAll == false)
                continue;
+            if(TighterChargedHadronCut == true && RecoChargedHadronsHP <= 5)
+               continue;
             // if(IsMC == true && GenPassSTheta == false)
             //    continue;
          }
@@ -342,7 +356,7 @@ int main(int argc, char *argv[])
                GenMultiplicity = GenMultiplicity + 1;
             GenSumE = GenSumE + P[0];
          }
-         if(DoHybridSumE == false && GenSumE < GenSumECut)
+         if(DoHybridSumE == false && GenSumECut > 0 && GenSumE < GenSumECut)
             continue;
          if(GenMultiplicityMin >= 0 && GenMultiplicity < GenMultiplicityMin)
             continue;
@@ -363,12 +377,12 @@ int main(int argc, char *argv[])
          }
          if(DoSumESmear == false)
          {
-            if(DoHybridSumE == false && RecoSumE < RecoSumECut)
+            if(DoHybridSumE == false && RecoSumECut > 0 && RecoSumE < RecoSumECut)
                continue;
          }
          else
          {
-            if(DoHybridSumE == false && RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
+            if(DoHybridSumE == false && RecoSumECut > 0 && RecoSumE * DrawGaussian(1, SumESmear) < RecoSumECut)
                continue;
          }
          if(RecoMultiplicityMin >= 0 && RecoMultiplicity < RecoMultiplicityMin)
@@ -446,6 +460,7 @@ int main(int argc, char *argv[])
          for(int iR = 0; iR < (int)RecoJets.size(); iR++)
          {
             JEC.SetJetP(RecoJets[iR].first.GetP());
+            JEC.SetJetE(RecoJets[iR].first[0]);
             JEC.SetJetTheta(RecoJets[iR].first.GetTheta());
             JEC.SetJetPhi(RecoJets[iR].first.GetPhi());
             double Correction = JEC.GetCorrection();
@@ -519,7 +534,7 @@ int main(int argc, char *argv[])
             if(Include == true)
                GenHybridE = GenHybridE + P[0];
          }
-         if(DoHybridSumE == true && GenHybridE < GenSumECut)
+         if(DoHybridSumE == true && GenSumECut > 0 && GenHybridE < GenSumECut)
             continue;
 
          RecoHybridE = 0;
@@ -692,8 +707,8 @@ int main(int argc, char *argv[])
          RecoJetJEU.resize(NRecoJets);
          for(int iR = 0; iR < NRecoJets; iR++)
          {
-            // double Correction = RecoJets[iR].first[0] / RecoJets[iR].second.e();
-            double Correction = 1;
+            double Correction = RecoJets[iR].first[0] / RecoJets[iR].second.e();
+            // double Correction = 1;
             double Uncertainty = 0.005;
             
             RecoJetPX[iR]    = RecoJets[iR].first[1];
@@ -801,6 +816,10 @@ int main(int argc, char *argv[])
 
          OutputTree.Fill();
       }
+
+      Bar.Update(EntryCount);
+      Bar.Print();
+      Bar.PrintLine();
 
       InputFile.Close();
    }

@@ -44,6 +44,7 @@ vector<TGraphAsymmErrors> TranscribeMC(string FileName, string HistogramName,
    double MinOverwrite, double MaxOverwrite, double XMin, double XMax,
    bool DoSelfNormalize = false, double Scale = 1,
    bool ApplyCorrection = false, string CorrectionFileName = "NONE", string CorrectionState = "NONE");
+pair<double, double> GetGraphMinMax(string FileName, string HistogramName, vector<double> GenBins);
 
 int main(int argc, char *argv[])
 {
@@ -215,13 +216,20 @@ int main(int argc, char *argv[])
    vector<TGraphAsymmErrors> GResult = Transcribe(H1[PrimaryName], GenBins1, GenBins2, nullptr);
    vector<TGraphAsymmErrors> GSystematics = Transcribe(H1["HSystematicsPlus"], GenBins1, GenBins2, H1["HSystematicsMinus"]);
    
-   double PrimaryScale = AddUp(H1[PrimaryName], WorldXMin, WorldXMax, GenBins1);
    vector<vector<TGraphAsymmErrors>> GMC(MCCount);
    for(int i = 0; i < MCCount; i++)
+   {
+      pair<double, double> GraphMinMax = GetGraphMinMax(MCFileNames[i], MCHistNames[i], GenBins1);
+      cout << GraphMinMax.first << " " << GraphMinMax.second << endl;
+      double PrimaryScale = AddUp(H1[PrimaryName],
+         max(WorldXMin, GraphMinMax.first),
+         min(WorldXMax, GraphMinMax.second),
+         GenBins1);
       GMC[i] = TranscribeMC(MCFileNames[i], MCHistNames[i],
          GenPrimaryMinOverwrite, GenPrimaryMaxOverwrite,
          WorldXMin, WorldXMax, DoSelfNormalize, PrimaryScale,
          MCCorrection[i], CorrectionFileName, CorrectionState);
+   }
    
    for(TGraphAsymmErrors G : GResult)
       cout << "Total integral = " << CalculateIntegral(G, WorldXMin) << endl;
@@ -744,7 +752,15 @@ TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2)
       E1YL = G1.GetErrorYlow(i);
       E1XH = G1.GetErrorXhigh(i);
       E1XL = G1.GetErrorXlow(i);
-      G2.GetPoint(i, X2, Y2);
+      
+      for(int j = 0; j < N; j++)
+      {
+         G2.GetPoint(j, X2, Y2);
+         if(X2 >= X1 - E1XL && X2 <= X1 + E1XH)
+            break;
+         else
+            Y2 = 0;
+      }
 
       if(Y2 == 0)
       {
@@ -896,3 +912,44 @@ vector<TGraphAsymmErrors> TranscribeMC(string FileName, string HistogramName,
    return G;
 }
 
+pair<double, double> GetGraphMinMax(string FileName, string HistogramName, vector<double> GenBins)
+{
+   TFile File(FileName.c_str());
+
+   TObject *Object = File.Get(HistogramName.c_str());
+
+   if(Object == nullptr)
+      return pair<double, double>(-999, 999);
+
+   double Min = -999;
+   double Max = 999;
+
+   if(Object->ClassName() == TString("TGraphAsymmErrors"))
+   {
+      for(int i = 0; i < ((TGraphAsymmErrors *)Object)->GetN(); i++)
+      {
+         double X, Y;
+         double XErrLow, XErrHigh;
+         ((TGraphAsymmErrors *)Object)->GetPoint(i, X, Y);
+         XErrLow = ((TGraphAsymmErrors *)Object)->GetErrorXlow(i);
+         XErrHigh = ((TGraphAsymmErrors *)Object)->GetErrorXhigh(i);
+
+         if(X - XErrLow < Min || Min < -998)
+            Min = X - XErrLow;
+         if(X + XErrHigh > Max || Max > 998)
+            Max = X + XErrHigh;
+      }
+   }
+   else if(Object->ClassName() == TString("TH1D"))
+   {
+      Min = ((TH1D *)Object)->GetXaxis()->GetBinLowEdge(1);
+      Max = ((TH1D *)Object)->GetXaxis()->GetBinUpEdge(((TH1D *)Object)->GetNbinsX());
+
+      Min = GenBins[Min+1];
+      Max = GenBins[Max];
+   }
+
+   File.Close();
+
+   return pair<double, double>(Min, Max);
+}

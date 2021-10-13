@@ -1,22 +1,22 @@
 
-Observables           = JetE,LeadingDiJetE,LeadingDiJetSumE,JetZG,JetRG,JetMG,JetMGE,JetM,JetME,JetZG2,JetRG2,JetMG2,JetMGE2,JetM2,JetME2
+Observables           = JetE,LeadingDiJetE,LeadingDiJetSumE,JetZG,JetRG,JetMG,JetMGE,JetM,JetME,JetZG2,JetRG2,JetMG2,JetMGE2
 LeadingObservables    = LeadingDiJetE,LeadingDiJetSumE
-# Observables = JetE
+# Observables = LeadingJetE
 
 default: Preparation23514
 
 RunThrust: ThrustNominalRun ThrustNoCutRun
 
-RunNominal: Preparation23514 DataNominalRun DataSumERun MCNominalRun \
+RunNominal: Preparation23514 DataNominalRun FakeDataNominalRun DataSumERun MCNominalRun \
 	MCNoJECRun DataJECRunHalf DataNoResidualRun \
 	DataJECRun DataJERRun \
 	MCSumERun \
 	DataLargeThetaGapRun MCLargeThetaGapRun DataThetaSideRun MCThetaSideRun MCExtra \
-	DataFlooredRun DataTighterRun
+	DataFlooredRun DataTighterRun FakeFakeRun
 
-MCExtra: MCPythia8 MCHerwig MCSherpa MCHerwig715 MCPyquen MCPyquenStrong MCVincia1 MCVincia2 MCLeading
+MCExtra: MCPythia6 MCPythia8 MCHerwig MCSherpa MCHerwig715 MCPyquen MCPyquenStrong MCVincia1 MCVincia2 MCLeading
 
-RunAll: Preparation23514 RunThrust RunNominal
+RunAll: Preparation23514 RunThrust RunNominal LowEInvestigation
 
 Preparation:
 	ln -sf ../23411_JetResponseClustering/*root .
@@ -92,6 +92,18 @@ DataNominalRun: Execute ExecutePreset
 		--Prefix Data --Suffix Nominal --Shift 0.0 --Smear 1.025 \
 		--Observables $(Observables) | grep ^time`
 
+FakeDataNominalRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC MC.root --Data FakeData.root \
+		--MCSumE MCSumE.root --DataSumE FakeDataSumE.root \
+		--Prefix FakeData --Suffix Nominal --Shift 0.0 --Smear 1.00 \
+		--Observables $(Observables) | grep ^time`
+
+FakeFakeRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC FakeData.root --Data FakeData.root \
+		--MCSumE FakeDataSumE.root --DataSumE FakeDataSumE.root \
+		--Prefix FakeFake --Suffix "" --Shift 0.0 --Smear 1.00 \
+		--Observables $(Observables) | grep ^time`
+
 DataTighterRun: Execute ExecutePreset
 	# Check SumE
 	eval `./ExecutePreset --MC MCTighterCut.root --Data DataTighterCut.root \
@@ -102,7 +114,7 @@ DataTighterRun: Execute ExecutePreset
 DataFlooredRun: Execute ExecutePreset
 	eval `./ExecutePreset --MC MC.root --Data Data.root \
 		--MCSumE MCSumE.root --DataSumE DataSumE.root \
-		--Prefix Data --Suffix Nominal --Shift 0.0 --Smear 1.025 \
+		--Prefix Data --Suffix Floored --Shift 0.0 --Smear 1.025 \
 		--Observables $(Observables) --Flooring true | grep ^time`
 
 DataSumERun: Execute ExecutePreset
@@ -149,12 +161,12 @@ DataJERRun: Execute ExecutePreset
 	eval `./ExecutePreset --MC MC.root --Data Data.root \
 		--MCSumE MCSumE.root --DataSumE DataSumE.root \
 		--Prefix Data --Suffix JERDown --Shift 0.0 --Smear 1.00 \
-		--Observables $(Observables)
+		--Observables $(Observables) | grep ^time`
 
 DataNoResidualRun: Execute ExecutePreset
 	# Check SumE
 	eval `./ExecutePreset --MC MC.root --Data DataNoResidual.root \
-		--MCSumE MCSumE.root --DataSumE DataNoResidual.root \
+		--MCSumE MCSumE.root --DataSumE DataNoResidualSumE.root \
 		--Prefix Data --Suffix NoResidual --Shift 0.0 --Smear 1.025 \
 		--Observables $(Observables) | grep ^time`
 
@@ -176,6 +188,12 @@ MCLeading: Execute ExecutePreset
 		--MCSumE MCLeading.root --DataSumE MCLeading.root \
 		--Prefix MCTrue --Suffix "" --Shift 0.0 --Smear 1.00 \
 		--Observables $(LeadingObservables) | grep ^time`
+
+MCPythia6: Execute ExecutePreset
+	eval `./ExecutePreset --MC MC.root --Data MC.root \
+		--MCSumE MCPythia6SumE.root --DataSumE MCPythia6SumE.root \
+		--Prefix MCPythia6 --Suffix "" --Shift 0.0 --Smear 1.00 \
+		--Observables $(Observables) | grep ^time`
 
 MCPythia8: Execute ExecutePreset
 	eval `./ExecutePreset --MC MCPythia8.root --Data MCPythia8.root \
@@ -210,11 +228,11 @@ MCSherpa: Execute ExecutePreset
 MCHerwig715: Execute ExecutePreset
 	eval `./ExecutePreset --MC MCHerwig715.root --Data MCHerwig715.root \
 		--MCSumE MCHerwig715SumE.root --DataSumE MCHerwig715SumE.root \
-		--Prefix MCHerwig --Suffix "" --Shift 0.0 --Smear 1.00 \
+		--Prefix MCHerwig715 --Suffix "" --Shift 0.0 --Smear 1.00 \
 		--Observables $(Observables) | grep ^time`
 	eval `./ExecutePreset --MC MCHerwig715.root --Data MCHerwig715.root \
 		--MCSumE MCHerwig715Leading.root --DataSumE MCHerwig715Leading.root \
-		--Prefix MCHerwigTrue --Suffix "" --Shift 0.0 --Smear 1.00 \
+		--Prefix MCHerwig715True --Suffix "" --Shift 0.0 --Smear 1.00 \
 		--Observables $(LeadingObservables) | grep ^time`
 
 MCPyquen: Execute ExecutePreset
@@ -256,6 +274,23 @@ MCVincia2: Execute ExecutePreset
 		--MCSumE MCVincia2Leading.root --DataSumE MCVincia2Leading.root \
 		--Prefix MCVincia2True --Suffix "" --Shift 0.0 --Smear 1.00 \
 		--Observables $(LeadingObservables) | grep ^time`
+
+LowEInvestigation: Execute
+	echo "Uncomment to resurrect this check"
+	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetMGELowECut.root \
+	# 	--Observable JetMGE --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+	# 	--BinningGenMin 2 --BinningRecoMin 2 \
+	# 	--ObservableGenBins $(GenJetMGEBins) \
+	# 	--ObservableRecoBins $(RecoJetMGEBins) \
+	# 	--BinningGenBins $(GenJetECoarseBins) \
+	# 	--BinningRecoBins $(RecoJetECoarseBins)
+	# time ./Execute --MC MC.root --Data MC.root --Output Output/MCJetMELowECut.root \
+	# 	--Observable JetME --ObservableIndex 0 --Binning JetE --BinningIndex -1 \
+	# 	--BinningGenMin 2 --BinningRecoMin 2 \
+	# 	--ObservableGenBins $(GenJetMEBins) \
+	# 	--ObservableRecoBins $(RecoJetMEBins) \
+	# 	--BinningGenBins $(GenJetECoarseBins) \
+	# 	--BinningRecoBins $(RecoJetECoarseBins)
 
 DebugRun: Execute ExecutePreset
 	eval `./ExecutePreset --MC MC.root --Data MC.root \

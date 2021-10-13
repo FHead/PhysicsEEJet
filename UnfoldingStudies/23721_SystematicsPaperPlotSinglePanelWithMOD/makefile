@@ -9,7 +9,11 @@ Prepare:
 	ln -sf ../23412_Systematics/ Systematics
 	mkdir -p Plots
 
-RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunConversion
+Deploy:
+	mkdir -p ../FinalResult/SystematicsPartial
+	cp Plots/*png ../FinalResult/SystematicsPartial
+
+RunTest: RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunConversion
 # RunTest: RunJetE RunJetZG RunConversion
 
 RunJetE: Execute
@@ -37,8 +41,8 @@ RunDiJetE: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
-		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
-		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC,HRecoGenCut \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection" \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
 
@@ -52,8 +56,8 @@ RunDiJetSumE: Execute
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.65,0.9,"Preliminary",0,0.65,0.85,"Anti-k_{T} jet R = 0.4",0,0.65,0.8,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
-		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC \
-		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7 \
+		--Variations HJECUp,HJECDown,HJERUp,HJERDown,HMCPrior,HIterationDown,HIterationUp,HSVD,HMCClosure,HFake,HLowSumE,HHighSumE,HSmearSumE,HCorrectionFit,HCorrectionMC,HRecoGenCut \
+		--SystematicGroups 1,1,2,2,0,3,3,4,5,6,7,7,7,7,7,7 \
 		--Labels "JEC","JER","Unfold","SVD","Closure","Fake","Selection" \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.75 --LogoY 0.65 --LogoW 0.12
 

@@ -9,6 +9,10 @@ Prepare:
 	ln -sf ../23412_Systematics/ Systematics
 	mkdir -p Plots
 
+Deploy:
+	mkdir -p ../FinalResult/SmearingMatrixFull/
+	cp Plots/*png ../FinalResult/SmearingMatrixFull/
+
 RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunConversion
 
 RunJetE: Execute

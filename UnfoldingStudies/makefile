@@ -1,10 +1,12 @@
 
 
-default: Systematics FinalPlot
+default: Systematics FinalPlot FinalPlotSmall
 
 RunAll: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan LeadingJetCorrection Systematics FinalPlot FinalPlotSmall
 
 RunAllQuick: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataIterationScan Systematics FinalPlot FinalPlotSmall
+
+RunAllMinimal: JetClustering UnfoldPreparation NominalUnfold Systematics FinalPlot FinalPlotSmall
 
 JetClustering:
 	(cd 23514_JetResponseClustering/ && make Prepare RunGroup1 RunGroup2)
@@ -13,7 +15,7 @@ UnfoldPreparation:
 	(cd 23411_UnfoldingPreparation/ && make Preparation23514 RunNominal)
 
 NominalUnfold:
-	(cd 23412_ActualUnfold && make Prepare RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunMCFakeUnfold)
+	(cd 23412_ActualUnfold && make Prepare RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunMCFakeUnfold RunDataUnfoldFloored RunDataUnfoldTighter RunFakeDataUnfoldNominal)
 
 MCIterationScan:
 	(cd 23412_PerfectRecoGeneration/ && make Prepare TestRun)
@@ -46,19 +48,20 @@ LeadingJetCorrection:
 	(cd 23545_LeadingDiJetUncertainty/ && make Prepare TestRun)
 	(cd 23551_JetReweighting/ && make Prepare TestRun)
 	(cd 23551_JetReweightingUncertainty && make Prepare TestRun)
+	(cd 23755_LeadingJetRecoCorrection/ && make Prepare TestRun)
 
 Systematics:
 	(cd 23412_Systematics && make Prepare RunData RunDataPlot)
 
 FinalPlot:
-	(cd 23715_UnfoldedPaperPlotWithMOD && make Prepare RunTest)
-	(cd 23715_SystematicsPaperPlotWithMOD && make Prepare RunTest)
-	(cd 23715_SmearingMatrixPaperPlotWithMOD && make Prepare RunTest)
+	(cd 23755_UnfoldedPaperPlotWithMOD && make Prepare RunTest Deploy)
+	(cd 23715_SystematicsPaperPlotWithMOD && make Prepare RunTest Deploy)
+	(cd 23715_SmearingMatrixPaperPlotWithMOD && make Prepare RunTest Deploy)
 
 FinalPlotSmall:
-	(cd 23721_SmearingMatrixPaperPlotSmallWithMOD && make Prepare RunTest)
-	(cd 23721_SystematicsPaperPlotSinglePanelWithMOD && make Prepare RunTest)
-	(cd 23721_UnfoldedPaperPlotSinglePanelWithMOD && make Prepare RunTest)
+	(cd 23721_SmearingMatrixPaperPlotSmallWithMOD && make Prepare RunTest Deploy)
+	(cd 23721_SystematicsPaperPlotSinglePanelWithMOD && make Prepare RunTest Deploy)
+	(cd 23721_UnfoldedPaperPlotSinglePanelWithMOD && make Prepare RunTest Deploy)
 
 
 

@@ -70,10 +70,12 @@ DebugRunPlot: ExecutePlot
 	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.10 --Tier Gen
 	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_008.pdf \
 	# 	--JetThetaGap 0.2 --RecalculateSumE true --ParticleThetaGap 0.08 --Tier Gen
-	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_Stored020.pdf \
-		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenSumE[4]' --Tier Gen
+	# time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_Stored020.pdf \
+	# 	--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenSumE[4]' --Tier Gen
 	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_Hybrid020.pdf \
 		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenHybridE[4]' --Tier Gen
+	time ./ExecutePlot --Input MCNoCutDebug.root --Output JetComparison_Reco_Hybrid020.pdf \
+		--JetThetaGap 0.2 --RecalculateSumE false --SumEString 'GenHybridE[4]' --Tier Reco
 
 RunCorrectionPlot: ExecuteCorrection
 	./ExecuteCorrection --Input MCNoCutDebug.root --DHFile Correction.dh --Suffix "" --HybridECut 83

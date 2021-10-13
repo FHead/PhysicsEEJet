@@ -1,15 +1,19 @@
 DoMOD = true
 Format = eps
+LeadingDiJetScale = 1
+# LeadingDiJetScale = 1.5262468673783047
+# 1 / 0.655202
 
 default: RunTest
 
 Prepare:
-	rm -f OriginalInput Input Systematics
+	rm -f OriginalInput Input Systematics JoaoInput FelixInput
 	ln -sf ../23411_UnfoldingPreparation/Output OriginalInput
 	ln -sf ../23412_ActualUnfold/Unfolded Input
 	ln -sf ../23412_Systematics/ Systematics
 	ln -sf ../23514_JoaoConversion/ JoaoInput
 	ln -sf ../23472_LeadingDiJetStudies/Correction.dh .
+	ln -fs ../24113_FelixResult/ FelixInput
 	mkdir -p Plots
 
 PYQUEN = MCPyquen
@@ -98,6 +102,22 @@ RunJetE: Execute
 		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
+	# Jet E: normalized, felix comparison
+	./Execute --Input Input/DataJetENominal.root \
+		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowELogFelix.$(Format) \
+		--MCFile "FelixInput/Graph_inclusive.root","Input/DataJetENominal.root" \
+		--MCHistogram GFelix,HMCTruth \
+		--MCLabel "Felix","PYTHIA 6" \
+		--PrimaryName HUnfoldedBayes17 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0.015 --WorldYMax 0.75 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
+		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
+		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+		--IgnoreGroup 0 --Row 1 --Column 1 \
+		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 
 RunDiJetE: Execute
 	# DiJet E
@@ -107,9 +127,9 @@ RunDiJetE: Execute
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
 		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
-		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.21 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
@@ -123,7 +143,7 @@ RunDiJetE: Execute
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
 		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
 		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0.000000004 --WorldYMax 6 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
@@ -139,9 +159,9 @@ RunDiJetE: Execute
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
 		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes7 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
-		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.21 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
@@ -152,20 +172,38 @@ RunDiJetE: Execute
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	./Execute --Input Input/DataLeadingDiJetENominal.root \
 		--Systematic Systematics/DataLeadingDiJetE.root --Output Plots/DataLeadingDiJetENominalCorrected.pdf --FinalOutput Plots/MeowLeadingDiJetECorrectedPythia.$(Format) \
-		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCVincia1LeadingDiJetE.root",OriginalInput/MCVincia2LeadingDiJetE.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2" \
+		--MCFile "Input/DataLeadingDiJetENominal.root","OriginalInput/MCPythia8LeadingDiJetE.root","OriginalInput/MCVincia1LeadingDiJetE.root",OriginalInput/MCVincia2LeadingDiJetE.root,"OriginalInput/MCPythia8TrueLeadingDiJetE.root","Input/FakeDataLeadingDiJetENominal.root" \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen,HUnfoldedBayes7 \
+		--MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2","P8 Leading","Fake data" \
 		--PrimaryName HUnfoldedBayes7 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
-		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.21 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
 		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
 		--CorrectionFile Correction.dh --CorrectionState DijetJetE \
-		--MCCorrection true,true,true,true,true \
+		--MCCorrection true,true,true,true,false,true \
+		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
+	# Felix comparison
+	./Execute --Input Input/DataLeadingDiJetENominal.root \
+		--Systematic Systematics/DataLeadingDiJetE.root --Output Plots/DataLeadingDiJetENominalCorrected.pdf --FinalOutput Plots/MeowLeadingDiJetECorrectedPythia.$(Format) \
+		--MCFile "Input/DataLeadingDiJetENominal.root","FelixInput/Graph_2jet.root" \
+		--MCHistogram HMCTruth,GFelix \
+		--MCLabel "PYTHIA 6","Felix" \
+		--PrimaryName HUnfoldedBayes7 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 \
+		--WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
+		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
+		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--IgnoreGroup 0 --Row 1 --Column 1 \
+		--CorrectionFile Correction.dh --CorrectionState DijetJetE \
+		--MCCorrection true,false \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 
 RunDiJetSumE: Execute
@@ -176,9 +214,9 @@ RunDiJetSumE: Execute
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
 		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes15 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
-		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.06 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.12 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
@@ -192,7 +230,7 @@ RunDiJetSumE: Execute
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
 		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes16 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
 		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0.000000004 --WorldYMax 0.6 --WorldRMin 0.51 --WorldRMax 1.49 --LogY true \
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
@@ -208,9 +246,9 @@ RunDiJetSumE: Execute
 		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
 		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
 		--PrimaryName HUnfoldedBayes15 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
-		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.06 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.12 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
@@ -219,13 +257,14 @@ RunDiJetSumE: Execute
 		--CorrectionFile Correction.dh --CorrectionState DijetSumE \
 		--MCCorrection true,true,true,true,true \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
+	# DiJet SumE, pythia different showers
 	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
 		--Systematic Systematics/DataLeadingDiJetSumE.root --Output Plots/DataLeadingDiJetSumENominalCorrected.pdf --FinalOutput Plots/MeowLeadingDiJetSumECorrectedPythia.$(Format) \
-		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCVincia1LeadingDiJetSumE.root",OriginalInput/MCVincia2LeadingDiJetSumE.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2" \
+		--MCFile "Input/DataLeadingDiJetSumENominal.root","OriginalInput/MCPythia8LeadingDiJetSumE.root","OriginalInput/MCVincia1LeadingDiJetSumE.root",OriginalInput/MCVincia2LeadingDiJetSumE.root,OriginalInput/MCPythia8TrueLeadingDiJetSumE.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2","P8 Leading" \
 		--PrimaryName HUnfoldedBayes15 \
-		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+		--DoSelfNormalize false --DoEventNormalize true --ExtraScale $(LeadingDiJetScale) \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
 		--WorldXMin 24 --WorldXMax 92 --WorldYMin 0 --WorldYMax 0.06 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
@@ -234,7 +273,7 @@ RunDiJetSumE: Execute
 		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--IgnoreGroup 0 --Row 1 --Column 1 \
 		--CorrectionFile Correction.dh --CorrectionState DijetSumE \
-		--MCCorrection true,true,true,true,true \
+		--MCCorrection true,true,true,true,false \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 
 RunJetZG: Execute

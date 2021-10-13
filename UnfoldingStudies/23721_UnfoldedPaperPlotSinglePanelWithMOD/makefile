@@ -12,11 +12,161 @@ Prepare:
 	ln -sf ../23472_LeadingDiJetStudies/Correction.dh .
 	mkdir -p Plots
 
+Deploy:
+	mkdir -p ../FinalResult/UnfoldedPartial
+	cp Plots/*png ../FinalResult/UnfoldedPartial
+
 PYQUEN = MCPyquen
 # PYQUEN = MCPyquenStrong
 
-RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetZG2 RunJetRG2 RunJetM RunJetME RunConversion
+RunTest: RunJetZG RunJetRG RunJetMG RunJetMGE RunJetZG2 RunJetRG2 RunJetM RunJetME RunConversion
 # RunTest: RunJetRG RunJetME RunJetMGE RunConversion
+
+
+RunJetZG: Execute
+	./Execute --Input Input/DataJetZGNominal.root \
+		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/PartialMeowZG.eps \
+		--MCFile "OriginalInput/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root,OriginalInput/$(PYQUEN)JetZG.root \
+		--MCHistogram HMCGen,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes17 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
+		--WorldXMin -0.01 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.8 --WorldRMax 1.18 --LogY false \
+		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.25 \
+		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetRG: Execute
+	./Execute --Input Input/DataJetRGNominal.root \
+		--Systematic Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/PartialMeowRG.eps \
+		--MCFile "Input/DataJetRGNominal.root","OriginalInput/MCPythia8JetRG.root","OriginalInput/MCHerwigJetRG.root",OriginalInput/MCSherpaJetRG.root,OriginalInput/$(PYQUEN)JetRG.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes8 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
+		--WorldXMin -0.015 --WorldXMax 0.7 --WorldYMin 0 --WorldYMax 11.5 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.08,0.80,"Preliminary",0,0.08,0.73,"Anti-k_{T} jet R = 0.4",0,0.08,0.66,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.08,0.59,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetMG: Execute
+	./Execute --Input Input/DataJetMGNominal.root \
+		--Systematic Systematics/DataJetMGNormalized.root --Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/PartialMeowMG.eps \
+		--MCFile "Input/DataJetMGNominal.root","OriginalInput/MCPythia8JetMG.root","OriginalInput/MCHerwigJetMG.root",OriginalInput/MCSherpaJetMG.root,OriginalInput/$(PYQUEN)JetMG.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes16 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.1 --GenPrimaryMax 14.999 \
+		--WorldXMin -0.1 --WorldXMax 14.999 --WorldYMin 0 --WorldYMax 0.5 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet M_{G}" --YLabel "1/N dN/d(Jet M_{G})" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetMGE: Execute
+	./Execute --Input Input/DataJetMGENominal.root \
+		--Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/PartialMeowMGE.eps \
+		--MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root","OriginalInput/MCHerwigJetMGE.root",OriginalInput/MCSherpaJetMGE.root,OriginalInput/$(PYQUEN)JetMGE.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes16 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
+		--WorldXMin -0.01 --WorldXMax 0.5 --WorldYMin 0 --WorldYMax 12 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet M_{G}/E" --YLabel "1/N dN/d(Jet M_{G}/E)" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetZG2: Execute
+	./Execute --Input Input/DataJetZG2Nominal.root \
+		--Systematic None --Output Plots/DataJetZG2Nominal.pdf --FinalOutput Plots/PartialMeowZG2.eps \
+		--MCFile "Input/DataJetZG2Nominal.root","OriginalInput/MCPythia8JetZG2.root","OriginalInput/MCHerwigJetZG2.root",OriginalInput/MCSherpaJetZG2.root,OriginalInput/$(PYQUEN)JetZG2.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes14 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
+		--WorldXMin -0.015 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetRG2: Execute
+	./Execute --Input Input/DataJetRG2Nominal.root \
+		--Systematic None --Output Plots/DataJetRG2Nominal.pdf --FinalOutput Plots/PartialMeowRG2.eps \
+		--MCFile "Input/DataJetRG2Nominal.root","OriginalInput/MCPythia8JetRG2.root","OriginalInput/MCHerwigJetRG2.root",OriginalInput/MCSherpaJetRG2.root,OriginalInput/$(PYQUEN)JetRG2.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes14 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
+		--WorldXMin -0.015 --WorldXMax 0.7 --WorldYMin 0 --WorldYMax 9 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetM: Execute
+	./Execute --Input Input/DataJetMNominal.root \
+		--Systematic Systematics/DataJetMNormalized.root --Output Plots/DataJetMNominal.pdf --FinalOutput Plots/PartialMeowM.eps \
+		--MCFile "Input/DataJetMNominal.root","OriginalInput/MCPythia8JetM.root","OriginalInput/MCHerwigJetM.root",OriginalInput/MCSherpaJetM.root,OriginalInput/$(PYQUEN)JetM.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes7 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin 0 --GenPrimaryMax 14.999 \
+		--WorldXMin 0 --WorldXMax 14.999 --WorldYMin 0 --WorldYMax 0.599 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet M" --YLabel "1/N dN/d(Jet M)" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunJetME: Execute
+	./Execute --Input Input/DataJetMENominal.root \
+		--Systematic Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/PartialMeowME.eps \
+		--MCFile "Input/DataJetMENominal.root","OriginalInput/MCPythia8JetME.root","OriginalInput/MCHerwigJetME.root",OriginalInput/MCSherpaJetME.root,OriginalInput/$(PYQUEN)JetME.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes7 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin 0 --GenPrimaryMax 0.5 \
+		--WorldXMin 0 --WorldXMax 0.499 --WorldYMin 0 --WorldYMax 14 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet M/E" --YLabel "1/N dN/d(Jet M/E)" --Binning "Jet E" \
+		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		$(Group) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+
+RunConversion:
+	bash ConvertEPS.sh
+
+Execute: MakePaperPlot.cpp
+	CompileRootMacro MakePaperPlot.cpp Execute
+
+
+
 
 RunJetE: Execute
 	# Jet E: Count
@@ -188,144 +338,3 @@ RunDiJetSumE: Execute
 		--MCCorrection true,true,true,true,true \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 
-RunJetZG: Execute
-	./Execute --Input Input/DataJetZGNominal.root \
-		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/PartialMeowZG.eps \
-		--MCFile "OriginalInput/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root,OriginalInput/$(PYQUEN)JetZG.root \
-		--MCHistogram HMCGen,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes17 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
-		--WorldXMin -0.01 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.8 --WorldRMax 1.18 --LogY false \
-		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetRG: Execute
-	./Execute --Input Input/DataJetRGNominal.root \
-		--Systematic Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/PartialMeowRG.eps \
-		--MCFile "Input/DataJetRGNominal.root","OriginalInput/MCPythia8JetRG.root","OriginalInput/MCHerwigJetRG.root",OriginalInput/MCSherpaJetRG.root,OriginalInput/$(PYQUEN)JetRG.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes8 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
-		--WorldXMin -0.015 --WorldXMax 0.7 --WorldYMin 0 --WorldYMax 11.5 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.08,0.80,"Preliminary",0,0.08,0.73,"Anti-k_{T} jet R = 0.4",0,0.08,0.66,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.08,0.59,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetMG: Execute
-	./Execute --Input Input/DataJetMGNominal.root \
-		--Systematic Systematics/DataJetMGNormalized.root --Output Plots/DataJetMGNominal.pdf --FinalOutput Plots/PartialMeowMG.eps \
-		--MCFile "Input/DataJetMGNominal.root","OriginalInput/MCPythia8JetMG.root","OriginalInput/MCHerwigJetMG.root",OriginalInput/MCSherpaJetMG.root,OriginalInput/$(PYQUEN)JetMG.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes16 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin -0.1 --GenPrimaryMax 14.999 \
-		--WorldXMin -0.1 --WorldXMax 14.999 --WorldYMin 0 --WorldYMax 0.5 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet M_{G}" --YLabel "1/N dN/d(Jet M_{G})" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetMGE: Execute
-	./Execute --Input Input/DataJetMGENominal.root \
-		--Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/PartialMeowMGE.eps \
-		--MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root","OriginalInput/MCHerwigJetMGE.root",OriginalInput/MCSherpaJetMGE.root,OriginalInput/$(PYQUEN)JetMGE.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes16 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
-		--WorldXMin -0.01 --WorldXMax 0.5 --WorldYMin 0 --WorldYMax 12 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet M_{G}/E" --YLabel "1/N dN/d(Jet M_{G}/E)" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetZG2: Execute
-	./Execute --Input Input/DataJetZG2Nominal.root \
-		--Systematic None --Output Plots/DataJetZG2Nominal.pdf --FinalOutput Plots/PartialMeowZG2.eps \
-		--MCFile "Input/DataJetZG2Nominal.root","OriginalInput/MCPythia8JetZG2.root","OriginalInput/MCHerwigJetZG2.root",OriginalInput/MCSherpaJetZG2.root,OriginalInput/$(PYQUEN)JetZG2.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes14 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
-		--WorldXMin -0.015 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetRG2: Execute
-	./Execute --Input Input/DataJetRG2Nominal.root \
-		--Systematic None --Output Plots/DataJetRG2Nominal.pdf --FinalOutput Plots/PartialMeowRG2.eps \
-		--MCFile "Input/DataJetRG2Nominal.root","OriginalInput/MCPythia8JetRG2.root","OriginalInput/MCHerwigJetRG2.root",OriginalInput/MCSherpaJetRG2.root,OriginalInput/$(PYQUEN)JetRG2.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes14 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
-		--WorldXMin -0.015 --WorldXMax 0.7 --WorldYMin 0 --WorldYMax 9 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetM: Execute
-	./Execute --Input Input/DataJetMNominal.root \
-		--Systematic Systematics/DataJetMNormalized.root --Output Plots/DataJetMNominal.pdf --FinalOutput Plots/PartialMeowM.eps \
-		--MCFile "Input/DataJetMNominal.root","OriginalInput/MCPythia8JetM.root","OriginalInput/MCHerwigJetM.root",OriginalInput/MCSherpaJetM.root,OriginalInput/$(PYQUEN)JetM.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes7 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin 0 --GenPrimaryMax 14.999 \
-		--WorldXMin 0 --WorldXMax 14.999 --WorldYMin 0 --WorldYMax 0.599 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet M" --YLabel "1/N dN/d(Jet M)" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunJetME: Execute
-	./Execute --Input Input/DataJetMENominal.root \
-		--Systematic Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/PartialMeowME.eps \
-		--MCFile "Input/DataJetMENominal.root","OriginalInput/MCPythia8JetME.root","OriginalInput/MCHerwigJetME.root",OriginalInput/MCSherpaJetME.root,OriginalInput/$(PYQUEN)JetME.root \
-		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
-		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
-		--PrimaryName HUnfoldedBayes7 \
-		--DoSelfNormalize true \
-		--GenPrimaryMin 0 --GenPrimaryMax 0.5 \
-		--WorldXMin 0 --WorldXMax 0.499 --WorldYMin 0 --WorldYMax 14 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
-		--XLabel "Jet M/E" --YLabel "1/N dN/d(Jet M/E)" --Binning "Jet E" \
-		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
-		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
-		$(Group) \
-		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
-
-RunConversion:
-	bash ConvertEPS.sh
-
-Execute: MakePaperPlot.cpp
-	CompileRootMacro MakePaperPlot.cpp Execute

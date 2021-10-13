@@ -462,6 +462,7 @@ int main(int argc, char *argv[])
          for(int iR = 0; iR < (int)RecoJets.size(); iR++)
          {
             JEC.SetJetP(RecoJets[iR].first.GetP());
+            JEC.SetJetE(RecoJets[iR].first[0]);
             JEC.SetJetTheta(RecoJets[iR].first.GetTheta());
             JEC.SetJetPhi(RecoJets[iR].first.GetPhi());
             double Correction = JEC.GetCorrection();

@@ -10,7 +10,7 @@ MEBin     = --GenPrimaryMin 0 --GenPrimaryMax 0.75 --RecoPrimaryMin 0 --RecoPrim
 
 default: RunThrustUnfold
 
-UnfoldAll: RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunMCFakeUnfold RunThrustUnfold UnfoldIterations
+UnfoldAll: RunDataUnfoldNominal RunDataUnfold RunMCUnfold RunMCFakeUnfold RunThrustUnfold UnfoldIterations RunDataUnfoldFloored RunDataUnfoldTighter RunFakeDataUnfoldNominal
 
 UnfoldIterations: RunIterationStudies RunDataIterationStudies
 
@@ -155,6 +155,90 @@ RunDataUnfoldNominal: Execute ExecutePlot
 		--Output Plots/DataJetMNominal.pdf $(MBin)
 	./ExecutePlot --Input Unfolded/DataJetMENominal.root --Original Input/DataJetMENominal.root \
 		--Output Plots/DataJetMENominal.pdf $(MEBin)
+
+RunFakeDataUnfoldNominal: Execute ExecutePlot
+	./Execute --Input Input/FakeDataJetENominal.root             --Output Unfolded/FakeDataJetENominal.root
+	./Execute --Input Input/FakeDataLeadingDiJetENominal.root    --Output Unfolded/FakeDataLeadingDiJetENominal.root
+	./Execute --Input Input/FakeDataLeadingDiJetSumENominal.root --Output Unfolded/FakeDataLeadingDiJetSumENominal.root
+	./Execute --Input Input/FakeDataJetZGNominal.root            --Output Unfolded/FakeDataJetZGNominal.root
+	./Execute --Input Input/FakeDataJetRGNominal.root            --Output Unfolded/FakeDataJetRGNominal.root
+	./Execute --Input Input/FakeDataJetMGNominal.root            --Output Unfolded/FakeDataJetMGNominal.root
+	./Execute --Input Input/FakeDataJetMGENominal.root           --Output Unfolded/FakeDataJetMGENominal.root
+	./Execute --Input Input/FakeDataJetZG2Nominal.root           --Output Unfolded/FakeDataJetZG2Nominal.root
+	./Execute --Input Input/FakeDataJetRG2Nominal.root           --Output Unfolded/FakeDataJetRG2Nominal.root
+	./Execute --Input Input/FakeDataJetMNominal.root             --Output Unfolded/FakeDataJetMNominal.root
+	./Execute --Input Input/FakeDataJetMENominal.root            --Output Unfolded/FakeDataJetMENominal.root
+
+
+RunDataUnfoldFloored: Execute ExecutePlot
+	./Execute --Input Input/DataJetEFloored.root --Output Unfolded/DataJetEFloored.root
+	./Execute --Input Input/DataLeadingDiJetEFloored.root --Output Unfolded/DataLeadingDiJetEFloored.root
+	./Execute --Input Input/DataLeadingDiJetSumEFloored.root --Output Unfolded/DataLeadingDiJetSumEFloored.root
+	./Execute --Input Input/DataJetZGFloored.root --Output Unfolded/DataJetZGFloored.root
+	./Execute --Input Input/DataJetRGFloored.root --Output Unfolded/DataJetRGFloored.root
+	./Execute --Input Input/DataJetMGFloored.root --Output Unfolded/DataJetMGFloored.root
+	./Execute --Input Input/DataJetMGEFloored.root --Output Unfolded/DataJetMGEFloored.root
+	./Execute --Input Input/DataJetZG2Floored.root --Output Unfolded/DataJetZG2Floored.root
+	./Execute --Input Input/DataJetRG2Floored.root --Output Unfolded/DataJetRG2Floored.root
+	./Execute --Input Input/DataJetMFloored.root --Output Unfolded/DataJetMFloored.root
+	./Execute --Input Input/DataJetMEFloored.root --Output Unfolded/DataJetMEFloored.root
+	./ExecutePlot --Input Unfolded/DataJetEFloored.root --Original Input/DataJetEFloored.root \
+		--Output Plots/DataJetEFloored.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetEFloored.root --Original Input/DataLeadingDiJetEFloored.root \
+		--Output Plots/DataLeadingDiJetEFloored.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumEFloored.root --Original Input/DataLeadingDiJetSumEFloored.root \
+		--Output Plots/DataLeadingDiJetSumEFloored.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataJetZGFloored.root --Original Input/DataJetZGFloored.root \
+		--Output Plots/DataJetZGFloored.pdf $(ZGBin)
+	./ExecutePlot --Input Unfolded/DataJetRGFloored.root --Original Input/DataJetRGFloored.root \
+		--Output Plots/DataJetRGFloored.pdf $(RGBin)
+	./ExecutePlot --Input Unfolded/DataJetMGFloored.root --Original Input/DataJetMGFloored.root \
+		--Output Plots/DataJetMGFloored.pdf $(MGBin)
+	./ExecutePlot --Input Unfolded/DataJetMGEFloored.root --Original Input/DataJetMGEFloored.root \
+		--Output Plots/DataJetMGEFloored.pdf $(MGEBin)
+	./ExecutePlot --Input Unfolded/DataJetZG2Floored.root --Original Input/DataJetZG2Floored.root \
+		--Output Plots/DataJetZG2Floored.pdf $(ZGBin)
+	./ExecutePlot --Input Unfolded/DataJetRG2Floored.root --Original Input/DataJetRG2Floored.root \
+		--Output Plots/DataJetRG2Floored.pdf $(RGBin)
+	./ExecutePlot --Input Unfolded/DataJetMFloored.root --Original Input/DataJetMFloored.root \
+		--Output Plots/DataJetMFloored.pdf $(MBin)
+	./ExecutePlot --Input Unfolded/DataJetMEFloored.root --Original Input/DataJetMEFloored.root \
+		--Output Plots/DataJetMEFloored.pdf $(MEBin)
+
+RunDataUnfoldTighter: Execute ExecutePlot
+	./Execute --Input Input/DataJetETighter.root --Output Unfolded/DataJetETighter.root
+	./Execute --Input Input/DataLeadingDiJetETighter.root --Output Unfolded/DataLeadingDiJetETighter.root
+	./Execute --Input Input/DataLeadingDiJetSumETighter.root --Output Unfolded/DataLeadingDiJetSumETighter.root
+	./Execute --Input Input/DataJetZGTighter.root --Output Unfolded/DataJetZGTighter.root
+	./Execute --Input Input/DataJetRGTighter.root --Output Unfolded/DataJetRGTighter.root
+	./Execute --Input Input/DataJetMGTighter.root --Output Unfolded/DataJetMGTighter.root
+	./Execute --Input Input/DataJetMGETighter.root --Output Unfolded/DataJetMGETighter.root
+	./Execute --Input Input/DataJetZG2Tighter.root --Output Unfolded/DataJetZG2Tighter.root
+	./Execute --Input Input/DataJetRG2Tighter.root --Output Unfolded/DataJetRG2Tighter.root
+	./Execute --Input Input/DataJetMTighter.root --Output Unfolded/DataJetMTighter.root
+	./Execute --Input Input/DataJetMETighter.root --Output Unfolded/DataJetMETighter.root
+	./ExecutePlot --Input Unfolded/DataJetETighter.root --Original Input/DataJetETighter.root \
+		--Output Plots/DataJetETighter.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetETighter.root --Original Input/DataLeadingDiJetETighter.root \
+		--Output Plots/DataLeadingDiJetETighter.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataLeadingDiJetSumETighter.root --Original Input/DataLeadingDiJetSumETighter.root \
+		--Output Plots/DataLeadingDiJetSumETighter.pdf --Iteration 14
+	./ExecutePlot --Input Unfolded/DataJetZGTighter.root --Original Input/DataJetZGTighter.root \
+		--Output Plots/DataJetZGTighter.pdf $(ZGBin)
+	./ExecutePlot --Input Unfolded/DataJetRGTighter.root --Original Input/DataJetRGTighter.root \
+		--Output Plots/DataJetRGTighter.pdf $(RGBin)
+	./ExecutePlot --Input Unfolded/DataJetMGTighter.root --Original Input/DataJetMGTighter.root \
+		--Output Plots/DataJetMGTighter.pdf $(MGBin)
+	./ExecutePlot --Input Unfolded/DataJetMGETighter.root --Original Input/DataJetMGETighter.root \
+		--Output Plots/DataJetMGETighter.pdf $(MGEBin)
+	./ExecutePlot --Input Unfolded/DataJetZG2Tighter.root --Original Input/DataJetZG2Tighter.root \
+		--Output Plots/DataJetZG2Tighter.pdf $(ZGBin)
+	./ExecutePlot --Input Unfolded/DataJetRG2Tighter.root --Original Input/DataJetRG2Tighter.root \
+		--Output Plots/DataJetRG2Tighter.pdf $(RGBin)
+	./ExecutePlot --Input Unfolded/DataJetMTighter.root --Original Input/DataJetMTighter.root \
+		--Output Plots/DataJetMTighter.pdf $(MBin)
+	./ExecutePlot --Input Unfolded/DataJetMETighter.root --Original Input/DataJetMETighter.root \
+		--Output Plots/DataJetMETighter.pdf $(MEBin)
 
 RunDataUnfold: Execute ExecutePlot
 	./Execute --Input Input/DataJetENominal.root --Output Unfolded/DataJetEMCPrior.root --MCPrior true

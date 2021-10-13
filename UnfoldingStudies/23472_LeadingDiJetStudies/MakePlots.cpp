@@ -147,6 +147,8 @@ int main(int argc, char *argv[])
    HSumE.SetStats(0);
    PdfFile.AddPlot(HSumE, "", false, false, true);
 
+   cout << "Cut efficiency at 83 GeV = " << HSumE.GetBinContent(HSumE.FindBin(83)) << endl;
+
    InputFile.Close();
 
    PdfFile.AddTimeStampPage();

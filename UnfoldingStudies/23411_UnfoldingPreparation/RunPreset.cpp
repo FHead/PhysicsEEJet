@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
    vector<string> Observables = CL.GetStringVector("Observables", {"JetE", "LeadingDiJetE", "LeadingDiJetSumE",
       "JetZG", "JetRG", "JetMG", "JetMGE", "JetM", "JetME",
-      "JetZG2", "JetRG2", "JetMG2", "JetMGE2", "JetM2", "JetME2"});
+      "JetZG2", "JetRG2", "JetMG2", "JetMGE2"});
 
    for(string Observable: Observables)
    {
@@ -44,7 +44,20 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "LeadingDiJetE")
+      else if(Observable == "LeadingJetE")
+      {
+         cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
+            << " --Output Output/" << Prefix << "LeadingJetE" << Suffix << ".root"
+            << " --Observable LeadingJetE --ObservableIndex -1 --Binning None --BinningIndex -1"
+            << " --ObservableGenBins " << Binnings["GenJetEBins"]
+            << " --ObservableRecoBins " << Binnings["RecoJetEBins"]
+            << " --BinningGenBins 0,1 --BinningRecoBins 0,1"
+            << " --ObservableUncertaintyShift " << JetShift
+            << " --ObservableUncertaintySmear " << JetSmear
+            << " --Flooring " << Flooring
+            << ";" << endl;
+      }
+      else if(Observable == "LeadingDiJetE")
       {
          cout << "time ./Execute --MC " << MCSumEFile << " --Data " << DataSumEFile
             << " --Output Output/" << Prefix << "LeadingDiJetE" << Suffix << ".root"
@@ -57,7 +70,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "LeadingDiJetSumE")
+      else if(Observable == "LeadingDiJetSumE")
       {
          cout << "time ./Execute --MC " << MCSumEFile << " --Data " << DataSumEFile
             << " --Output Output/" << Prefix << "LeadingDiJetSumE" << Suffix << ".root"
@@ -70,7 +83,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetZG")
+      else if(Observable == "JetZG")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
             << " --Output Output/" << Prefix << "JetZG" << Suffix << ".root"
@@ -84,7 +97,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetRG")
+      else if(Observable == "JetRG")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
             << " --Output Output/" << Prefix << "JetRG" << Suffix << ".root"
@@ -98,7 +111,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetMG")
+      else if(Observable == "JetMG")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
             << " --Output Output/" << Prefix << "JetMG" << Suffix << ".root"
@@ -112,7 +125,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetMGE")
+      else if(Observable == "JetMGE")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
             << " --Output Output/" << Prefix << "JetMGE" << Suffix << ".root"
@@ -126,7 +139,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetM")
+      else if(Observable == "JetM")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
             << " --Output Output/" << Prefix << "JetM" << Suffix << ".root"
@@ -140,7 +153,7 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetME")
+      else if(Observable == "JetME")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
             << " --Output Output/" << Prefix << "JetME" << Suffix << ".root"
@@ -154,10 +167,10 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetZG2")
+      else if(Observable == "JetZG2")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetZG" << Suffix << ".root"
+            << " --Output Output/" << Prefix << "JetZG2" << Suffix << ".root"
             << " --Observable JetZG --ObservableIndex 1 --Binning JetE --BinningIndex -1"
             << " --ObservableGenBins " << Binnings["GenJetZGBins"]
             << " --ObservableRecoBins " << Binnings["RecoJetZGBins"]
@@ -168,10 +181,10 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetRG2")
+      else if(Observable == "JetRG2")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetRG" << Suffix << ".root"
+            << " --Output Output/" << Prefix << "JetRG2" << Suffix << ".root"
             << " --Observable JetRG --ObservableIndex 1 --Binning JetE --BinningIndex -1"
             << " --ObservableGenBins " << Binnings["GenJetRGBins"]
             << " --ObservableRecoBins " << Binnings["RecoJetRGBins"]
@@ -182,10 +195,10 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetMG2")
+      else if(Observable == "JetMG2")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetMG" << Suffix << ".root"
+            << " --Output Output/" << Prefix << "JetMG2" << Suffix << ".root"
             << " --Observable JetMG --ObservableIndex 1 --Binning JetE --BinningIndex -1"
             << " --ObservableGenBins " << Binnings["GenJetMGBins"]
             << " --ObservableRecoBins " << Binnings["RecoJetMGBins"]
@@ -196,10 +209,10 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetMGE2")
+      else if(Observable == "JetMGE2")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetMGE" << Suffix << ".root"
+            << " --Output Output/" << Prefix << "JetMGE2" << Suffix << ".root"
             << " --Observable JetMGE --ObservableIndex 1 --Binning JetE --BinningIndex -1"
             << " --ObservableGenBins " << Binnings["GenJetMGEBins"]
             << " --ObservableRecoBins " << Binnings["RecoJetMGEBins"]
@@ -210,38 +223,10 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring
             << ";" << endl;
       }
-      if(Observable == "JetM2")
+      else if(Observable == "Thrust")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetM" << Suffix << ".root"
-            << " --Observable JetM --ObservableIndex 1 --Binning JetE --BinningIndex -1"
-            << " --ObservableGenBins " << Binnings["GenJetMBins"]
-            << " --ObservableRecoBins " << Binnings["RecoJetMBins"]
-            << " --BinningGenBins " << Binnings["GenJetECoarseBins"]
-            << " --BinningRecoBins " << Binnings["RecoJetECoarseBins"]
-            << " --BinningUncertaintyShift " << JetShift
-            << " --BinningUncertaintySmear " << JetSmear
-            << " --Flooring " << Flooring
-            << ";" << endl;
-      }
-      if(Observable == "JetME2")
-      {
-         cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetME" << Suffix << ".root"
-            << " --Observable JetME --ObservableIndex 1 --Binning JetE --BinningIndex -1"
-            << " --ObservableGenBins " << Binnings["GenJetMEBins"]
-            << " --ObservableRecoBins " << Binnings["RecoJetMEBins"]
-            << " --BinningGenBins " << Binnings["GenJetECoarseBins"]
-            << " --BinningRecoBins " << Binnings["RecoJetECoarseBins"]
-            << " --BinningUncertaintyShift " << JetShift
-            << " --BinningUncertaintySmear " << JetSmear
-            << " --Flooring " << Flooring
-            << ";" << endl;
-      }
-      if(Observable == "Thrust")
-      {
-         cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetME" << Suffix << ".root"
+            << " --Output Output/" << Prefix << "Thrust" << Suffix << ".root"
             << " --Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1"
             << " --ObservableGenBins " << Binnings["GenThrustBins"]
             << " --ObservableRecoBins " << Binnings["RecoThrustBins"]
@@ -250,10 +235,10 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring << " --CheckMatchAngle false"
             << ";" << endl;
       }
-      if(Observable == "ThrustUniform")
+      else if(Observable == "ThrustUniform")
       {
          cout << "time ./Execute --MC " << MCFile << " --Data " << DataFile
-            << " --Output Output/" << Prefix << "JetME" << Suffix << ".root"
+            << " --Output Output/" << Prefix << "Thrust" << Suffix << ".root"
             << " --Observable Thrust --ObservableIndex -1 --Binning None --BinningIndex -1"
             << " --ObservableGenBins " << Binnings["GenThrustUniformBins"]
             << " --ObservableRecoBins " << Binnings["RecoThrustUniformBins"]
@@ -262,6 +247,8 @@ int main(int argc, char *argv[])
             << " --Flooring " << Flooring << " --CheckMatchAngle false"
             << ";" << endl;
       }
+      else
+         cout << "time echo observable " << Observable << " not found" << endl;
    }
 }
 
