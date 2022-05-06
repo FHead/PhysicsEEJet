@@ -18,7 +18,7 @@ DataJEC     = $(MCJEC),$(ResidualJEC)
 default: DebugRun
 # RunGenVsGenBefore RunGenBeforeOnly
 
-RunGroup1: RunCut RunNoCut RunTighterCut RunNoResidual RunNoJEC RunLargeThetaGap RunStock RunThetaSides RunPythia8 RunHerwig RunSherpa RunHerwig715 RunPyquen RunVincia
+RunGroup1: RunCut RunNoCut RunTighterCut RunNoResidual RunNoJEC RunLargeThetaGap RunStock RunThetaSides RunPythia8 RunHerwig RunSherpa RunHerwig715 RunPyquen RunVincia RunSJSmear
 
 RunGroup2: RunCutSumE RunCutSmearedSumE RunTighterCutSumE RunNoJECSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE RunPyquenSumE RunVinciaSumE
 
@@ -37,7 +37,7 @@ Prepare:
 
 Execute: CalculateJets.cpp
 	CompileRootMacro CalculateJets.cpp Execute \
-		-I../../CommonCode/include ../../CommonCode/library/*.o
+		-I../../CommonCode/include ../../CommonCode/library/*.o -g 
 	ln -sf ../../CommonCode/source/Dictionary_rdict.pcm .
 
 RunNoCut: Execute
@@ -48,11 +48,25 @@ RunNoCut: Execute
 	
 RunCut: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output Data.root \
-		--MC false --BaselineCut true --JEC $(DataJEC)
+		--MC false --BaselineCut true --JEC $(DataJEC) --DoAuxiliary true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MC.root \
-		--MC true --BaselineCut true --JEC $(MCJEC)
+		--MC true --BaselineCut true --JEC $(MCJEC) --DoAuxiliary true
 	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output FakeData.root \
-		--MC true --BaselineCut true --JEC $(MCJEC)
+		--MC true --BaselineCut true --JEC $(MCJEC) --DoAuxiliary true
+
+RunSJSmear: Execute
+	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCSJSmear.root \
+		--MC true --BaselineCut true --JEC $(MCJEC) --DoAuxiliary true --DoSJSmear true
+
+RunNoNeutral: Execute
+	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataNoNeutral.root \
+		--MC false --BaselineCut true --JEC $(DataJEC) --IgnoreNeutral true
+	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCNoNeutral.root \
+		--MC true --BaselineCut true --JEC $(MCJEC) --IgnoreNeutral true
+	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataNoNeutralSumE.root \
+		--MC false --BaselineCut true --JEC $(DataJEC) --IgnoreNeutral true --RecoSumECut 83 --DoHybridSumE true
+	time ./Execute --Input $(MCSample) --Fraction $(Fraction) --Output MCNoNeutralSumE.root \
+		--MC true --BaselineCut true --JEC $(MCJEC) --IgnoreNeutral true --RecoSumECut 83 --GenSumECut 83 --DoHybridSumE true
 	
 RunTighterCut: Execute
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataTighterCut.root \

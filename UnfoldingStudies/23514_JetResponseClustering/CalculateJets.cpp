@@ -16,6 +16,7 @@ using namespace fastjet;
 #include "Code/TauHelperFunctions3.h"
 #include "CommandLine.h"
 #include "ProgressBar.h"
+#include "CustomAssert.h"
 
 #include "JetCorrector.h"
 #include "CATree.h"
@@ -25,6 +26,7 @@ using namespace fastjet;
 int main(int argc, char *argv[]);
 int FindBin(int N, double Bins[], double X);
 bool DecreasingEnergy(pair<FourVector, PseudoJet> &V1, pair<FourVector, PseudoJet> &V2);
+FourVector SmearAngle(FourVector P, double AngleSigma);
 
 int main(int argc, char *argv[])
 {
@@ -44,12 +46,14 @@ int main(int argc, char *argv[])
    double RecoSumECut            = CL.GetDouble("RecoSumECut", -99999);
    bool DoSumESmear              = CL.GetBool("DoSumESmear", false);
    double SumESmear              = CL.GetDouble("SumESmear", 0.02);
+   bool DoSJSmear                = CL.GetBool("DoSJSmear", false);
    vector<string> JECFiles       = CL.GetStringVector("JEC", vector<string>{});
    double Fraction               = CL.GetDouble("Fraction", 1.00);
    double JetR                   = CL.GetDouble("JetR", 0.4);
    string RecoTreeName           = CL.Get("RecoTreeName", "t");
    string GenTreeName            = CL.Get("GenTreeName", "tgenBefore");
    bool CheckLeadingGenDiJet     = CL.GetBool("CheckLeadingGenDiJet", false);
+   bool IgnoreNeutral            = CL.GetBool("IgnoreNeutral", false);
    double MultiplicityEMin       = CL.GetDouble("MultiplicityEMin", 0);
    double MultiplicityThetaMin   = CL.GetDouble("MultiplicityThetaMin", ThetaMin);
    double MultiplicityThetaMax   = CL.GetDouble("MultiplicityThetaMax", ThetaMax);
@@ -57,6 +61,9 @@ int main(int argc, char *argv[])
    int GenMultiplicityMax        = CL.GetInt("GenMultiplicityMax", -1);
    int RecoMultiplicityMin       = CL.GetInt("RecoMultiplicityMin", -1);
    int RecoMultiplicityMax       = CL.GetInt("RecoMultiplicityMax", -1);
+   bool DoAuxiliary              = CL.GetBool("DoAuxiliary", true);
+
+   Assert(!(UseStored && IgnoreNeutral), "Can't ignore neutral hadron if we use stored jets!");
 
    JetCorrector JEC(JECFiles);
 
@@ -82,6 +89,18 @@ int main(int argc, char *argv[])
    vector<float> RecoJetE;
    vector<float> RecoJetJEC;
    vector<float> RecoJetJEU;
+   vector<int>   RecoJetN00;
+   vector<int>   RecoJetN05;
+   vector<int>   RecoJetN10;
+   vector<int>   RecoJetN15;
+   vector<vector<float>> RecoJetSJ1PX;
+   vector<vector<float>> RecoJetSJ1PY;
+   vector<vector<float>> RecoJetSJ1PZ;
+   vector<vector<float>> RecoJetSJ1E;
+   vector<vector<float>> RecoJetSJ2PX;
+   vector<vector<float>> RecoJetSJ2PY;
+   vector<vector<float>> RecoJetSJ2PZ;
+   vector<vector<float>> RecoJetSJ2E;
    vector<vector<float>> RecoJetZG;   // first index is SD index, second index is jet
    vector<vector<float>> RecoJetRG;
    vector<vector<float>> RecoJetPG;
@@ -99,6 +118,18 @@ int main(int argc, char *argv[])
    vector<float> GenJetPhi;
    vector<float> GenJetM;
    vector<float> GenJetE;
+   vector<int>   GenJetN00;
+   vector<int>   GenJetN05;
+   vector<int>   GenJetN10;
+   vector<int>   GenJetN15;
+   vector<vector<float>> GenJetSJ1PX;
+   vector<vector<float>> GenJetSJ1PY;
+   vector<vector<float>> GenJetSJ1PZ;
+   vector<vector<float>> GenJetSJ1E;
+   vector<vector<float>> GenJetSJ2PX;
+   vector<vector<float>> GenJetSJ2PY;
+   vector<vector<float>> GenJetSJ2PZ;
+   vector<vector<float>> GenJetSJ2E;
    vector<vector<float>> GenJetZG;
    vector<vector<float>> GenJetRG;
    vector<vector<float>> GenJetPG;
@@ -113,6 +144,18 @@ int main(int argc, char *argv[])
    vector<float> MatchedJetPhi;
    vector<float> MatchedJetM;
    vector<float> MatchedJetE;
+   vector<int>   MatchedJetN00;
+   vector<int>   MatchedJetN05;
+   vector<int>   MatchedJetN10;
+   vector<int>   MatchedJetN15;
+   vector<vector<float>> MatchedJetSJ1PX;
+   vector<vector<float>> MatchedJetSJ1PY;
+   vector<vector<float>> MatchedJetSJ1PZ;
+   vector<vector<float>> MatchedJetSJ1E;
+   vector<vector<float>> MatchedJetSJ2PX;
+   vector<vector<float>> MatchedJetSJ2PY;
+   vector<vector<float>> MatchedJetSJ2PZ;
+   vector<vector<float>> MatchedJetSJ2E;
    vector<vector<float>> MatchedJetZG;
    vector<vector<float>> MatchedJetRG;
    vector<vector<float>> MatchedJetPG;
@@ -141,6 +184,21 @@ int main(int argc, char *argv[])
    OutputTree.Branch("RecoJetE",            &RecoJetE);
    OutputTree.Branch("RecoJetJEC",          &RecoJetJEC);
    OutputTree.Branch("RecoJetJEU",          &RecoJetJEU);
+   if(DoAuxiliary == true)
+   {
+      OutputTree.Branch("RecoJetN00",          &RecoJetN00);
+      OutputTree.Branch("RecoJetN05",          &RecoJetN05);
+      OutputTree.Branch("RecoJetN10",          &RecoJetN10);
+      OutputTree.Branch("RecoJetN15",          &RecoJetN15);
+   }
+   OutputTree.Branch("RecoJetSJ1PX",         &RecoJetSJ1PX);
+   OutputTree.Branch("RecoJetSJ1PY",         &RecoJetSJ1PY);
+   OutputTree.Branch("RecoJetSJ1PZ",         &RecoJetSJ1PZ);
+   OutputTree.Branch("RecoJetSJ1E",         &RecoJetSJ1E);
+   OutputTree.Branch("RecoJetSJ2PX",         &RecoJetSJ2PX);
+   OutputTree.Branch("RecoJetSJ2PY",         &RecoJetSJ2PY);
+   OutputTree.Branch("RecoJetSJ2PZ",         &RecoJetSJ2PZ);
+   OutputTree.Branch("RecoJetSJ2E",         &RecoJetSJ2E);
    OutputTree.Branch("RecoJetZG",           &RecoJetZG);
    OutputTree.Branch("RecoJetRG",           &RecoJetRG);
    OutputTree.Branch("RecoJetPG",           &RecoJetPG);
@@ -158,6 +216,21 @@ int main(int argc, char *argv[])
    OutputTree.Branch("GenJetPhi",           &GenJetPhi);
    OutputTree.Branch("GenJetM",             &GenJetM);
    OutputTree.Branch("GenJetE",             &GenJetE);
+   if(DoAuxiliary == true)
+   {
+      OutputTree.Branch("GenJetN00",          &GenJetN00);
+      OutputTree.Branch("GenJetN05",          &GenJetN05);
+      OutputTree.Branch("GenJetN10",          &GenJetN10);
+      OutputTree.Branch("GenJetN15",          &GenJetN15);
+   }
+   OutputTree.Branch("GenJetSJ1PX",          &GenJetSJ1PX);
+   OutputTree.Branch("GenJetSJ1PY",          &GenJetSJ1PY);
+   OutputTree.Branch("GenJetSJ1PZ",          &GenJetSJ1PZ);
+   OutputTree.Branch("GenJetSJ1E",          &GenJetSJ1E);
+   OutputTree.Branch("GenJetSJ2PX",          &GenJetSJ2PX);
+   OutputTree.Branch("GenJetSJ2PY",          &GenJetSJ2PY);
+   OutputTree.Branch("GenJetSJ2PZ",          &GenJetSJ2PZ);
+   OutputTree.Branch("GenJetSJ2E",          &GenJetSJ2E);
    OutputTree.Branch("GenJetZG",            &GenJetZG);
    OutputTree.Branch("GenJetRG",            &GenJetRG);
    OutputTree.Branch("GenJetPG",            &GenJetPG);
@@ -172,6 +245,21 @@ int main(int argc, char *argv[])
    OutputTree.Branch("MatchedJetPhi",       &MatchedJetPhi);
    OutputTree.Branch("MatchedJetM",         &MatchedJetM);
    OutputTree.Branch("MatchedJetE",         &MatchedJetE);
+   if(DoAuxiliary == true)
+   {
+      OutputTree.Branch("MatchedJetN00",          &MatchedJetN00);
+      OutputTree.Branch("MatchedJetN05",          &MatchedJetN05);
+      OutputTree.Branch("MatchedJetN10",          &MatchedJetN10);
+      OutputTree.Branch("MatchedJetN15",          &MatchedJetN15);
+   }
+   OutputTree.Branch("MatchedJetSJ1PX",      &MatchedJetSJ1PX);
+   OutputTree.Branch("MatchedJetSJ1PY",      &MatchedJetSJ1PY);
+   OutputTree.Branch("MatchedJetSJ1PZ",      &MatchedJetSJ1PZ);
+   OutputTree.Branch("MatchedJetSJ1E",      &MatchedJetSJ1E);
+   OutputTree.Branch("MatchedJetSJ2PX",      &MatchedJetSJ2PX);
+   OutputTree.Branch("MatchedJetSJ2PY",      &MatchedJetSJ2PY);
+   OutputTree.Branch("MatchedJetSJ2PZ",      &MatchedJetSJ2PZ);
+   OutputTree.Branch("MatchedJetSJ2E",      &MatchedJetSJ2E);
    OutputTree.Branch("MatchedJetZG",        &MatchedJetZG);
    OutputTree.Branch("MatchedJetRG",        &MatchedJetRG);
    OutputTree.Branch("MatchedJetPG",        &MatchedJetPG);
@@ -208,6 +296,8 @@ int main(int argc, char *argv[])
       float RecoP[MAX];
       float RecoMass[MAX];
       bool RecoHighPurity[MAX];
+      short RecoCharge[MAX];
+      short RecoType[MAX];
       bool RecoPassSTheta = true;
       bool RecoPassAll = true;
       int RecoChargedHadronsHP = 1000;
@@ -246,6 +336,8 @@ int main(int argc, char *argv[])
          RecoTree->SetBranchAddress("pmag",              &RecoP);
          RecoTree->SetBranchAddress("mass",              &RecoMass);
          RecoTree->SetBranchAddress("highPurity",        &RecoHighPurity);
+         RecoTree->SetBranchAddress("charge",            &RecoCharge);
+         RecoTree->SetBranchAddress("pwflag",            &RecoType);
          RecoTree->SetBranchAddress("Thrust",            &RecoThrust);
          RecoTree->SetBranchAddress("passesAll",         &RecoPassAll);
          RecoTree->SetBranchAddress("passesSTheta",      &RecoPassSTheta);
@@ -410,6 +502,8 @@ int main(int argc, char *argv[])
             FourVector P(0, RecoPX[i], RecoPY[i], RecoPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + RecoMass[i] * RecoMass[i]);
             RecoParticles.emplace_back(P);
+            if(IgnoreNeutral == true && RecoCharge[i] == 0 && RecoType[i] == 5)
+               continue;
             RecoFJParticles.emplace_back(P[1], P[2], P[3], P[0]);
          }
 
@@ -573,7 +667,23 @@ int main(int argc, char *argv[])
          // Now that all the preparation work is done, increment the event count by one
          PassedEventCount = PassedEventCount + 1;
  
-         // Calculate groomed quantities for gen jets
+         // Calculate groomed and auxiliary quantities for gen jets
+         GenJetN00.clear();
+         GenJetN05.clear();
+         GenJetN10.clear();
+         GenJetN15.clear();
+         GenJetN00.resize(GenJets.size());
+         GenJetN05.resize(GenJets.size());
+         GenJetN10.resize(GenJets.size());
+         GenJetN15.resize(GenJets.size());
+         GenJetSJ1PX.resize(GenJets.size());
+         GenJetSJ1PY.resize(GenJets.size());
+         GenJetSJ1PZ.resize(GenJets.size());
+         GenJetSJ1E.resize(GenJets.size());
+         GenJetSJ2PX.resize(GenJets.size());
+         GenJetSJ2PY.resize(GenJets.size());
+         GenJetSJ2PZ.resize(GenJets.size());
+         GenJetSJ2E.resize(GenJets.size());
          GenJetZG.resize(GenJets.size());
          GenJetRG.resize(GenJets.size());
          GenJetPG.resize(GenJets.size());
@@ -585,8 +695,17 @@ int main(int argc, char *argv[])
             if(UseStored == true || GenJets[i].second.has_constituents() == false)
             {
                for(FourVector V : GenParticles)
+               {
                   if(GetAngle(GenJets[i].first, V) < JetR)
+                  {
                      Nodes.push_back(new Node(V));
+
+                     if(V[0] > 0.0)   GenJetN00[i] = GenJetN00[i] + 1;
+                     if(V[0] > 0.5)   GenJetN05[i] = GenJetN05[i] + 1;
+                     if(V[0] > 1.0)   GenJetN10[i] = GenJetN10[i] + 1;
+                     if(V[0] > 1.5)   GenJetN15[i] = GenJetN15[i] + 1;
+                  }
+               }
             }
             else   // we cluster jets ourselves.  We get the constituents!
             {
@@ -595,10 +714,23 @@ int main(int argc, char *argv[])
                {
                   FourVector V(P.e(), P.px(), P.py(), P.pz());
                   Nodes.push_back(new Node(V));
+
+                  if(V[0] > 0.0)   GenJetN00[i] = GenJetN00[i] + 1;
+                  if(V[0] > 0.5)   GenJetN05[i] = GenJetN05[i] + 1;
+                  if(V[0] > 1.0)   GenJetN10[i] = GenJetN10[i] + 1;
+                  if(V[0] > 1.5)   GenJetN15[i] = GenJetN15[i] + 1;
                }
             }
             BuildCATree(Nodes);
          
+            GenJetSJ1PX[i].resize(NSD);
+            GenJetSJ1PY[i].resize(NSD);
+            GenJetSJ1PZ[i].resize(NSD);
+            GenJetSJ1E[i].resize(NSD);
+            GenJetSJ2PX[i].resize(NSD);
+            GenJetSJ2PY[i].resize(NSD);
+            GenJetSJ2PZ[i].resize(NSD);
+            GenJetSJ2E[i].resize(NSD);
             GenJetZG[i].resize(NSD);
             GenJetRG[i].resize(NSD);
             GenJetPG[i].resize(NSD);
@@ -614,15 +746,34 @@ int main(int argc, char *argv[])
                   {
                      FourVector &P1 = SDNode->Child1->P;
                      FourVector &P2 = SDNode->Child2->P;
+
+                     GenJetSJ1PX[i][iSD] = P1[1];
+                     GenJetSJ1PY[i][iSD] = P1[2];
+                     GenJetSJ1PZ[i][iSD] = P1[3];
+                     GenJetSJ1E[i][iSD] = P1[0];
+                     GenJetSJ2PX[i][iSD] = P2[1];
+                     GenJetSJ2PY[i][iSD] = P2[2];
+                     GenJetSJ2PZ[i][iSD] = P2[3];
+                     GenJetSJ2E[i][iSD] = P2[0];
+
                      // GenJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
                      GenJetZG[i][iSD] = min(P1[0], P2[0]) / (P1[0] + P2[0]);
                      GenJetRG[i][iSD] = GetAngle(P1, P2);
-                     GenJetPG[i][iSD] = SDNode->P.GetP();
-                     GenJetMG[i][iSD] = SDNode->P.GetMass();
+                     GenJetPG[i][iSD] = (P1 + P2).GetP();
+                     GenJetMG[i][iSD] = (P1 + P2).GetMass();
                      GenJetNG[i][iSD] = CountFinalNode(SDNode);
                   }
                   else
                   {
+                     GenJetSJ1PX[i][iSD] = 0;
+                     GenJetSJ1PY[i][iSD] = 0;
+                     GenJetSJ1PZ[i][iSD] = 0;
+                     GenJetSJ1E[i][iSD] = 0;
+                     GenJetSJ2PX[i][iSD] = 0;
+                     GenJetSJ2PY[i][iSD] = 0;
+                     GenJetSJ2PZ[i][iSD] = 0;
+                     GenJetSJ2E[i][iSD] = 0;
+
                      GenJetZG[i][iSD] = -1;
                      GenJetRG[i][iSD] = -1;
                      GenJetPG[i][iSD] = -1;
@@ -633,7 +784,23 @@ int main(int argc, char *argv[])
             }
          }
 
-         // Groomed quantities for reco jets
+         // Groomed quantities and auxiliary stuff for reco jets
+         RecoJetN00.clear();
+         RecoJetN05.clear();
+         RecoJetN10.clear();
+         RecoJetN15.clear();
+         RecoJetSJ1PX.resize(RecoJets.size());
+         RecoJetSJ1PY.resize(RecoJets.size());
+         RecoJetSJ1PZ.resize(RecoJets.size());
+         RecoJetSJ1E.resize(RecoJets.size());
+         RecoJetSJ2PX.resize(RecoJets.size());
+         RecoJetSJ2PY.resize(RecoJets.size());
+         RecoJetSJ2PZ.resize(RecoJets.size());
+         RecoJetSJ2E.resize(RecoJets.size());
+         RecoJetN00.resize(RecoJets.size());
+         RecoJetN05.resize(RecoJets.size());
+         RecoJetN10.resize(RecoJets.size());
+         RecoJetN15.resize(RecoJets.size());
          RecoJetZG.resize(RecoJets.size());
          RecoJetRG.resize(RecoJets.size());
          RecoJetPG.resize(RecoJets.size());
@@ -645,8 +812,17 @@ int main(int argc, char *argv[])
             if(UseStored == true || RecoJets[i].second.has_constituents() == false)
             {
                for(FourVector V : RecoParticles)
+               {
                   if(GetAngle(RecoJets[i].first, V) < JetR)
+                  {
                      Nodes.push_back(new Node(V));
+
+                     if(V[0] > 0.0)   RecoJetN00[i] = RecoJetN00[i] + 1;
+                     if(V[0] > 0.5)   RecoJetN05[i] = RecoJetN05[i] + 1;
+                     if(V[0] > 1.0)   RecoJetN10[i] = RecoJetN10[i] + 1;
+                     if(V[0] > 1.5)   RecoJetN15[i] = RecoJetN15[i] + 1;
+                  }
+               }
             }
             else   // we cluster jets ourselves.  We get the constituents!
             {
@@ -655,10 +831,23 @@ int main(int argc, char *argv[])
                {
                   FourVector V(P.e(), P.px(), P.py(), P.pz());
                   Nodes.push_back(new Node(V));
+
+                  if(V[0] > 0.0)   RecoJetN00[i] = RecoJetN00[i] + 1;
+                  if(V[0] > 0.5)   RecoJetN05[i] = RecoJetN05[i] + 1;
+                  if(V[0] > 1.0)   RecoJetN10[i] = RecoJetN10[i] + 1;
+                  if(V[0] > 1.5)   RecoJetN15[i] = RecoJetN15[i] + 1;
                }
             }
             BuildCATree(Nodes);
             
+            RecoJetSJ1PX[i].resize(NSD);
+            RecoJetSJ1PY[i].resize(NSD);
+            RecoJetSJ1PZ[i].resize(NSD);
+            RecoJetSJ1E[i].resize(NSD);
+            RecoJetSJ2PX[i].resize(NSD);
+            RecoJetSJ2PY[i].resize(NSD);
+            RecoJetSJ2PZ[i].resize(NSD);
+            RecoJetSJ2E[i].resize(NSD);
             RecoJetZG[i].resize(NSD);
             RecoJetRG[i].resize(NSD);
             RecoJetPG[i].resize(NSD);
@@ -669,20 +858,51 @@ int main(int argc, char *argv[])
             {
                for(int iSD = 0; iSD < NSD; iSD++)
                {
-                  Node *SDNode = FindSDNodeE(Nodes[0], SDZCut[iSD], SDBeta[iSD]);
+                  double SC1 = 1, SC2 = 1;
+                  Node *SDNode = nullptr;
+                  if(DoSJSmear == false)
+                     SDNode = FindSDNodeE(Nodes[0], SDZCut[iSD], SDBeta[iSD]);
+                  else
+                     SDNode = FindSDNodeESmear(Nodes[0], SC1, SC2, SDZCut[iSD], SDBeta[iSD], 0.03, 0.06);
+
                   if(SDNode != nullptr && SDNode->Child1 != nullptr && SDNode->Child2 != nullptr)
                   {
-                     FourVector &P1 = SDNode->Child1->P;
-                     FourVector &P2 = SDNode->Child2->P;
+                     FourVector P1 = SDNode->Child1->P * SC1;
+                     FourVector P2 = SDNode->Child2->P * SC2;
+
+                     if(DoSJSmear == true)
+                     {
+                        P1 = SmearAngle(P1, 0.002);
+                        P2 = SmearAngle(P2, 0.002);
+                     }
+
+                     RecoJetSJ1PX[i][iSD] = P1[1];
+                     RecoJetSJ1PY[i][iSD] = P1[2];
+                     RecoJetSJ1PZ[i][iSD] = P1[3];
+                     RecoJetSJ1E[i][iSD] = P1[0];
+                     RecoJetSJ2PX[i][iSD] = P2[1];
+                     RecoJetSJ2PY[i][iSD] = P2[2];
+                     RecoJetSJ2PZ[i][iSD] = P2[3];
+                     RecoJetSJ2E[i][iSD] = P2[0];
+
                      // RecoJetZG[i][iSD] = P2.GetP() / (P1.GetP() + P2.GetP());
                      RecoJetZG[i][iSD] = min(P1[0], P2[0]) / (P1[0] + P2[0]);
                      RecoJetRG[i][iSD] = GetAngle(P1, P2);
-                     RecoJetPG[i][iSD] = SDNode->P.GetP();
-                     RecoJetMG[i][iSD] = SDNode->P.GetMass();
+                     RecoJetPG[i][iSD] = (P1 + P2).GetP();
+                     RecoJetMG[i][iSD] = (P1 + P2).GetMass();
                      RecoJetNG[i][iSD] = CountFinalNode(SDNode);
                   }
                   else
                   {
+                     RecoJetSJ1PX[i][iSD] = 0;
+                     RecoJetSJ1PY[i][iSD] = 0;
+                     RecoJetSJ1PZ[i][iSD] = 0;
+                     RecoJetSJ1E[i][iSD] = 0;
+                     RecoJetSJ2PX[i][iSD] = 0;
+                     RecoJetSJ2PY[i][iSD] = 0;
+                     RecoJetSJ2PZ[i][iSD] = 0;
+                     RecoJetSJ2E[i][iSD] = 0;
+
                      RecoJetZG[i][iSD] = -1;
                      RecoJetRG[i][iSD] = -1;
                      RecoJetPG[i][iSD] = -1;
@@ -762,6 +982,18 @@ int main(int argc, char *argv[])
          MatchedJetAngle.resize(NGenJets);
          MatchedJetJEC.resize(NGenJets);
          MatchedJetJEU.resize(NGenJets);
+         MatchedJetN00.resize(NGenJets);
+         MatchedJetN05.resize(NGenJets);
+         MatchedJetN10.resize(NGenJets);
+         MatchedJetN15.resize(NGenJets);
+         MatchedJetSJ1PX.resize(NGenJets);
+         MatchedJetSJ1PY.resize(NGenJets);
+         MatchedJetSJ1PZ.resize(NGenJets);
+         MatchedJetSJ1E.resize(NGenJets);
+         MatchedJetSJ2PX.resize(NGenJets);
+         MatchedJetSJ2PY.resize(NGenJets);
+         MatchedJetSJ2PZ.resize(NGenJets);
+         MatchedJetSJ2E.resize(NGenJets);
          MatchedJetZG.resize(NGenJets);
          MatchedJetRG.resize(NGenJets);
          MatchedJetPG.resize(NGenJets);
@@ -783,6 +1015,14 @@ int main(int argc, char *argv[])
                }
             }
 
+            MatchedJetSJ1PX[iG].resize(NSD, -1);
+            MatchedJetSJ1PY[iG].resize(NSD, -1);
+            MatchedJetSJ1PZ[iG].resize(NSD, -1);
+            MatchedJetSJ1E[iG].resize(NSD, -1);
+            MatchedJetSJ2PX[iG].resize(NSD, -1);
+            MatchedJetSJ2PY[iG].resize(NSD, -1);
+            MatchedJetSJ2PZ[iG].resize(NSD, -1);
+            MatchedJetSJ2E[iG].resize(NSD, -1);
             MatchedJetZG[iG].resize(NSD, -1);
             MatchedJetRG[iG].resize(NSD, -1);
             MatchedJetPG[iG].resize(NSD, -1);
@@ -804,8 +1044,21 @@ int main(int argc, char *argv[])
             MatchedJetAngle[iG] = BestAngle;
             MatchedJetJEC[iG]   = RecoJetJEC[BestIndex];
             MatchedJetJEU[iG]   = RecoJetJEU[BestIndex];
+            MatchedJetN00[iG]   = RecoJetN00[BestIndex];
+            MatchedJetN05[iG]   = RecoJetN05[BestIndex];
+            MatchedJetN10[iG]   = RecoJetN10[BestIndex];
+            MatchedJetN15[iG]   = RecoJetN15[BestIndex];
             for(int iSD = 0; iSD < NSD; iSD++)
             {
+               MatchedJetSJ1PX[iG][iSD] = RecoJetSJ1PX[BestIndex][iSD];
+               MatchedJetSJ1PY[iG][iSD] = RecoJetSJ1PY[BestIndex][iSD];
+               MatchedJetSJ1PZ[iG][iSD] = RecoJetSJ1PZ[BestIndex][iSD];
+               MatchedJetSJ1E[iG][iSD] = RecoJetSJ1E[BestIndex][iSD];
+               MatchedJetSJ2PX[iG][iSD] = RecoJetSJ2PX[BestIndex][iSD];
+               MatchedJetSJ2PY[iG][iSD] = RecoJetSJ2PY[BestIndex][iSD];
+               MatchedJetSJ2PZ[iG][iSD] = RecoJetSJ2PZ[BestIndex][iSD];
+               MatchedJetSJ2E[iG][iSD] = RecoJetSJ2E[BestIndex][iSD];
+
                MatchedJetZG[iG][iSD] = RecoJetZG[BestIndex][iSD];
                MatchedJetRG[iG][iSD] = RecoJetRG[BestIndex][iSD];
                MatchedJetPG[iG][iSD] = RecoJetPG[BestIndex][iSD];
@@ -859,6 +1112,30 @@ bool DecreasingEnergy(pair<FourVector, PseudoJet> &V1, pair<FourVector, PseudoJe
    return V1.first[0] > V2.first[0];
 }
 
+FourVector SmearAngle(FourVector P, double AngleSigma)
+{
+   // We assume sigma is small in this version of the code.
+   // If it's too big we need (a bit) more sophistication
+
+   FourVector PHat = P / P.GetP();
+
+   FourVector PZ(1, 0, 0, 1);
+   if(P[1] == 0 && P[2] == 0)
+      PZ = FourVector(1, 1, 0, 0);
+   FourVector A = PHat.SpatialCross(PZ);
+   A = A / A.GetP();
+   FourVector B = PHat.SpatialCross(A);
+   B = B / B.GetP();
+
+   PHat = PHat + A * DrawGaussian(AngleSigma) + B * DrawGaussian(AngleSigma);
+   PHat = PHat / PHat.GetP();
+
+   P[1] = PHat[1] * P.GetP();
+   P[2] = PHat[2] * P.GetP();
+   P[3] = PHat[3] * P.GetP();
+
+   return P;
+}
 
 
 
