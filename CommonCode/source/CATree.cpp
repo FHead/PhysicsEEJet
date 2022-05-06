@@ -316,6 +316,57 @@ Node *FindSDNodeE(Node *HeadNode, double ZCut, double Beta, double R0)
    return Current;
 }
 
+Node *FindSDNodeESmear(Node *HeadNode, double &SC1, double &SC2, double ZCut, double Beta, double R0, double SmearSJ1, double SmearSJ2)
+{
+   if(HeadNode == NULL)
+      return NULL;
+
+   SC1 = 1, SC2 = 1;
+
+   bool Done = false;
+   Node *Current = HeadNode;
+
+   while(Done == false)
+   {
+      if(Current->N == 1)
+         Done = true;
+      else if(Current->N == 2)
+      {
+         // WTF!
+         std::cerr << "Error!  N = " << Current->N << "!" << std::endl;
+      }
+      else if(Current->Child1 == NULL || Current->Child2 == NULL)
+      {
+         // WTF!
+         std::cerr << "Error!  Child NULL while N = " << Current->N << "!" << std::endl;
+      }
+      else
+      {
+         SC1 = DrawGaussian(1, SmearSJ1);
+         SC2 = DrawGaussian(1, SmearSJ2);
+         double P1 = Current->Child1->P[0] * SC1;
+         double P2 = Current->Child2->P[0] * SC2;
+         double PRatio = std::min(P1, P2) / (P1 + P2);
+
+         double Angle = GetAngle(Current->Child1->P, Current->Child2->P);
+
+         double Threshold = ZCut * std::pow(Angle / R0, Beta);
+
+         if(PRatio > Threshold)
+            Done = true;
+         else
+         {
+            if(P1 > P2)
+               Current = Current->Child1;
+            else
+               Current = Current->Child2;
+         }
+      }
+   }
+
+   return Current;
+}
+
 std::vector<std::pair<double, double>> CountSD(Node *HeadNode, double ZCut, double Beta, double R0, double AngleCut)
 {
    std::vector<std::pair<double, double>> Result;
