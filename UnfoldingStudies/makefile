@@ -8,6 +8,12 @@ RunAllQuick: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataI
 
 RunAllMinimal: JetClustering UnfoldPreparation NominalUnfold Systematics FinalPlot FinalPlotSmall
 
+SJSmear:
+	(cd 23514_JetResponseClustering/ && make RunSJSmear)
+	(cd 23411_UnfoldingPreparation/ && make DataSJSmearRun)
+	(cd 23412_ActualUnfold/ && make RunDataUnfoldSJSmear)
+	(cd 23755_UnfoldedPaperPlotWithMOD/ && make RunJetMGE RunJetRG RunJetZG RunConversion)
+
 JetClustering:
 	(cd 23514_JetResponseClustering/ && make Prepare RunGroup1 RunGroup2)
 
