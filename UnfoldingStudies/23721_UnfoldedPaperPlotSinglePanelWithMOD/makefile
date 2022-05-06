@@ -1,5 +1,6 @@
 DoMOD = true
 Group = --Group 2,8 --Row 1 --Column 2
+Group2 = --Group 8 --Row 1 --Column 1
 
 default: RunTest
 
@@ -36,9 +37,24 @@ RunJetZG: Execute
 		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.41,0.75,"$(Preliminary)",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+	./Execute --Input Input/DataJetZGNominal.root \
+		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominalSinglePanel.pdf --FinalOutput Plots/PartialMeowZGSinglePanel.eps \
+		--MCFile "OriginalInput/DataJetZGNominal.root","OriginalInput/MCPythia8JetZG.root","OriginalInput/MCHerwigJetZG.root",OriginalInput/MCSherpaJetZG.root,OriginalInput/$(PYQUEN)JetZG.root \
+		--MCHistogram HMCGen,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes17 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
+		--WorldXMin -0.01 --WorldXMax 0.4999 --WorldYMin 0 --WorldYMax 7 --WorldRMin 0.8 --WorldRMax 1.18 --LogY false \
+		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
+		--LegendX 0.62 --LegendY 0.3 --LegendSize 0.0425 \
+		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.1 --LineModifier 2 \
+		--Texts 0,0.62,0.93,"$(Preliminary)",0,0.62,0.87,"Anti-k_{T} jet R = 0.4",0,0.62,0.81,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.62,0.75,"z_{cut} = 0.1 #beta = 0.0",0,0.20,0.10,"Jet E > 40.0 GeV" \
+		$(Group2) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.825 --LogoY 0.37 --LogoW 0.12
 
 RunJetRG: Execute
 	./Execute --Input Input/DataJetRGNominal.root \
@@ -53,9 +69,24 @@ RunJetRG: Execute
 		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.08,0.80,"Preliminary",0,0.08,0.73,"Anti-k_{T} jet R = 0.4",0,0.08,0.66,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.08,0.59,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.08,0.80,"$(Preliminary)",0,0.08,0.73,"Anti-k_{T} jet R = 0.4",0,0.08,0.66,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.08,0.59,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
+	./Execute --Input Input/DataJetRGNominal.root \
+		--Systematic Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominalSinglePanel.pdf --FinalOutput Plots/PartialMeowRGSinglePanel.eps \
+		--MCFile "Input/DataJetRGNominal.root","OriginalInput/MCPythia8JetRG.root","OriginalInput/MCHerwigJetRG.root",OriginalInput/MCSherpaJetRG.root,OriginalInput/$(PYQUEN)JetRG.root \
+		--MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+		--MCLabel "PYTHIA 6","PYTHIA 8","HERWIG 7","SHERPA","PYQUEN" \
+		--PrimaryName HUnfoldedBayes8 \
+		--DoSelfNormalize true \
+		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
+		--WorldXMin -0.015 --WorldXMax 0.7 --WorldYMin 0 --WorldYMax 6.0 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
+		--LegendX 0.62 --LegendY 0.3 --LegendSize 0.0425 \
+		--XAxis 305 --YAxis 505 --RAxis 305 --MarkerModifier 1.1 --LineModifier 2 \
+		--Texts 0,0.62,0.93,"$(Preliminary)",0,0.62,0.87,"Anti-k_{T} jet R = 0.4",0,0.62,0.81,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.62,0.75,"z_{cut} = 0.1 #beta = 0.0",0,0.10,0.93,"Jet E > 40.0 GeV" \
+		$(Group2) \
+		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.825 --LogoY 0.39 --LogoW 0.12
 
 RunJetMG: Execute
 	./Execute --Input Input/DataJetMGNominal.root \
@@ -70,7 +101,7 @@ RunJetMG: Execute
 		--XLabel "Jet M_{G}" --YLabel "1/N dN/d(Jet M_{G})" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.41,0.75,"$(Preliminary)",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
@@ -87,7 +118,7 @@ RunJetMGE: Execute
 		--XLabel "Jet M_{G}/E" --YLabel "1/N dN/d(Jet M_{G}/E)" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.46,0.75,"$(Preliminary)",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
@@ -104,7 +135,7 @@ RunJetZG2: Execute
 		--XLabel "Jet z_{G}" --YLabel "1/N dN/d(Jet z_{G})" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.41,0.75,"$(Preliminary)",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
@@ -121,7 +152,7 @@ RunJetRG2: Execute
 		--XLabel "Jet R_{G}" --YLabel "1/N dN/d(Jet R_{G})" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.41,0.75,"$(Preliminary)",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
@@ -138,7 +169,7 @@ RunJetM: Execute
 		--XLabel "Jet M" --YLabel "1/N dN/d(Jet M)" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.41,0.75,"Preliminary",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.41,0.75,"$(Preliminary)",0,0.41,0.68,"Anti-k_{T} jet R = 0.4",0,0.41,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.41,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
@@ -155,7 +186,7 @@ RunJetME: Execute
 		--XLabel "Jet M/E" --YLabel "1/N dN/d(Jet M/E)" --Binning "Jet E" \
 		--LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
 		--XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
-		--Texts 0,0.46,0.75,"Preliminary",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
+		--Texts 0,0.46,0.75,"$(Preliminary)",0,0.46,0.68,"Anti-k_{T} jet R = 0.4",0,0.46,0.61,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.46,0.54,"z_{cut} = 0.1 #beta = 0.0" \
 		$(Group) \
 		--DoMOD $(DoMOD) --CanvasScale 4 --LogoX 0.90 --LogoY 0.96 --LogoW 0.1
 
@@ -182,7 +213,7 @@ RunJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "dN / d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# Jet E: Normalized
@@ -198,7 +229,7 @@ RunJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# Jet E: Normalized - log
@@ -214,7 +245,7 @@ RunJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# Jet E: Normalized, Joao comparison
@@ -230,7 +261,7 @@ RunJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 
@@ -248,7 +279,7 @@ RunDiJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# DiJet E: log
@@ -264,7 +295,7 @@ RunDiJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.45 --LegendY 0.10 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# DiJet E Corr
@@ -280,7 +311,7 @@ RunDiJetE: Execute
 		--XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
 		--CorrectionFile Correction.dh --CorrectionState DijetJetE \
 		--MCCorrection true,true,true,true,true \
@@ -300,7 +331,7 @@ RunDiJetSumE: Execute
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# DiJet SumE: log
@@ -316,7 +347,7 @@ RunDiJetSumE: Execute
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
 		--LegendX 0.45 --LegendY 0.10 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
 		--DoMOD $(DoMOD) --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 	# DiJet SumE corrected
@@ -332,7 +363,7 @@ RunDiJetSumE: Execute
 		--XLabel "Leading dijet sum E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Leading dijet sum E)" --Binning "None" \
 		--LegendX 0.15 --LegendY 0.25 --LegendSize 0.04 \
 		--XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
-		--Texts 0,0.1,0.9,"Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
+		--Texts 0,0.1,0.9,"$(Preliminary)",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",0,0.1,0.75,"Leading dijet" \
 		--Group 0 --Row 1 --Column 1 \
 		--CorrectionFile Correction.dh --CorrectionState DijetSumE \
 		--MCCorrection true,true,true,true,true \

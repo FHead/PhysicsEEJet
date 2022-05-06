@@ -23,6 +23,7 @@ using namespace std;
 #include "SetStyle.h"
 #include "CustomAssert.h"
 #include "DataHelper.h"
+#include "RootUtilities.h"
 
 int main(int argc, char *argv[]);
 vector<double> DetectBins(TH1D *HMin, TH1D *HMax);
@@ -48,6 +49,8 @@ pair<double, double> GetGraphMinMax(string FileName, string HistogramName, vecto
 
 int main(int argc, char *argv[])
 {
+   SilenceRoot();
+
    SetThesisStyle();
    vector<int> Colors = GetPrimaryColors();
 
@@ -81,6 +84,7 @@ int main(int argc, char *argv[])
    double CanvasScale             = DoMOD ? CL.GetDouble("CanvasScale", 10) : 1;
 
    double MarkerModifier          = CL.GetDouble("MarkerModifier", 1.0) * CanvasScale;
+   double LineModifier            = CL.GetDouble("LineModifier", 1.0);
 
    double WorldXMin               = CL.GetDouble("WorldXMin", 10);
    double WorldXMax               = CL.GetDouble("WorldXMax", 50);
@@ -386,20 +390,20 @@ int main(int argc, char *argv[])
 
       for(int j = 0; j < MCCount; j++)
       {
-         GMC[j][Group[i]].SetLineWidth(2);
+         GMC[j][Group[i]].SetLineWidth(2 * LineModifier);
          GMC[j][Group[i]].SetLineColor(Colors[MCColors[j]]);
          GMC[j][Group[i]].SetMarkerStyle(1);
          GMC[j][Group[i]].SetMarkerColor(Colors[MCColors[j]]);
       }
       
-      GSystematics[Group[i]].SetLineWidth(2);
+      GSystematics[Group[i]].SetLineWidth(2 * LineModifier);
       GSystematics[Group[i]].SetLineColor(Colors[6]);
       GSystematics[Group[i]].SetFillColor(Colors[2]);
       GSystematics[Group[i]].SetMarkerStyle(20);
       GSystematics[Group[i]].SetMarkerSize(MarkerModifier);
       GSystematics[Group[i]].SetMarkerColor(Colors[6]);
       
-      GResult[Group[i]].SetLineWidth(2);
+      GResult[Group[i]].SetLineWidth(2 * LineModifier);
       GResult[Group[i]].SetLineColor(Colors[6]);
       GResult[Group[i]].SetMarkerStyle(20);
       GResult[Group[i]].SetMarkerSize(MarkerModifier);
@@ -436,20 +440,20 @@ int main(int argc, char *argv[])
 
       for(int j = 0; j < MCCount; j++)
       {
-         GRMC[j][Group[i]].SetLineWidth(2);
+         GRMC[j][Group[i]].SetLineWidth(2 * LineModifier);
          GRMC[j][Group[i]].SetLineColor(Colors[MCColors[j]]);
          GRMC[j][Group[i]].SetMarkerStyle(1);
          GRMC[j][Group[i]].SetMarkerColor(Colors[MCColors[j]]);
       }
 
-      GRSystematics[Group[i]].SetLineWidth(2);
+      GRSystematics[Group[i]].SetLineWidth(2 * LineModifier);
       GRSystematics[Group[i]].SetLineColor(Colors[6]);
       GRSystematics[Group[i]].SetFillColor(Colors[2]);
       GRSystematics[Group[i]].SetMarkerStyle(20);
       GRSystematics[Group[i]].SetMarkerSize(MarkerModifier);
       GRSystematics[Group[i]].SetMarkerColor(Colors[6]);
       
-      GRResult[Group[i]].SetLineWidth(2);
+      GRResult[Group[i]].SetLineWidth(2 * LineModifier);
       GRResult[Group[i]].SetLineColor(Colors[6]);
       GRResult[Group[i]].SetMarkerStyle(20);
       GRResult[Group[i]].SetMarkerSize(MarkerModifier);
@@ -745,6 +749,8 @@ TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2)
    int N = G2.GetN();
    for(int i = 0; i < N; i++)
    {
+      int I = G.GetN();
+
       double X1, X2, Y1, Y2, E1YH, E1YL, E1XH, E1XL;
 
       G1.GetPoint(i, X1, Y1);
@@ -764,13 +770,13 @@ TGraphAsymmErrors CalculateRatio(TGraphAsymmErrors &G1, TGraphAsymmErrors &G2)
 
       if(Y2 == 0)
       {
-         G.SetPoint(i, X1, 0);
-         G.SetPointError(i, E1XL, E1XH, 0, 0);
+         G.SetPoint(I, X1, 0);
+         G.SetPointError(I, E1XL, E1XH, 0, 0);
       }
       else
       {
-         G.SetPoint(i, X1, Y1 / Y2);
-         G.SetPointError(i, E1XL, E1XH, E1YL / Y2, E1YH / Y2);
+         G.SetPoint(I, X1, Y1 / Y2);
+         G.SetPointError(I, E1XL, E1XH, E1YL / Y2, E1YH / Y2);
       }
    }
 
@@ -944,6 +950,9 @@ pair<double, double> GetGraphMinMax(string FileName, string HistogramName, vecto
    {
       Min = ((TH1D *)Object)->GetXaxis()->GetBinLowEdge(1);
       Max = ((TH1D *)Object)->GetXaxis()->GetBinUpEdge(((TH1D *)Object)->GetNbinsX());
+
+      while(Max > GenBins.size())
+         Max = Max - (GenBins.size() - 1);
 
       Min = GenBins[Min+1];
       Max = GenBins[Max];
