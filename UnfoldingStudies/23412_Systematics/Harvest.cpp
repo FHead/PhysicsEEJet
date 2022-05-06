@@ -81,16 +81,21 @@ int main(int argc, char *argv[])
       TFile File(FileNames[i].c_str());
       TFile BaseFile(BaseFileNames[i].c_str());
 
-      TH1D *H = (TH1D *)File.Get(HistogramNames[i].c_str());
+      TH1D *H = ((FileNames[i] == "Flat") ? nullptr : (TH1D *)File.Get(HistogramNames[i].c_str()));
       TH1D *HB = (TH1D *)BaseFile.Get(BaseHistogramNames[i].c_str());
 
-      if(H != nullptr && HB != nullptr)
+      if(HB == nullptr)
+         continue;
+
+      if(H != nullptr || HistogramNames[i] == "Flat")
       {
          OutputFile.cd();
-         TH1D *HCloned = (TH1D *)H->Clone(Form("H%s", Labels[i].c_str()));
          TH1D *HBCloned = (TH1D *)HB->Clone(Form("H%sBase", Labels[i].c_str()));
-
-         HCloned->Scale(ExtraScaling[i]);
+         TH1D *HCloned = nullptr;
+         if(H != nullptr)
+            HCloned = (TH1D *)H->Clone(Form("H%s", Labels[i].c_str()));
+         else
+            HCloned = (TH1D *)HB->Clone(Form("H%s", Labels[i].c_str()));
 
          if(HTotalPlus == nullptr && HTotalMinus == nullptr)
          {
@@ -106,6 +111,10 @@ int main(int argc, char *argv[])
          }
          if(Bridging[i] > 0)
             DoBridging(HBCloned, HCloned, Bridging[i]);
+         
+         HCloned->Scale(ExtraScaling[i]);
+
+         OutputFile.cd();
          HCloned->Write();
          HBCloned->Write();
 
@@ -116,6 +125,7 @@ int main(int argc, char *argv[])
       File.Close();
    }
 
+   OutputFile.cd();
    HTotalPlus->Write();
    HTotalMinus->Write();
 
@@ -161,7 +171,7 @@ void SelfNormalize(TH1D *H, int NormalizationGroupSize)
    if(BinningCount <= 0)
       BinningCount = 1;
 
-   cout << H->GetNbinsX() << " " << NormalizationGroupSize << " " << BinningCount << endl;
+   // cout << H->GetNbinsX() << " " << NormalizationGroupSize << " " << BinningCount << endl;
 
    for(int iB = 0; iB < BinningCount; iB++)
    {
