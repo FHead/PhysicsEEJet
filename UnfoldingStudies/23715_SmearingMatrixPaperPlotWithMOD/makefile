@@ -15,9 +15,29 @@ Deploy:
 
 RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetM RunJetME RunConversion
 
+RunExtra: RunJetEFineBin
+
 RunJetE: Execute
 	./Execute --Input Input/DataJetENominal.root \
 		--Output Plots/DataJetENominal.pdf --FinalOutput Plots/MatrixP.$(Format) \
+		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 46 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
+		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
+		--XAxis 505 --YAxis 505 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
+		--DoMOD $(DoMOD) --CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
+
+RunJetEFineBin: Execute
+	./Execute --Input Input/DataJetEFineRecoBin.root \
+		--Output Plots/DataJetENominal.pdf --FinalOutput Plots/MatrixPFine.$(Format) \
+		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 46 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
+		--GenPrimaryMin 0 --GenPrimaryMax 46 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
+		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \
+		--XAxis 505 --YAxis 505 \
+		--IgnoreGroupRow 0 --IgnoreGroupColumn 0 --Row 1 --Column 1 \
+		--DoMOD $(DoMOD) --CanvasScale 5 --LogoX 0.75 --LogoY 0.22 --LogoW 0.12
+	./Execute --Input Input/DataJetEVeryFineRecoBin.root \
+		--Output Plots/DataJetENominal.pdf --FinalOutput Plots/MatrixPVeryFine.$(Format) \
 		--WorldXMin 0 --WorldXMax 70 --WorldYMin 0 --WorldYMax 46 --WorldZMin 0.0001 --WorldZMax 1 --LogZ true \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 --RecoPrimaryMin 0 --RecoPrimaryMax 100 \
 		--Primary "Jet E (GeV)" --Binning "None" --RowNormalize true \

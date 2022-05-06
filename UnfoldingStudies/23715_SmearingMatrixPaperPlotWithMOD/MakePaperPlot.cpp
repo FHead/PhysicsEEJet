@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
          Label = "[";
          if(MatchedBins2[i] > -999)
             Label = Label + Form("%.1f", MatchedBins2[i]);
-         Label = Label + " < ";
+         Label = Label + " - ";
          if(MatchedBins2[i+1] < 999)
             Label = Label + Form("%.1f", MatchedBins2[i+1]);
          Label = Label + "]";
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
          Label = "[";
          if(GenBins2[i] > -999)
             Label = Label + Form("%.1f", GenBins2[i]);
-         Label = Label + " < ";
+         Label = Label + " - ";
          if(GenBins2[i+1] < 999)
             Label = Label + Form("%.1f", GenBins2[i+1]);
          Label = Label + "]";
