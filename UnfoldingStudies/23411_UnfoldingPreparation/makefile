@@ -10,9 +10,11 @@ RunThrust: ThrustNominalRun ThrustNoCutRun
 RunNominal: Preparation23514 DataNominalRun FakeDataNominalRun DataSumERun MCNominalRun \
 	MCNoJECRun DataJECRunHalf DataNoResidualRun \
 	DataJECRun DataJERRun \
+	DataSJSmearRun \
 	MCSumERun \
 	DataLargeThetaGapRun MCLargeThetaGapRun DataThetaSideRun MCThetaSideRun MCExtra \
-	DataFlooredRun DataTighterRun FakeFakeRun
+	DataFlooredRun DataTighterRun FakeFakeRun \
+	NoNeutralRun DataFineBinRun DataVeryFineBinRun MCGenReweightRun DataGenReweightRun
 
 MCExtra: MCPythia6 MCPythia8 MCHerwig MCSherpa MCHerwig715 MCPyquen MCPyquenStrong MCVincia1 MCVincia2 MCLeading
 
@@ -92,6 +94,60 @@ DataNominalRun: Execute ExecutePreset
 		--Prefix Data --Suffix Nominal --Shift 0.0 --Smear 1.025 \
 		--Observables $(Observables) | grep ^time`
 
+DataGenReweightRun: Execute ExecutePreset
+	# eval `./ExecutePreset --MC MC.root --Data Data.root \
+	# 	--MCSumE MCSumE.root --DataSumE DataSumE.root \
+	# 	--Prefix Data --Suffix GenReweightN05Test --Shift 0.0 --Smear 1.025 \
+	# 	--Observables $(Observables) --GenReweight N05Test | grep ^time`
+	# eval `./ExecutePreset --MC MC.root --Data Data.root \
+	# 	--MCSumE MCSumE.root --DataSumE DataSumE.root \
+	# 	--Prefix Data --Suffix GenReweightN10Test --Shift 0.0 --Smear 1.025 \
+	# 	--Observables $(Observables) --GenReweight N10Test | grep ^time`
+	# eval `./ExecutePreset --MC MC.root --Data Data.root \
+	# 	--MCSumE MCSumE.root --DataSumE DataSumE.root \
+	# 	--Prefix Data --Suffix GenReweightN15Test --Shift 0.0 --Smear 1.025 \
+	# 	--Observables $(Observables) --GenReweight N15Test | grep ^time`
+	eval `./ExecutePreset --MC MC.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix GenReweightZGDown --Shift 0.0 --Smear 1.025 \
+		--Observables $(Observables) --GenReweight ZGDown | grep ^time`
+	eval `./ExecutePreset --MC MC.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix GenReweightZGUp --Shift 0.0 --Smear 1.025 \
+		--Observables $(Observables) --GenReweight ZGUp | grep ^time`
+	eval `./ExecutePreset --MC MC.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix GenReweightRGDown --Shift 0.0 --Smear 1.025 \
+		--Observables $(Observables) --GenReweight RGDown | grep ^time`
+	eval `./ExecutePreset --MC MC.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix GenReweightRGUp --Shift 0.0 --Smear 1.025 \
+		--Observables $(Observables) --GenReweight RGUp | grep ^time`
+
+DataFineBinRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC MC.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix FineRecoBin --Shift 0.0 --Smear 1.025 \
+		--FineRecoBins true \
+		--Observables $(Observables) | grep ^time`
+
+DataVeryFineBinRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC MC.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix VeryFineRecoBin --Shift 0.0 --Smear 1.025 \
+		--VeryFineRecoBins true \
+		--Observables $(Observables) | grep ^time`
+
+NoNeutralRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC MCNoNeutral.root --Data DataNoNeutral.root \
+		--MCSumE MCNoNeutralSumE.root --DataSumE DataNoNeutralSumE.root \
+		--Prefix Data --Suffix NoNeutral --Shift 0.0 --Smear 1.025 \
+		--Observables $(Observables) | grep ^time`
+	eval `./ExecutePreset --MC MCNoNeutral.root --Data MCNoNeutral.root \
+		--MCSumE MCNoNeutralSumE.root --DataSumE MCNoNeutralSumE.root \
+		--Prefix MC --Suffix NoNeutral --Shift 0.0 --Smear 1.00 \
+		--Observables $(LeadingObservables) | grep ^time`
+
 FakeDataNominalRun: Execute ExecutePreset
 	eval `./ExecutePreset --MC MC.root --Data FakeData.root \
 		--MCSumE MCSumE.root --DataSumE FakeDataSumE.root \
@@ -163,6 +219,12 @@ DataJERRun: Execute ExecutePreset
 		--Prefix Data --Suffix JERDown --Shift 0.0 --Smear 1.00 \
 		--Observables $(Observables) | grep ^time`
 
+DataSJSmearRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC MCSJSmear.root --Data Data.root \
+		--MCSumE MCSumE.root --DataSumE DataSumE.root \
+		--Prefix Data --Suffix SJSmear --Shift 0.0 --Smear 1.025 \
+		--Observables $(Observables) | grep ^time`
+
 DataNoResidualRun: Execute ExecutePreset
 	# Check SumE
 	eval `./ExecutePreset --MC MC.root --Data DataNoResidual.root \
@@ -175,6 +237,12 @@ MCNominalRun: Execute ExecutePreset
 		--MCSumE MCSumE.root --DataSumE MCSumE.root \
 		--Prefix MC --Suffix Nominal --Shift 0.0 --Smear 1.00 \
 		--Observables $(Observables) | grep ^time`
+
+MCGenReweightRun: Execute ExecutePreset
+	eval `./ExecutePreset --MC MC.root --Data MC.root \
+		--MCSumE MCSumE.root --DataSumE MCSumE.root \
+		--Prefix MC --Suffix GenReweightN05Test --Shift 0.0 --Smear 1.00 \
+		--Observables $(Observables) --GenReweight N05Test | grep ^time`
 
 MCNoJECRun: Execute ExecutePreset
 	# Check SumE

@@ -13,6 +13,8 @@ enum ObservableType {ObservableNone, ObservableLeadingJetE, ObservableSubleading
    ObservableJetE, ObservableJetP, ObservableZG, ObservableRG, ObservableMG, ObservableMGE, ObservableThrust,
    ObservableLeadingDiJetE, ObservableLeadingDiJetSumE, ObservableJetM, ObservableJetME};
 enum ObservableStep {Gen, Reco, Matched};
+enum GenWeightType {GenWeightNone, GenWeightN05Test, GenWeightN10Test, GenWeightN15Test,
+   GenWeightZGDown, GenWeightZGUp, GenWeightRGDown, GenWeightRGUp};
 
 class Messenger;
 int main(int argc, char *argv[]);
@@ -35,6 +37,10 @@ private:
    vector<float>         *GenJetE;
    vector<float>         *GenJetP;
    vector<float>         *GenJetTheta;
+   vector<int>           *GenJetN00;
+   vector<int>           *GenJetN05;
+   vector<int>           *GenJetN10;
+   vector<int>           *GenJetN15;
    vector<vector<float>> *GenJetZG;
    vector<vector<float>> *GenJetRG;
    vector<vector<float>> *GenJetMG;
@@ -72,6 +78,10 @@ public:
       GenJetE = nullptr;
       GenJetP = nullptr;
       GenJetTheta = nullptr;
+      GenJetN00 = nullptr;
+      GenJetN05 = nullptr;
+      GenJetN10 = nullptr;
+      GenJetN15 = nullptr;
       GenJetZG = nullptr;
       GenJetRG = nullptr;
       GenJetMG = nullptr;
@@ -103,6 +113,10 @@ public:
       Tree->SetBranchAddress("GenJetE", &GenJetE);
       Tree->SetBranchAddress("GenJetP", &GenJetP);
       Tree->SetBranchAddress("GenJetTheta", &GenJetTheta);
+      Tree->SetBranchAddress("GenJetN00", &GenJetN00);
+      Tree->SetBranchAddress("GenJetN05", &GenJetN05);
+      Tree->SetBranchAddress("GenJetN10", &GenJetN10);
+      Tree->SetBranchAddress("GenJetN15", &GenJetN15);
       Tree->SetBranchAddress("GenJetZG", &GenJetZG);
       Tree->SetBranchAddress("GenJetRG", &GenJetRG);
       Tree->SetBranchAddress("GenJetMG", &GenJetMG);
@@ -502,6 +516,27 @@ public:
       if(Item >= MatchedJetAngle->size())   return 999;
       return (*MatchedJetAngle)[Item];
    }
+   double GetGenWeight(GenWeightType &Type, int Item)
+   {
+      if(Type == GenWeightNone)
+         return 1;
+      if(Type == GenWeightN05Test)
+         return 2 - 0.06 * (*GenJetN05)[Item];
+      if(Type == GenWeightN10Test)
+         return 2 - 0.06 * (*GenJetN15)[Item];
+      if(Type == GenWeightN15Test)
+         return 2 - 0.06 * (*GenJetN10)[Item];
+      if(Type == GenWeightZGDown)
+         return 1.15 - 0.5 * (*GenJetZG)[Item][0];
+      if(Type == GenWeightZGUp)
+         return 0.85 + 0.5 * (*GenJetZG)[Item][0];
+      if(Type == GenWeightRGDown)
+         return 1.15 - 0.5 * (*GenJetRG)[Item][0];
+      if(Type == GenWeightRGUp)
+         return 0.85 + 0.5 * (*GenJetRG)[Item][0];
+
+      return 1;
+   }
 };
 
 int main(int argc, char *argv[])
@@ -525,6 +560,16 @@ int main(int argc, char *argv[])
    double BinningUncertaintyShift = CL.GetDouble("BinningUncertaintyShift", 0);
    double BinningUncertaintySmear = CL.GetDouble("BinningUncertaintySmear", 1);
    bool CheckMatchAngle           = CL.GetBool("CheckMatchAngle", true);
+
+   string DoGenReweight           = CL.Get("GenReweight", "none");
+   GenWeightType GenType = GenWeightNone;
+   if(DoGenReweight == "N05Test")   GenType = GenWeightN05Test;
+   if(DoGenReweight == "N10Test")   GenType = GenWeightN10Test;
+   if(DoGenReweight == "N15Test")   GenType = GenWeightN15Test;
+   if(DoGenReweight == "ZGDown")    GenType = GenWeightZGDown;
+   if(DoGenReweight == "ZGUp")      GenType = GenWeightZGUp;
+   if(DoGenReweight == "RGDown")    GenType = GenWeightRGDown;
+   if(DoGenReweight == "RGUp")      GenType = GenWeightRGUp;
    
    double PrimaryGenMin           = CL.GetDouble("ObservableGenMin", -99999);
    double PrimaryGenMax           = CL.GetDouble("ObservableGenMax", +99999);
@@ -638,6 +683,8 @@ int main(int argc, char *argv[])
    TH2D HResponse("HResponse", ";Matched;Gen", MatchedBinCount, 0, MatchedBinCount, GenBinCount, 0, GenBinCount);
    TH1D HDataReco("HDataReco", ";Reco", RecoBinCount, 0, RecoBinCount);
 
+   HDataReco.Sumw2();
+
    TH1D HGenPrimaryBinMin("HGenPrimaryBinMin", ";Gen;Min", GenBinCount, 0, GenBinCount);
    TH1D HGenPrimaryBinMax("HGenPrimaryBinMax", ";Gen;Max", GenBinCount, 0, GenBinCount);
    TH1D HGenBinningBinMin("HGenBinningBinMin", ";Gen;Min", GenBinCount, 0, GenBinCount);
@@ -669,10 +716,11 @@ int main(int argc, char *argv[])
       int NJet = MMC.GetItemCount(Gen, PrimaryType);
       for(int iJ = 0; iJ < NJet; iJ++)
       {
+         double GenWeight = MMC.GetGenWeight(GenType, iJ);
          int GenBin = MMC.GetCompositeBin(Gen,
             PrimaryType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, 1, PrimaryGenMin, PrimaryGenMax,
             BinningType, BinningIndex, iJ, BinningGenBins, 0, 1, 1, BinningGenMin, BinningGenMax);
-         HMCGen.Fill(GenBin);
+         HMCGen.Fill(GenBin, GenWeight);
       }
 
       ObservableType PrimaryMatrixType = PrimaryType;
@@ -689,6 +737,7 @@ int main(int argc, char *argv[])
          if(CheckMatchAngle == true && (Angle > 0.2 || Angle < 0))
             continue;
 
+         double GenWeight = MMC.GetGenWeight(GenType, iJ);
          int GenBin = MMC.GetCompositeBin(Gen,
             PrimaryMatrixType, PrimaryIndex, iJ, PrimaryGenBins, 0, 1, 1, PrimaryGenMin, PrimaryGenMax,
             BinningMatrixType, BinningIndex, iJ, BinningGenBins, 0, 1, 1, BinningGenMin, BinningGenMax);
@@ -704,10 +753,10 @@ int main(int argc, char *argv[])
             BinningMatrixType, BinningIndex, iJ, BinningGenBins, BinningUncertaintyShift, BinningUncertaintySmear, 1,
                BinningGenMin, BinningGenMax);
 
-         HMCMatched.Fill(MatchedBin);
-         HResponse.Fill(MatchedBin, GenBin);
+         HMCMatched.Fill(MatchedBin, GenWeight);
+         HResponse.Fill(MatchedBin, GenBin, GenWeight);
          
-         HMCMatchedGenBin.Fill(MatchedGenBin);
+         HMCMatchedGenBin.Fill(MatchedGenBin, GenWeight);
 
          if(DoJetAugmentation == true)
          {
@@ -728,7 +777,7 @@ int main(int argc, char *argv[])
                      BinningMatrixType, BinningIndex, iJ, BinningRecoBins, BinningUncertaintyShift, BinningUncertaintySmear,
                         Scale, BinningRecoMin, BinningRecoMax);
          
-                  HResponse.Fill(NewMatchedBin, NewGenBin);
+                  HResponse.Fill(NewMatchedBin, NewGenBin, GenWeight);
                 }
             }
          }
