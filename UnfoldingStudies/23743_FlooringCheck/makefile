@@ -20,9 +20,9 @@ RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMGE RunJetME Run
 RunJetE: Execute
 	./Execute --Input Input/DataJetENominal.root \
 		--Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowE.$(Format) \
-		--MCFile Input/DataJetETighter.root,Input/DataJetEFloored.root \
-		--MCHistogram HUnfoldedBayes17,HUnfoldedBayes17 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataJetETighter.root,Input/DataJetEFloored.root,Input/DataJetENoNeutral.root,Input/DataJetEMCPrior.root \
+		--MCHistogram HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -37,9 +37,9 @@ RunJetE: Execute
 RunDiJetE: Execute
 	./Execute --Input Input/DataLeadingDiJetENominal.root \
 		--Systematic Systematics/DataLeadingDiJetE.root --Output Plots/DataLeadingDiJetENominalCorrected.pdf --FinalOutput Plots/MeowLeadingDiJetECorrected.$(Format) \
-		--MCFile Input/DataLeadingDiJetETighter.root,Input/DataLeadingDiJetEFloored.root \
-		--MCHistogram HUnfoldedBayes7,HUnfoldedBayes7 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataLeadingDiJetETighter.root,Input/DataLeadingDiJetEFloored.root,Input/DataLeadingDiJetENoNeutral.root,Input/DataLeadingDiJetEMCPrior.root \
+		--MCHistogram HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 46 \
@@ -56,9 +56,9 @@ RunDiJetE: Execute
 RunDiJetSumE: Execute
 	./Execute --Input Input/DataLeadingDiJetSumENominal.root \
 		--Systematic Systematics/DataLeadingDiJetSumE.root --Output Plots/DataLeadingDiJetSumENominalCorrected.pdf --FinalOutput Plots/MeowLeadingDiJetSumECorrected.$(Format) \
-		--MCFile Input/DataLeadingDiJetSumETighter.root,Input/DataLeadingDiJetSumEFloored.root \
-		--MCHistogram HUnfoldedBayes15,HUnfoldedBayes15 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataLeadingDiJetSumETighter.root,Input/DataLeadingDiJetSumEFloored.root,Input/DataLeadingDiJetSumENoNeutral.root,Input/DataLeadingDiJetSumEMCPrior.root \
+		--MCHistogram HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedBayes15,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes15 \
 		--DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
 		--GenPrimaryMin 0 --GenPrimaryMax 92 \
@@ -75,9 +75,9 @@ RunDiJetSumE: Execute
 RunJetZG: Execute
 	./Execute --Input Input/DataJetZGNominal.root \
 		--Systematic Systematics/DataJetZGNormalized.root --Output Plots/DataJetZGNominal.pdf --FinalOutput Plots/MeowZG.$(Format) \
-		--MCFile Input/DataJetZGTighter.root,Input/DataJetZGFloored.root \
-		--MCHistogram HUnfoldedBayes17,HUnfoldedBayes17 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataJetZGTighter.root,Input/DataJetZGFloored.root,Input/DataJetZGNoNeutral.root,Input/DataJetZGMCPrior.root \
+		--MCHistogram HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedBayes17,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes17 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
@@ -92,9 +92,9 @@ RunJetZG: Execute
 RunJetRG: Execute
 	./Execute --Input Input/DataJetRGNominal.root \
 		--Systematic Systematics/DataJetRGNormalized.root --Output Plots/DataJetRGNominal.pdf --FinalOutput Plots/MeowRG.$(Format) \
-		--MCFile Input/DataJetRGTighter.root,Input/DataJetRGFloored.root \
-		--MCHistogram HUnfoldedBayes8,HUnfoldedBayes8 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataJetRGTighter.root,Input/DataJetRGFloored.root,Input/DataJetRGNoNeutral.root,Input/DataJetRGMCPrior.root \
+		--MCHistogram HUnfoldedBayes8,HUnfoldedBayes8,HUnfoldedBayes8,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes8 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.015 --GenPrimaryMax 0.75 \
@@ -109,9 +109,9 @@ RunJetRG: Execute
 RunJetMGE: Execute
 	./Execute --Input Input/DataJetMGENominal.root \
 		--Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/MeowMGE.$(Format) \
-		--MCFile Input/DataJetMGETighter.root,Input/DataJetMGEFloored.root \
-		--MCHistogram HUnfoldedBayes16,HUnfoldedBayes16 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataJetMGETighter.root,Input/DataJetMGEFloored.root,Input/DataJetMGENoNeutral.root,Input/DataJetMGEMCPrior.root \
+		--MCHistogram HUnfoldedBayes16,HUnfoldedBayes16,HUnfoldedBayes16,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes16 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
@@ -126,9 +126,9 @@ RunJetMGE: Execute
 RunJetME: Execute
 	./Execute --Input Input/DataJetMENominal.root \
 		--Systematic Systematics/DataJetMENormalized.root --Output Plots/DataJetMENominal.pdf --FinalOutput Plots/MeowME.$(Format) \
-		--MCFile Input/DataJetMETighter.root,Input/DataJetMEFloored.root \
-		--MCHistogram HUnfoldedBayes7,HUnfoldedBayes7 \
-		--MCLabel "Tighter","Floored" \
+		--MCFile Input/DataJetMETighter.root,Input/DataJetMEFloored.root,Input/DataJetMENoNeutral.root,Input/DataJetMEMCPrior.root \
+		--MCHistogram HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedBayes7,HUnfoldedTUnfold \
+		--MCLabel "Tighter","Floored","No neutral","TUnfold" \
 		--PrimaryName HUnfoldedBayes7 \
 		--DoSelfNormalize true \
 		--GenPrimaryMin 0 --GenPrimaryMax 0.5 \
