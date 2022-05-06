@@ -1,0 +1,80 @@
+# Start a new submission. This section is optional for the provision of information about the overall submission.
+---
+
+comment: "The first measurements of energy spectra and substructure of anti-kT jets in hadronic $Z^0$ decays in $e^+e^-$ collisions are presented. The archived $e^+e^-$ annihilation data at a center-of-mass energy of 91.2 GeV were collected with the ALEPH detector at LEP in 1994. In addition to inclusive jet and leading dijet energy spectra, various jet substructure observables are analyzed as a function of jet energy which includes groomed and ungroomed jet mass to jet energy ratios, groomed momentum sharing, and groomed jet radius. The results are compared with perturbative QCD calculations and predictions from the SHERPA, HERWIG v7.1.5, PYTHIA 6, PYTHIA 8, and PYQUEN event generators. The jet energy spectra agree with perturbative QCD calculations which include the treatment of logarithms of the jet radius and threshold logarithms. None of the event generators give a fully satisfactory description of the data."
+record_ids:
+- {id: 1972346, type: inspire}
+- {id: 2111.09914, type: arxiv}
+- {id: MITHIG-MOD-21-001, type: MITHIGMOD}
+
+---
+name: "InclusiveJetEnergy"
+location: Data from figure 12 of preprint
+description: The measured inclusive jet energy spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet X"]}
+  - {name: observables, values: ["Jet energy"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataJetE.yaml
+
+---
+name: "LeadingDiJetEnergy"
+location: Data from figure 13 of preprint
+description: The measured leading dijet energy spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet jet X"]}
+  - {name: observables, values: ["Jet energy"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataDiJetE.yaml
+
+---
+name: "LeadingDiJetSumEnergy"
+location: Data from figure 14 of preprint
+description: The measured leading dijet sum energy spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet jet X"]}
+  - {name: observables, values: ["Dijet energy"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataDiJetSumE.yaml
+
+---
+name: "InclusiveJetZG"
+location: Data from figure 15 of preprint
+description: The measured inclusive jet zg spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet X"]}
+  - {name: observables, values: ["Jet ZG"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataJetZG.yaml
+
+---
+name: "InclusiveJetRG"
+location: Data from figure 16 of preprint
+description: The measured inclusive jet Rg spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet X"]}
+  - {name: observables, values: ["Jet RG"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataJetRG.yaml
+
+---
+name: "InclusiveJetME"
+location: Data from figure 17 of preprint
+description: The measured inclusive jet M/E spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet X"]}
+  - {name: observables, values: ["Jet Mass/E"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataJetME.yaml
+
+---
+name: "InclusiveJetMGE"
+location: Data from figure 17 of preprint
+description: The measured inclusive jet Mg/E spectrum
+keywords: # used for searching, possibly multiple values for each keyword
+  - {name: reactions, values: ["e+ e- --> jet X"]}
+  - {name: observables, values: ["Jet MG/E"]}
+  - {name: cmenergies, values: [91.2]}
+data_file: DataJetMGE.yaml
+
+
