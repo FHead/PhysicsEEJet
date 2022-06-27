@@ -1,0 +1,195 @@
+
+body
+{
+   background: url(Wood_Wallpaper_by_stenosis.jpg);
+   font-family: arial, sans-serif;
+}
+
+div
+{
+   box-sizing: border-box;
+   border-radius: 10px;
+   border: 1px solid #000;
+}
+
+div.PageContainer
+{
+   max-width: 1600px;
+   min-width: 1024px;
+   height: 100%;
+   margin-left: auto;
+   margin-right: auto;
+   border: 0px;
+   display: flex;
+   flex-direction: column;
+}
+
+div.Header
+{
+   position: relative;
+   padding: 0.5em;
+   margin-bottom: 0.5em;
+   font-size: 2em;
+   font-weight: bold;
+   text-align: center;
+   background-color: rgba(255, 255, 255, 0.35);
+}
+
+div.Columns
+{
+   height: 100%;
+   display: flex;
+   flex-direction: row;
+   border: 0px;
+}
+
+div.LeftColumn
+{
+   width: 100%;
+   margin-right: 1em;
+   overflow: hidden;
+   position: relative;
+}
+
+div.RightColumn
+{
+   width: 400px;
+   padding: 1em;
+   display: flex;
+   flex-direction: column;
+   background: rgba(255, 255, 255, 0.35);
+}
+
+div.InformationDiv
+{
+   border: 0px;
+   margin-bottom: 1em;
+}
+
+div.TextAreaTitleDiv
+{
+   border: 0px;
+}
+
+div.TextAreaDiv
+{
+   border: 0px;
+   height: 100%;
+}
+
+div.ButtonDiv
+{
+   border: 0px;
+   margin-top: 1em;
+}
+
+div.Footer
+{
+   position: relative;
+   padding: 0.5em;
+   margin-top: 1em;
+   text-align: center;
+   background-color: rgba(255, 255, 255, 0.35);
+}
+
+canvas#MainDisplay
+{
+   width: 100%;
+   height: 100%;
+}
+
+textarea#ExtraInformation
+{
+   width: 100%;
+   height: 100%;
+   resize: none;
+   transition: 0.3s ease;
+}
+
+textarea#ParticleInput
+{
+   width: 100%;
+   height: 100%;
+   resize: none;
+   transition: 0.3s ease;
+}
+
+div.Tooltip
+{
+   display: inline-block;
+   padding: 0.5em;
+   max-height: 2.0em;
+   width: 100%;
+   overflow: hidden;
+   margin-bottom: 0.5em;
+   transition: ease 0.5s;
+}
+
+div.Tooltip > span
+{
+   display: block;
+   text-align: center;
+   width: 100%;
+   margin-bottom: 0.5em;
+}
+
+div.Tooltip:hover
+{
+   max-height: 100%;
+}
+
+div.OverlayRight
+{
+   position: absolute;
+   right: 10px;
+   top: 10px;
+   font-size: 1.25em;
+   padding: 0.5em;
+   background: rgba(255, 255, 255, 0.7);
+   pointer-events: none;
+}
+
+div.OverlayRight > span
+{
+   font-weight: bold;
+}
+
+div.OverlayLeft
+{
+   position: absolute;
+   left: 7.5px;
+   bottom: 7.5px;
+   font-size: 0.75em;
+   padding: 0.0em;
+   color: rgba(255, 255, 255, 0.25);
+   display: block;
+   transition: 0.3s ease;
+   pointer-events: none;
+}
+
+div.OverlayTop
+{
+   position: absolute;
+   left: 10px;
+   top: 10px;
+   font-size: 1.25em;
+   padding: 0.5em;
+   background: rgba(255, 255, 255, 0.7);
+   transition: 0.3s ease;
+   pointer-events: none;
+}
+
+div.OverlayTop > span
+{
+   font-weight: bold;
+}
+
+div.OverlayTop > div.Button
+{
+   display: inline-block;
+   border-radius: 1em;
+   font-weight: bold;
+   height: 1.25em;
+   width: 1.25em;
+   text-align: center;
+}

@@ -1,0 +1,181 @@
+<html>
+   <head>
+      <title>Sea Urchin Event Display</title>
+      <link rel="stylesheet" href="style.css" />
+      <link rel="shortcut icon" href="Alien.png" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+      <script src="three.js"></script>
+      <script src="control.js"></script>
+   </head>
+   <body>
+      <div class="PageContainer">
+         <div class="Header">
+            Sea Urchin Event Display
+         </div>
+         <div class="Columns">
+            <div class="LeftColumn" id="DisplayDiv" tabindex="0">
+               <div class="OverlayRight" id="ColorOverlay">&nbsp;</div>
+               <div class="OverlayLeft" id="ParticleOverlay">Created by Yi Chen</div>
+               <div class="OverlayTop" id="QuickTipOverlay">&nbsp;</div>
+            </div>
+            <div class="RightColumn">
+               <div class="InformationDiv">
+                  <div class="Tooltip"><span>Controls</span>
+                     <ul>
+                        <li>You may need to click on the display area to focus before keys could work.</li>
+                        <li>Moving: "ASDF" or arrow keys to move around.  We can also drag with left mouse button.</li>
+                        <li>Rotate: "Q"/"PageUp" to rotate left, "E"/"PageDown" to rotate right</li>
+                        <li>Zooming: "R" or "home" to zoom in, "F" or "end" to zoom out.  We can also use mouse middle button scroll.</li>
+                        <li>Right click and save image!</li>
+                     </ul>
+                  </div>
+                  <div class="Tooltip" id="DisplayGuideTooltip"><span>Display guide</span>
+                     <ul>
+                        <li>Yellow ball is the origin</li>
+                        <li>Axes are (red = x, green = y, blue = z).</li>
+                        <li>The knots are at 1, 5, 10, 25, 100 GeV.  Darker knots are negative.</li>
+                        <li>Note that there is some camera distortion when distances are large.</li>
+                     </ul>
+                  </div>
+                  <div class="Tooltip"><span>Particle format</span>
+                     <ul>
+                        <li>Each line is one particle</li>
+                        <li>Each particle contains four numbers separated by space (and/or comma): 3-momentum, and ID.</li>
+                        <li>Add a "#" to indicate comments.  Those lines will be ignored</li>
+                        <li>The ID is used to determine the line color, and it goes from 1 to 6.  If you need more colors let Yi know.</li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="TextAreaTitleDiv">
+                  Extra information
+               </div>
+               <div class="TextAreaDiv">
+                  <textarea id="ExtraInformation">Year = 2000<br />
+Run = 58332, Event = 11219<br />
+NParticle = 88 (64 charged)<br />
+Thrust = 0.789102<br /></textarea>
+               </div>
+               <div class="TextAreaTitleDiv">
+                  Particles (Px, Py, Pz, ID)
+               </div>
+               <div class="TextAreaDiv">
+                  <textarea id="ParticleInput"># Add your particles here
+# Jet 0, E = 70.8313
+1.127 -0.74 -2.295 1
+0.331 -0.391 -0.972 1
+1.111 -1.434 -3.292 1
+0.155 -0.703 -0.601 1
+0.936 -2.573 -2.078 1
+1.296 -1.929 -3.464 1
+0.142 -0.446 -0.448 1
+0.887 -1.049 -1.664 1
+2.502 -5.511 -6.426 1
+1.16 -1.488 -1.552 1
+2.11 -2.997 -3.155 1
+0.507 -0.669 -0.751 1
+0.435 -0.538 -0.672 1
+1.053 -1.422 -1.652 1
+0.659 -0.995 -1.279 1
+3.883 -5.521 -7.065 1
+0.891 -1.35 -1.439 1
+1.167 -1.906 -2.318 1
+3.431 -5.468 -6.28 1
+2.086 -3.296 -3.696 1
+# Jet 1, E = 38.4357
+-0.277 0.218 0.548 2
+-0.209 0.124 0.31 2
+-0.122 0.217 0.122 2
+-0.601 0.461 0.82 2
+-0.407 0.37 0.606 2
+-2.107 1.672 2.106 2
+-2.848 3.007 3.302 2
+-0.187 0.197 0.217 2
+-1.557 1.504 1.645 2
+-3.121 2.89 3.199 2
+-3.28 3.409 3.093 2
+-1.006 0.906 0.951 2
+-1.799 1.657 1.668 2
+-3.105 3.023 2.902 2
+-1.439 1.403 1.409 2
+# Jet 2, E = 33.8755
+-0.906 0.53 0.198 3
+-0.421 0.03 0.218 3
+-0.986 -0.087 0.338 3
+-0.546 0.082 0.26 3
+-0.467 -0.034 0.045 3
+-0.426 0.126 0.174 3
+-0.732 0.304 0.228 3
+-0.972 0.319 0.344 3
+-1.518 0.527 0.191 3
+-3.18 0.863 0.133 3
+-2.273 0.489 0.579 3
+-1.429 0.349 0.155 3
+-11.173 1.635 1.309 3
+-7.329 1.271 1.263 3
+# Jet 3, E = 32.6059
+0.423 1.228 1.483 4
+0.211 0.442 0.987 4
+0.944 0.518 2.246 4
+0.401 0.183 0.65 4
+1.12 0.557 1.588 4
+0.971 0.594 1.632 4
+0.244 0.18 0.486 4
+0.396 0.313 0.616 4
+3.311 2.977 6.125 4
+1.021 1.069 1.724 4
+1.147 1.144 2.082 4
+2.632 2.759 4.825 4
+0.912 0.948 1.72 4
+# Jet 4, E = 7.32381
+1.371 -0.418 0.477 5
+1.225 0.152 0.179 5
+1.023 0.222 0.406 5
+1.637 -0.008 0.67 5
+1.42 -0.016 0.847 5
+# Jet 5, E = 6.44136
+-1.149 2.475 0.13 5
+-0.076 0.389 0.14 5
+-0.589 2.575 0.433 5
+-0.057 0.259 0.002 5
+-0.056 0.239 0.004 5
+# Jet 6, E = 5.14744
+-0.808 -0.939 0.634 5
+-0.347 -0.063 0.207 5
+-0.626 -0.333 0.48 5
+-1.302 -0.748 0.588 5
+-0.737 -0.252 0.279 5
+# Jet 7, E = 2.11931
+0.313 0.103 0.003 5
+1.223 0.219 -0.092 5
+0.464 0.112 -0.101 5
+# Jet 8, E = 1.72163
+1.116 -0.3 1.276 5
+# Jet 9, E = 1.39963
+0.739 0.143 -1.18 5
+# Jet 10, E = 1.04873
+-0.048 0.194 -0.246 5
+-0.194 0.191 -0.632 5
+# Jet 11, E = 0.895088
+-0.486 -0.731 0.175 5
+# Jet 12, E = 0.452868
+0.042 0.41 -0.125 5
+# Jet 13, E = 0.422807
+-0.354 0.033 -0.181 5
+# Jet 14, E = 0.286194
+0.057 -0.243 -0.003 5
+# Thrust: theta = 0.819395, phi = 2.32971
+-50.284 53.021 68.2663 -1
+50.284 -53.021 -68.2663 -1</textarea>
+               </div>
+               <div class="ButtonDiv">
+                  <button type="button" id="ResetButton">Reset View</button>
+                  <button type="button" id="UpdateButton">Update Particles</button>
+               </div>
+            </div>
+         </div>
+         <div class="Footer">
+            Developed by FHead.  Last updated: Jun 27, 2022
+         </div>
+      </div>
+   </body>
+</html>
