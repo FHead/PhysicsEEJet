@@ -82,9 +82,7 @@ int main(int argc, char *argv[])
          else
             Tree.Fill();
 
-         str >> NVertex >> NParticle;
-
-         EventNumber = EventNumber + 1;
+         str >> EventNumber >> NVertex >> NParticle;
 
          for(int i = 0; i < MAX; i++)
          {
@@ -110,9 +108,9 @@ int main(int argc, char *argv[])
       }
       else if(Type == "P")   // Particle record
       {
-         int ID, V, PID;
-         str >> ID >> V >> PID;
-         str >> PX[ID-1] >> PY[ID-1] >> PZ[ID-1] >> E[ID-1] >> Mass[ID-1] >> Status[ID-1];
+         int ID, V;
+         str >> ID >> V;
+         str >> PID[ID-1] >> PX[ID-1] >> PY[ID-1] >> PZ[ID-1] >> E[ID-1] >> Mass[ID-1] >> Status[ID-1];
 
          FourVector Particle(E[ID-1], PX[ID-1], PY[ID-1], PZ[ID-1]);
          PT[ID-1] = Particle.GetPT();
