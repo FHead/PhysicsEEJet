@@ -8,6 +8,11 @@ RunAllQuick: JetClustering UnfoldPreparation NominalUnfold MCIterationScan DataI
 
 RunAllMinimal: JetClustering UnfoldPreparation NominalUnfold Systematics FinalPlot FinalPlotSmall
 
+RunJetScape:
+	(cd 23514_JetResponseClustering/ && make RunJetScape)
+	(cd 23411_UnfoldingPreparation/ && make MCJetScape)
+	(cd 23755_UnfoldedPaperPlotWithMOD/ && make RunJetScape)
+
 SJSmear:
 	(cd 23514_JetResponseClustering/ && make RunSJSmear)
 	(cd 23411_UnfoldingPreparation/ && make DataSJSmearRun)
@@ -69,5 +74,12 @@ FinalPlotSmall:
 	(cd 23721_SystematicsPaperPlotSinglePanelWithMOD && make Prepare RunTest Deploy)
 	(cd 23721_UnfoldedPaperPlotSinglePanelWithMOD && make Prepare RunTest Deploy)
 
+DeployOnly:
+	(cd 23755_UnfoldedPaperPlotWithMOD && make Deploy)
+	(cd 23715_SystematicsPaperPlotWithMOD && make Deploy)
+	(cd 23715_SmearingMatrixPaperPlotWithMOD && make Deploy)
+	(cd 23721_SmearingMatrixPaperPlotSmallWithMOD && make Deploy)
+	(cd 23721_SystematicsPaperPlotSinglePanelWithMOD && make Deploy)
+	(cd 23721_UnfoldedPaperPlotSinglePanelWithMOD && make Deploy)
 
 
