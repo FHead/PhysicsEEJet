@@ -102,7 +102,7 @@ PYQUEN=MCPyquen
    --CorrectionFile Correction.dh --CorrectionState DijetJetE \
    --Step1CorrectionFile Step1Correction.dh --Step1CorrectionState LeadingDiJetE \
    --MCCorrection true,false \
-   --MCCorrection true,false \
+   --MCStep1Correction true,false \
    --DoMOD ${DoMOD} --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
    
 ./Execute --Input Input/DataLeadingDiJetENominal.root \
@@ -123,7 +123,7 @@ PYQUEN=MCPyquen
    --CorrectionFile Correction.dh --CorrectionState DijetJetE \
    --Step1CorrectionFile Step1Correction.dh --Step1CorrectionState LeadingDiJetE \
    --MCCorrection true,false \
-   --MCCorrection true,false \
+   --MCStep1Correction true,false \
    --DoMOD ${DoMOD} --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
 
 ./Execute --Input Input/DataLeadingDiJetENominal.root \

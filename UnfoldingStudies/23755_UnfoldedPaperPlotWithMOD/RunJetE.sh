@@ -62,9 +62,27 @@ PYQUEN=MCPyquen
 ./Execute --Input Input/DataJetENominal.root \
    --Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowEPythia.$Format \
    --RootOutput Root/DataJetEPythia.root \
-   --MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCVincia1JetE.root",OriginalInput/MCVincia2JetE.root \
-   --MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen \
-   --MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2" \
+   --MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCVincia1JetE.root",OriginalInput/MCVincia2JetE.root,"OriginalInput/MCJetScapeJetE.root" \
+   --MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen \
+   --MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2","JetScape" \
+   --PrimaryName HUnfoldedBayes17 \
+   --DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
+   --GenPrimaryMin 0 --GenPrimaryMax 46 \
+   --WorldXMin 10 --WorldXMax 46 --WorldYMin 0 --WorldYMax 0.35 --WorldRMin 0.51 --WorldRMax 1.49 --LogY false \
+   --XLabel "Jet E (GeV)" --YLabel "1/N_{event} dN_{jet}/d(Jet E)  (GeV^{-1})" --Binning "None" \
+   --LegendX 0.15 --LegendY 0.35 --LegendSize 0.04 \
+   --XAxis 505 --YAxis 505 --RAxis 505 --MarkerModifier 0.5 \
+   --Texts 0,0.1,0.9,"$Preliminary",0,0.1,0.85,"Anti-k_{T} jet R = 0.4",0,0.1,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi" \
+   --IgnoreGroup 0 --Row 1 --Column 1 \
+   --DoMOD $DoMOD --CanvasScale 10 --LogoX 0.55 --LogoY 0.87 --LogoW 0.12
+
+# Jet E: jetscape
+./Execute --Input Input/DataJetENominal.root \
+   --Systematic Systematics/DataJetE.root --Output Plots/DataJetENominal.pdf --FinalOutput Plots/MeowEJetScape.$Format \
+   --RootOutput Root/DataJetEPythia.root \
+   --MCFile "Input/DataJetENominal.root","OriginalInput/MCPythia8JetE.root","OriginalInput/MCJetScapeJetE.root","OriginalInput/MCJetScapeBypassJetE.root",OriginalInput/MCJetScapeSmashJetE.root,OriginalInput/MCJetScapeLHEJetE.root \
+   --MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen,HMCGen \
+   --MCLabel "PYTHIA 6","PYTHIA 8","JetScape Matter","JetScape FSR","JetScape Matter+Smash","JetScape Madgraph" \
    --PrimaryName HUnfoldedBayes17 \
    --DoSelfNormalize false --DoEventNormalize true --ExtraScale 1 \
    --GenPrimaryMin 0 --GenPrimaryMax 46 \
