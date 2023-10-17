@@ -323,8 +323,10 @@ int main(int argc, char *argv[])
          GenTree->SetBranchAddress("mass",         &GenMass);
          if(GenTree->GetBranch("status") != nullptr)
             GenTree->SetBranchAddress("status",       &GenStatus);
-         GenTree->SetBranchAddress("Thrust",       &GenThrust);
-         GenTree->SetBranchAddress("passesSTheta", &GenPassSTheta);
+         if(GenTree->GetBranch("Thrust") != nullptr)
+            GenTree->SetBranchAddress("Thrust",       &GenThrust);
+         if(GenTree->GetBranch("passSTheta") != nullptr)
+            GenTree->SetBranchAddress("passesSTheta", &GenPassSTheta);
       }
       if(RecoTree != nullptr)
       {
@@ -454,7 +456,7 @@ int main(int argc, char *argv[])
             continue;
          if(GenMultiplicityMax >= 0 && GenMultiplicity > GenMultiplicityMax)
             continue;
-
+         
          RecoSumE = 0;
          RecoMultiplicity = 0;
          for(int i = 0; i < NReco; i++)
@@ -487,7 +489,7 @@ int main(int argc, char *argv[])
          vector<PseudoJet> GenFJParticles;
          for(int i = 0; i < NGen; i++)
          {
-            if(GenStatus[i] != 1)
+            if(GenStatus[i] != 1 && GenStatus[i] != 0)
                continue;
             FourVector P(0, GenPX[i], GenPY[i], GenPZ[i]);
             P[0] = sqrt(P.GetP() * P.GetP() + GenMass[i] * GenMass[i]);
@@ -549,6 +551,8 @@ int main(int argc, char *argv[])
                RecoJets.emplace_back(pair<FourVector, PseudoJet>(P, RecoFastJets[i]));
             }
          }
+         
+         // cout << NGen << endl;
             
          // Apply JEC to reco jets
          for(int iR = 0; iR < (int)RecoJets.size(); iR++)
