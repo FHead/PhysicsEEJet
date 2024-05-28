@@ -17,6 +17,7 @@ To start running, you will need a few things
    - make sure `fastjet-config` is in `PATH` variable
 4. helper codes
    - go clone this https://github.com/FHead/fheadhelpercode somewhere
+   - Set environment variable RootMacrosBase to point to the RootMacros folder
 5. (optional) `pythia8` installation
 
 
@@ -40,6 +41,7 @@ bash Compile
 Then come back here and go into `CommonCode`.  And do
 
 ```shell
+mkdir library
 make
 ```
 
