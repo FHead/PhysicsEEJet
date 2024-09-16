@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Code/TauHelperFunctions3.h"
+#include "TauHelperFunctions3.h"
 
-#include "include/BasicUtilities.h"
+#include "BasicUtilities.h"
 
 double GetRho(std::vector<double> *EtaMax, std::vector<double> *Rho, double Eta, bool SuppressMessage)
 {

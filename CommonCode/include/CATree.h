@@ -1,8 +1,8 @@
 #include <vector>
 #include <map>
 
-#include "Code/DrawRandom.h"
-#include "Code/TauHelperFunctions3.h"
+#include "DrawRandom.h"
+#include "TauHelperFunctions3.h"
 
 class Node;
 struct NodePair;

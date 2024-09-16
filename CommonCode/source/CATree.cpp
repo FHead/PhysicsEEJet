@@ -2,9 +2,9 @@
 #include <cmath>
 #include <iostream>
 
-#include "include/CATree.h"
+#include "CATree.h"
 
-#include "include/BasicUtilities.h"
+#include "BasicUtilities.h"
 
 Node::Node()
    : P(0, 0, 0, 0), Child1(NULL), Child2(NULL), Parent(NULL), N(1)
