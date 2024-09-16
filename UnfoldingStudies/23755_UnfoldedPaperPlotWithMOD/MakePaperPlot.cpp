@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
    vector<string> MCFileNames     = CL.GetStringVector("MCFile", vector<string>{InputFileName});
    vector<string> MCHistNames     = CL.GetStringVector("MCHistogram", vector<string>{"HMCTruth"});
    vector<string> MCLabels        = CL.GetStringVector("MCLabel", vector<string>{"PYTHIA6"});
-   vector<int> MCColors           = CL.GetIntVector("MCColors", vector<int>{0, 1, 3, 5, 4, 7, 6, 8});
+   vector<int> MCColors           = CL.GetIntVector("MCColors", vector<int>{0, 1, 3, 5, 4, 8, 6, 7});
    vector<bool> MCCorrection      = CL.GetBoolVector("MCCorrection", vector<bool>{false, false, false, false, false, false, false, false, false, false});
    vector<bool> MCStep1Correction = CL.GetBoolVector("MCStep1Correction", vector<bool>{false, false, false, false, false, false, false, false, false, false});
 

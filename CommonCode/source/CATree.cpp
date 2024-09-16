@@ -78,7 +78,7 @@ void BuildCATree2(std::vector<Node *> &Nodes)
 {
    std::vector<std::pair<double, int>> NodeEta(Nodes.size());
    for(int i = 0; i < (int)Nodes.size(); i++)
-      NodeEta[i] = std::pair<double, int>(Nodes[i]->P.GetEta(), i);
+      NodeEta[i] = std::pair<double, int>(Nodes[i]->P.GetTheta(), i);
    std::sort(NodeEta.begin(), NodeEta.end());
 
    while(Nodes.size() > 1)

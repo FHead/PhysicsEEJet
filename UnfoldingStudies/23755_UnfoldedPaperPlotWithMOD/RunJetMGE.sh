@@ -25,9 +25,9 @@ PYQUEN=MCPyquen
 ./Execute --Input Input/DataJetMGENominal.root \
    --Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/MeowMGEPythia.${Format} \
    --RootOutput Root/DataJetMGENominalPythia.root \
-   --MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root","OriginalInput/MCVincia1JetMGE.root",OriginalInput/MCVincia2JetMGE.root,Input/DataJetMGETighter.root \
-   --MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HUnfoldedBayes16 \
-   --MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2","Tighter global cut" \
+   --MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root","OriginalInput/MCVincia1JetMGE.root",OriginalInput/MCVincia2JetMGE.root,Input/DataJetMGETighter.root,OriginalInput/MCJetScapeJetMGE.root \
+   --MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HUnfoldedBayes16,HMCGen \
+   --MCLabel "PYTHIA 6","PYTHIA 8","P8 Shower 1","P8 Shower 2","Tighter global cut","JetScape" \
    --PrimaryName HUnfoldedBayes16 \
    --DoSelfNormalize true \
    --GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
@@ -39,6 +39,24 @@ PYQUEN=MCPyquen
    --IgnoreGroup 2 --Row 2 --Column 4 \
    --DoMOD ${DoMOD} --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
 
+./Execute --Input Input/DataJetMGENominal.root \
+   --Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGENominal.pdf --FinalOutput Plots/MeowMGEJetScape.${Format} \
+   --RootOutput Root/DataJetMGENominalPythia.root \
+   --MCFile "Input/DataJetMGENominal.root","OriginalInput/MCPythia8JetMGE.root",OriginalInput/MCJetScapeJetMGE.root,OriginalInput/MCJetScapeBypassJetMGE.root,OriginalInput/MCJetScapeSmashJetMGE.root,OriginalInput/MCJetScapeLHEJetMGE.root \
+   --MCHistogram HMCTruth,HMCGen,HMCGen,HMCGen,HMCGen,HMCGen \
+   --MCLabel "PYTHIA 6","PYTHIA 8","JS Matter","JS FSR","JS Matter+Smash","JS Madgraph" \
+   --PrimaryName HUnfoldedBayes16 \
+   --DoSelfNormalize true \
+   --GenPrimaryMin -0.01 --GenPrimaryMax 0.5 \
+   --WorldXMin -0.01 --WorldXMax 0.5 --WorldYMin 0 --WorldYMax 9 --WorldRMin 0.76 --WorldRMax 1.34 --LogY false \
+   --XLabel "Jet M_{G}/E" --YLabel "1/N dN/d(Jet M_{G}/E)" --Binning "Jet E" \
+   --LegendX 0.48 --LegendY 0.4 --LegendSize 0.075 \
+   --XAxis 305 --YAxis 505 --RAxis 303 --MarkerModifier 1.25 \
+   --Texts -1,0.76,0.9,"$Preliminary",-1,0.76,0.85,"Anti-k_{T} jet R = 0.4",-1,0.76,0.8,"0.2 #pi < #theta_{jet} < 0.8 #pi",-1,0.76,0.75,"z_{cut} = 0.1 #beta = 0.0" \
+   --IgnoreGroup 2 --Row 2 --Column 4 \
+   --DoMOD ${DoMOD} --CanvasScale 2 --LogoX 0.85 --LogoY 0.57 --LogoW 0.08
+
+./Execute --Input Input/DataJetMGENominal.root \
 ./Execute --Input Input/DataJetMGENominal.root \
    --Systematic Systematics/DataJetMGENormalized.root --Output Plots/DataJetMGEGenReweight.pdf --FinalOutput Plots/MeowMGEGenReweight.${Format} \
    --RootOutput Root/DataJetMGENominalGenReweight.root \

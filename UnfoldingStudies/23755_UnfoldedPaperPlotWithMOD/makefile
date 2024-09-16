@@ -23,6 +23,10 @@ PYQUEN = MCPyquen
 
 RunTest: RunJetE RunDiJetE RunDiJetSumE RunJetZG RunJetRG RunJetMG RunJetMGE RunJetZG2 RunJetRG2 RunJetM RunJetME RunConversion
 
+RunJetScape: RunJetE RunJetZG RunJetRG RunJetMGE RunJetME 
+	bash ConvertEPS.sh JetScape
+	cp Plots/*JetScape*pdf .
+
 RunJetE: Execute
 	bash RunJetE.sh
 

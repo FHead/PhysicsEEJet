@@ -1,15 +1,19 @@
-Fraction           = 1.00
+Fraction             = 1.00
 
-DataSample         = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
-MCSample           = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
-Pythia8Sample      = Pythia8Samples/PurePythia91.root
-HerwigSample       = HerwigSamples/run_00/Belle_0_0.root,HerwigSamples/run_01/Belle_0_0.root
-Herwig715Sample    = Herwig715Samples/run_00/Belle_0_0.root
-SherpaSample       = SherpaSamples/run_00/Belle_0_0.root
-PyquenSample       = PyquenSamples/OutputEE.root
-PyquenStrongSample = PyquenSamples/OutputEE_PbPbWide_0_10.root
-Vincia1Sample      = VinciaSamples/Pythia91Shower1.root
-Vincia2Sample      = VinciaSamples/Pythia91Shower2.root
+DataSample           = `ls SamplesData/LEP1Data1994*root | tr '\n' ',' | sed "s/,$$//"`
+MCSample             = `ls SamplesMC/*root | head -n 100 | tr '\n' ',' | sed "s/,$$//"`
+Pythia8Sample        = Pythia8Samples/PurePythia91.root
+HerwigSample         = HerwigSamples/run_00/Belle_0_0.root,HerwigSamples/run_01/Belle_0_0.root
+Herwig715Sample      = Herwig715Samples/run_00/Belle_0_0.root
+SherpaSample         = SherpaSamples/run_00/Belle_0_0.root
+PyquenSample         = PyquenSamples/OutputEE.root
+PyquenStrongSample   = PyquenSamples/OutputEE_PbPbWide_0_10.root
+Vincia1Sample        = VinciaSamples/Pythia91Shower1.root
+Vincia2Sample        = VinciaSamples/Pythia91Shower2.root
+JetScapeSample       = JetScapeSamples/JetScapeEEHadrons.root
+JetScapeBypassSample = JetScapeSamples/JetScapeEEHadronsBypass.root
+JetScapeSmashSample  = JetScapeSamples/JetScapeEEHadronsSmash.root
+JetScapeLHESample    = JetScapeSamples/JetScapeEEHadronsLHE.root
 
 MCJEC       = ../../JetCorrection/23474_MC/JECR4.txt
 ResidualJEC = ../../JetCorrection/23475_DataRel/JECRelativeResidualR4.txt,../../JetCorrection/23475_DataAbs/JECResidualR4.txt
@@ -23,6 +27,8 @@ RunGroup1: RunCut RunNoCut RunTighterCut RunNoResidual RunNoJEC RunLargeThetaGap
 RunGroup2: RunCutSumE RunCutSmearedSumE RunTighterCutSumE RunNoJECSumE RunLargeThetaGapSumE RunThetaSidesSumE RunPythia6SumE RunPythia8SumE RunHerwigSumE RunSherpaSumE RunCutLowerSumE RunCutHigherSumE RunHerwig715SumE RunPyquenSumE RunVinciaSumE
 
 RunGroup3: RunMultiplicity
+
+RunGroup4: RunJetScape
 
 Prepare:
 	rm -f Pythia8Samples SamplesData SamplesMC HerwigSamples SherpaSamples
@@ -271,6 +277,32 @@ RunMultiplicity: Execute
 		--MC false --BaselineCut true --JEC $(DataJEC) --RecoMultiplicityMin 0 --RecoMultiplicityMax 1000
 	time ./Execute --Input $(DataSample) --Fraction $(Fraction) --Output DataHighN.root \
 		--MC false --BaselineCut true --JEC $(DataJEC) --RecoMultiplicityMin 0 --RecoMultiplicityMax 1000
+
+RunJetScape: Execute
+	time ./Execute --Input $(JetScapeSample) --Fraction $(Fraction) --Output MCJetScape.root \
+		--MC true --UseStored false --BaselineCut false --GenTreeName tgen --RecoTreeName t
+	time ./Execute --Input $(JetScapeSample) --Fraction $(Fraction) --Output MCJetScapeSumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --RecoTreeName treco --DoHybridSumE true
+	time ./Execute --Input $(JetScapeSample) --Fraction $(Fraction) --Output MCJetScapeLeading.root \
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+	# time ./Execute --Input $(JetScapeBypassSample) --Fraction $(Fraction) --Output MCJetScapeBypass.root \
+	# 	--MC true --UseStored false --BaselineCut false --GenTreeName tgen --RecoTreeName t
+	# time ./Execute --Input $(JetScapeBypassSample) --Fraction $(Fraction) --Output MCJetScapeBypassSumE.root \
+	# 	--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --RecoTreeName treco --DoHybridSumE true
+	# time ./Execute --Input $(JetScapeBypassSample) --Fraction $(Fraction) --Output MCJetScapeBypassLeading.root \
+	# 	--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+	# time ./Execute --Input $(JetScapeSmashSample) --Fraction $(Fraction) --Output MCJetScapeSmash.root \
+	# 	--MC true --UseStored false --BaselineCut false --GenTreeName tgen --RecoTreeName t
+	# time ./Execute --Input $(JetScapeSmashSample) --Fraction $(Fraction) --Output MCJetScapeSmashSumE.root \
+	# 	--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --RecoTreeName treco --DoHybridSumE true
+	# time ./Execute --Input $(JetScapeSmashSample) --Fraction $(Fraction) --Output MCJetScapeSmashLeading.root \
+	# 	--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
+	time ./Execute --Input $(JetScapeLHESample) --Fraction $(Fraction) --Output MCJetScapeLHE.root \
+		--MC true --UseStored false --BaselineCut false --GenTreeName tgen --RecoTreeName t
+	time ./Execute --Input $(JetScapeLHESample) --Fraction $(Fraction) --Output MCJetScapeLHESumE.root \
+		--MC true --BaselineCut false --GenSumECut 83 --GenTreeName tgen --RecoTreeName treco --DoHybridSumE true
+	time ./Execute --Input $(JetScapeLHESample) --Fraction $(Fraction) --Output MCJetScapeLHELeading.root \
+		--MC true --BaselineCut false --CheckLeadingGenDiJet true --GenTreeName tgen --DoHybridSumE true
 
 DebugRun: Execute
 	time ./Execute --Input $(MCSample) --Fraction 0.02 --Output MCDebug.root \
