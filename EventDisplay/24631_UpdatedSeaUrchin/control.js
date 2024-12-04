@@ -17,12 +17,13 @@ var PressedKeys = {Left: false, Right: false, Up: false, Down: false, RLeft: fal
 var MouseLocation = {"X": 0, "Y": 0, "DownX": 0, "DownY": 0};
 var CameraZoomProposal = 1;
 var Colors = ['3498DB', '9B59B6', 'D35400', '27AE60', '2C3E50', '1ABC9C'];
-var HighlightColors = ['FFFFFF', 'FFFFFF', 'FFFFFF', 'FFFFFF', 'FFFFFF', 'FFFFFF'];
+// var HighlightColors = ['FFFFFF', 'FFFFFF', 'FFFFFF', 'FFFFFF', 'FFFFFF', 'FFFFFF'];
+var HighlightColors = ['FFB6C1', 'FFB6C1', 'FFB6C1', 'FFB6C1', 'FFB6C1', 'FFB6C1'];
 var InactiveColors = ['FFFFFF', 'FF10F0', '0000FF', 'FFFFFF', 'FFFFFF'];
 var MouseDetectionTolerance = 7;   // Tolerance in terms of pixels
 var RayCaster;
 var MaxJet = 4;
-var DisableMouseObject = true;
+var DisableMouseObject = false;
 
 function ParseParticles()
 {
@@ -361,7 +362,10 @@ function DetectMouseObject()
    }
 
    if(BestDistance > MouseDetectionTolerance || BestIndex < 0)
-      $('#ParticleOverlay').hide();
+   {
+      $('#ParticleOverlay').html('Created by Yi Chen');
+      $('#ParticleOverlay').show();
+   }
    else
    {
       var ParticleString = "";
@@ -377,9 +381,9 @@ function DetectMouseObject()
       if(Y < 0)
          Phi = -Phi;
 
-      ParticleString = ParticleString + "P = (" + X.toFixed(2) + ", " + Y.toFixed(2) + ", " + Z.toFixed(2) + "), ";
-      ParticleString = ParticleString + "|P| = " + L.toFixed(2) + ", ";
-      ParticleString = ParticleString + "(P<sub>T</sub>, &theta;, &eta;, &phi;) = (" + T.toFixed(2) + ", " + Theta.toFixed(3) + ", " + Eta.toFixed(3) + ", " + Phi.toFixed(3) + "), ";
+      ParticleString = ParticleString + "P = (" + X.toFixed(2) + ", " + Y.toFixed(2) + ", " + Z.toFixed(2) + ") GeV, ";
+      ParticleString = ParticleString + "|P| = " + L.toFixed(2) + " GeV, ";
+      ParticleString = ParticleString + "(P<sub>T</sub>, &theta;, &eta;, &phi;) = (" + T.toFixed(2) + " GeV, " + Theta.toFixed(3) + ", " + Eta.toFixed(3) + ", " + Phi.toFixed(3) + "), ";
       ParticleString = ParticleString + "ID = " + ParticleList[BestIndex][3];
       
       ParticleMaterials[BestIndex].color.set(parseInt('0x' + HighlightColors[MaterialIndex]));
