@@ -159,9 +159,13 @@ div.OverlayLeft
    position: absolute;
    left: 7.5px;
    bottom: 7.5px;
+   height: 1.75em;
+   line-height: 1.25em;
    font-size: 1em;
-   padding: 0.0em;
+   padding: 0.25em;
    color: rgba(255, 255, 255, 0.5);
+   background-color: rgba(255, 255, 255, 0.3);
+   border-radius: 0.375em;
    display: block;
    transition: 0.3s ease;
    pointer-events: none;
