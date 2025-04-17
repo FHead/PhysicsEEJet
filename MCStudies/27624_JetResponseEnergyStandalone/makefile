@@ -1,26 +1,32 @@
 
-default: RunJECClosure
+default: RunBillTree
 
 Prepare:
 	ln -sf ../../Samples/ALEPHMC Samples
+
+RunBillTree: Execute ExecuteJEC
+	bash RunBillTree.sh
 
 FullRun: Execute
 	for i in `ls Samples/ | cut -b 28-30`; \
 	do \
 		echo $$i; \
-		./Execute --FileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
+		./Execute --RecoFileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
+			--GenFileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
 			--Output MatchedR4$${i}.root \
 			--RecoTree akR4ESchemeJetTree \
 			--GenTree akR4ESchemeGenJetTree \
 			--JEC JECR4.txt \
 			--Fraction 1.00; \
-		./Execute --FileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
+		./Execute --RecoFileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
+			--GenFileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
 			--Output ReverseMatchedR4$${i}.root \
 			--RecoTree akR4ESchemeGenJetTree \
 			--GenTree akR4ESchemeJetTree \
 			--JEC JECR4.txt \
 			--Fraction 1.00; \
-		./Execute --FileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
+		./Execute --RecoFileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
+			--GenFileName Samples/LEP1MC1994_recons_aftercut-$${i}.root \
 			--Output MatchedR8$${i}.root \
 			--RecoTree akR8ESchemeJetTree \
 			--GenTree akR8ESchemeGenJetTree \
@@ -39,7 +45,8 @@ TauHelperFunctions3.o: TauHelperFunctions3.h TauHelperFunctions3.cpp
 	g++ TauHelperFunctions3.cpp -c -o TauHelperFunctions3.o
 
 TestRun: Execute
-	./Execute --FileName Samples/LEP1MC1994_recons_aftercut-011.root \
+	./Execute --RecoFileName Samples/LEP1MC1994_recons_aftercut-011.root \
+		--GenFileName Samples/LEP1MC1994_recons_aftercut-011.root \
 		--Output Matched011.root \
 		--RecoTree akR4ESchemeJetTree \
 		--GenTree akR4ESchemeGenJetTree \

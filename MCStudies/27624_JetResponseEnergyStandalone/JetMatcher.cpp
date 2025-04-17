@@ -20,17 +20,19 @@ int main(int argc, char *argv[])
 {
    CommandLine CL(argc, argv);
 
-   string FileName       = CL.Get("FileName");
+   string RecoFileName   = CL.Get("RecoFileName");
+   string GenFileName    = CL.Get("GenFileName");
    string OutputFileName = CL.Get("Output");
    string RecoTreeName   = CL.Get("RecoTree");
    string GenTreeName    = CL.Get("GenTree");
    double Fraction       = CL.GetDouble("Fraction", 1.00);
    string JECFile        = CL.Get("JEC", "");
 
-   TFile File(FileName.c_str());
+   TFile RecoFile(RecoFileName.c_str());
+   TFile GenFile(GenFileName.c_str());
 
-   TTree *RecoTree = (TTree *)File.Get(RecoTreeName.c_str());
-   TTree *GenTree  = (TTree *)File.Get(GenTreeName.c_str());
+   TTree *RecoTree = (TTree *)RecoFile.Get(RecoTreeName.c_str());
+   TTree *GenTree  = (TTree *)GenFile.Get(GenTreeName.c_str());
 
    int GenNJet;
    float GenJetPT[MAX], GenJetEta[MAX], GenJetPhi[MAX], GenJetM[MAX];
@@ -147,7 +149,8 @@ int main(int argc, char *argv[])
 
    OutputFile.Close();
 
-   File.Close();
+   GenFile.Close();
+   RecoFile.Close();
 
    return 0;
 }

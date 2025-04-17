@@ -41,8 +41,10 @@ int main(int argc, char *argv[])
 
    Assert(Tree != nullptr, "Tree not found!  Check file name or tree name");
 
-   int ThetaBinCount = 18;
-   double ThetaBins[] = {0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0};
+   // int ThetaBinCount = 18;
+   // double ThetaBins[] = {0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0};
+   int ThetaBinCount = 14;
+   double ThetaBins[] = {0, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 1.0};
 
    string Formula = "1/([0]+[1]*x+[2]*x*x+[3]*x*x*x)";
 
@@ -89,9 +91,20 @@ vector<double> JECFit(PdfFileHelper &PdfFile, TTree *Tree, double ThetaMin, doub
    // if(fabs(R - 0.8) < 1e-5)
    //    Threshold = 0.37;
    
+   // double Threshold = 0.08;
+   // if(fabs(R - 0.8) < 1e-5)
+   //    Threshold = 0.10;
+
    double Threshold = 0.08;
-   if(fabs(R - 0.8) < 1e-5)
-      Threshold = 0.10;
+   if(fabs(R - 0.1) < 1e-5)  Threshold = 0.031;
+   if(fabs(R - 0.2) < 1e-5)  Threshold = 0.044;
+   if(fabs(R - 0.3) < 1e-5)  Threshold = 0.080;
+   if(fabs(R - 0.4) < 1e-5)  Threshold = 0.080;
+   if(fabs(R - 0.5) < 1e-5)  Threshold = 0.120;
+   if(fabs(R - 0.6) < 1e-5)  Threshold = 0.120;
+   if(fabs(R - 0.8) < 1e-5)  Threshold = 0.120;
+   if(fabs(R - 1.0) < 1e-5)  Threshold = 0.300;
+   if(fabs(R - 1.2) < 1e-5)  Threshold = 0.031;
 
    int EntryCount = Tree->GetEntries();
    cout << "Number of entries in the tree: " << EntryCount << endl;
