@@ -7,7 +7,7 @@ using namespace std;
 #include "TTree.h"
 
 #include "CommandLine.h"
-#include "Code/TauHelperFunctions3.h"
+#include "TauHelperFunctions3.h"
 
 #define MAX 10000
 
